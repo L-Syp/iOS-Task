@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:Task.xcodeproj">
+      location = "group:/Users/u589242/Documents/Developer/iOS_Task/Task/Task/ArticlesHeadingTableViewCell.swift">
+   </FileRef>
+   <FileRef
+      location = "self:">
    </FileRef>
 </Workspace>

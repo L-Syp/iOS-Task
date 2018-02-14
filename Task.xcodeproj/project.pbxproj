@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D6A6D6A22034811D00441D53 /* ArticlesHeadingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6A6D6A12034811D00441D53 /* ArticlesHeadingTableViewCell.swift */; };
 		D6AC7F522034721A002DDEDC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6AC7F512034721A002DDEDC /* AppDelegate.swift */; };
 		D6AC7F542034721A002DDEDC /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6AC7F532034721A002DDEDC /* ViewController.swift */; };
 		D6AC7F572034721A002DDEDC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D6AC7F552034721A002DDEDC /* Main.storyboard */; };
@@ -14,6 +15,9 @@
 		D6AC7F5C2034721A002DDEDC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D6AC7F5B2034721A002DDEDC /* Assets.xcassets */; };
 		D6AC7F5F2034721A002DDEDC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D6AC7F5D2034721A002DDEDC /* LaunchScreen.storyboard */; };
 		D6AC7F6A2034721A002DDEDC /* TaskTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6AC7F692034721A002DDEDC /* TaskTests.swift */; };
+		D6AC7F7820347249002DDEDC /* RestCall.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6AC7F7520347248002DDEDC /* RestCall.swift */; };
+		D6AC7F7B20347317002DDEDC /* Article.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6AC7F7A20347317002DDEDC /* Article.swift */; };
+		D6AC7F8120347EE1002DDEDC /* ArticleHeadingTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6AC7F8020347EE1002DDEDC /* ArticleHeadingTableViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -27,6 +31,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		D6A6D6A12034811D00441D53 /* ArticlesHeadingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ArticlesHeadingTableViewCell.swift; path = /Users/u589242/Documents/Developer/iOS_Task/Task/Task/ArticlesHeadingTableViewCell.swift; sourceTree = "<absolute>"; };
 		D6AC7F4E2034721A002DDEDC /* Task.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Task.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D6AC7F512034721A002DDEDC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D6AC7F532034721A002DDEDC /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -38,6 +43,9 @@
 		D6AC7F652034721A002DDEDC /* TaskTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TaskTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D6AC7F692034721A002DDEDC /* TaskTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskTests.swift; sourceTree = "<group>"; };
 		D6AC7F6B2034721A002DDEDC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D6AC7F7520347248002DDEDC /* RestCall.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RestCall.swift; path = ../../../RestCall.swift; sourceTree = "<group>"; };
+		D6AC7F7A20347317002DDEDC /* Article.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Article.swift; path = ../../../Article.swift; sourceTree = "<group>"; };
+		D6AC7F8020347EE1002DDEDC /* ArticleHeadingTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleHeadingTableViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,9 +87,13 @@
 		D6AC7F502034721A002DDEDC /* Task */ = {
 			isa = PBXGroup;
 			children = (
+				D6A6D6A12034811D00441D53 /* ArticlesHeadingTableViewCell.swift */,
 				D6AC7F512034721A002DDEDC /* AppDelegate.swift */,
 				D6AC7F532034721A002DDEDC /* ViewController.swift */,
 				D6AC7F552034721A002DDEDC /* Main.storyboard */,
+				D6AC7F8020347EE1002DDEDC /* ArticleHeadingTableViewController.swift */,
+				D6AC7F7A20347317002DDEDC /* Article.swift */,
+				D6AC7F7520347248002DDEDC /* RestCall.swift */,
 				D6AC7F5B2034721A002DDEDC /* Assets.xcassets */,
 				D6AC7F5D2034721A002DDEDC /* LaunchScreen.storyboard */,
 				D6AC7F602034721A002DDEDC /* Info.plist */,
@@ -202,9 +214,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D6A6D6A22034811D00441D53 /* ArticlesHeadingTableViewCell.swift in Sources */,
+				D6AC7F8120347EE1002DDEDC /* ArticleHeadingTableViewController.swift in Sources */,
 				D6AC7F5A2034721A002DDEDC /* Task.xcdatamodeld in Sources */,
 				D6AC7F542034721A002DDEDC /* ViewController.swift in Sources */,
+				D6AC7F7B20347317002DDEDC /* Article.swift in Sources */,
 				D6AC7F522034721A002DDEDC /* AppDelegate.swift in Sources */,
+				D6AC7F7820347249002DDEDC /* RestCall.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
