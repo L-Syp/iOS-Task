@@ -39,7 +39,7 @@ class ArticleHeadingTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 3 //articles.count
+        return articles.count
     }
 
     
@@ -104,7 +104,7 @@ class ArticleHeadingTableViewController: UITableViewController {
     */
     
     func loadData(){
-        RestCall.makeGetCall(endpoint: RestCall.Endpoints.topHeadlines, itemsCount: 25, additionalQueries: [URLQueryItem(name: "country", value: "us")], apiKey: "2beb5953fd92424983abae1dc1c7d58c") { (dane) in
+        RestCall.makeGetCall(endpoint: RestCall.Endpoints.topHeadlines, itemsCount: 5, additionalQueries: [URLQueryItem(name: "country", value: "us")], apiKey: "2beb5953fd92424983abae1dc1c7d58c") { (dane) in
             for i in 0..<dane.articles.count {
                 self.articles.append(Article(with: dane.articles[i]))
                 print("Iteration: \(i) \n \(dane.articles[i])")
