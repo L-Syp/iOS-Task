@@ -11,7 +11,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Article Heading Table View Controller-->
+        <!--Breaking news-->
         <scene sceneID="aLq-vN-9z3">
             <objects>
                 <tableViewController id="QL9-aM-HlJ" customClass="ArticleHeadingTableViewController" customModule="Task" customModuleProvider="target" sceneMemberID="viewController">
@@ -79,7 +79,8 @@
                             <outlet property="delegate" destination="QL9-aM-HlJ" id="57N-5g-WIt"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="UGh-fH-tEA">
+                    <navigationItem key="navigationItem" title="Breaking news" id="UGh-fH-tEA">
+                        <barButtonItem key="backBarButtonItem" title="Go back to the news list" id="0kV-99-SQ8"/>
                         <barButtonItem key="rightBarButtonItem" systemItem="refresh" id="OJk-aY-x8R">
                             <connections>
                                 <action selector="refreshButton:" destination="QL9-aM-HlJ" id="7l5-yw-0Lz"/>
@@ -94,7 +95,7 @@
                     </connections>
                 </tapGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="-430" y="100"/>
+            <point key="canvasLocation" x="-335" y="100"/>
         </scene>
         <!--View Controller-->
         <scene sceneID="tne-QT-ifu">

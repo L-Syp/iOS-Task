@@ -17,12 +17,13 @@ class ArticleHeadingTableViewController: UITableViewController {
     
     // MARK: Actions
     @IBAction func refreshButton(_ sender: UIBarButtonItem) {
-        self.tableView.reloadData()
+        articles = [Article]() // to avoid duplicated posts
+        self.loadData(itemNo: 30)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.loadData()
+        self.loadData(itemNo: 2)
         
         //self.tableView.reloadData()
         // Uncomment the following line to preserve selection between presentations
@@ -130,8 +131,8 @@ class ArticleHeadingTableViewController: UITableViewController {
      }
      */
     
-    func loadData() {
-        RestCall.makeGetCall(endpoint: RestCall.Endpoints.topHeadlines, itemsCount: 30, additionalQueries: [URLQueryItem(name: "country", value: "us")], apiKey: apiKey) { dane in
+    func loadData(itemNo: Int) {
+        RestCall.makeGetCall(endpoint: RestCall.Endpoints.topHeadlines, itemsCount: itemNo, additionalQueries: [URLQueryItem(name: "country", value: "us")], apiKey: apiKey) { dane in
             for i in 0..<dane.articles.count {
                 self.articles.append(Article(with: dane.articles[i]))
                 self.cachedImages.append(nil)
