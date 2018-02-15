@@ -9,9 +9,16 @@
 import UIKit
 
 class ArticleHeadingTableViewController: UITableViewController {
+    
+    // MARK: Properties
     let apiKey = "2beb5953fd92424983abae1dc1c7d58c"
     var articles = [Article]()
     var cachedImages = [UIImage?]()
+    
+    // MARK: Actions
+    @IBAction func refreshButton(_ sender: UIBarButtonItem) {
+        self.tableView.reloadData()
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
