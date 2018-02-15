@@ -18,12 +18,12 @@ class ArticleHeadingTableViewController: UITableViewController {
     // MARK: Actions
     @IBAction func refreshButton(_ sender: UIBarButtonItem) {
         articles = [Article]() // to avoid duplicated posts
-        self.loadData(itemNo: 30)
+        self.loadData(endpoint: RestCall.Endpoints.topHeadlines, itemsCount: 20, additionalQueries: [URLQueryItem(name: "country", value: "us")])
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.loadData(itemNo: 2)
+        self.loadData(endpoint: RestCall.Endpoints.topHeadlines, itemsCount: 2, additionalQueries: [URLQueryItem(name: "country", value: "us")])
         
         //self.tableView.reloadData()
         // Uncomment the following line to preserve selection between presentations
@@ -131,8 +131,8 @@ class ArticleHeadingTableViewController: UITableViewController {
      }
      */
     
-    func loadData(itemNo: Int) {
-        RestCall.makeGetCall(endpoint: RestCall.Endpoints.topHeadlines, itemsCount: itemNo, additionalQueries: [URLQueryItem(name: "country", value: "us")], apiKey: apiKey) { dane in
+    func loadData(endpoint: RestCall.Endpoints, itemsCount: Int, additionalQueries: [URLQueryItem]) {
+        RestCall.makeGetCall(endpoint: endpoint, itemsCount: itemsCount, additionalQueries: additionalQueries, apiKey: apiKey) { dane in
             for i in 0..<dane.articles.count {
                 self.articles.append(Article(with: dane.articles[i]))
                 self.cachedImages.append(nil)
