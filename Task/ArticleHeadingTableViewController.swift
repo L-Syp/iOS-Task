@@ -10,12 +10,11 @@ import UIKit
 
 class ArticleHeadingTableViewController: UITableViewController {
 
+
+    
+
     let apiKey = "2beb5953fd92424983abae1dc1c7d58c"
-    var articles = [Article]() {
-        didSet {
-            print("Articles count: \(self.articles.count)")
-        }
-    }
+    var articles = [Article]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -50,14 +49,14 @@ class ArticleHeadingTableViewController: UITableViewController {
         }
         
         if (indexPath.row % 2 == 0){
-            cell.backgroundColor = UIColor.lightGray
+            cell.backgroundColor = UIColor(red: 158.0/255.0, green: 184.0/255.0, blue: 226.0/255.0, alpha: 1.0)
+        } else {
+            cell.backgroundColor = UIColor(red: 184.0/255.0, green: 242.0/255.0, blue: 155.0/255.0, alpha: 1.0)
         }
         
         cell.articleHeadingTitle.text = articles[indexPath.row].title ?? "No title"
         cell.articleHeadingSource.text = "Source: \(articles[indexPath.row].sourceName ?? "-")"
         cell.articleHeadingImage.image = #imageLiteral(resourceName: "newsImage")
-        
-        
         if let imgURL = articles[indexPath.row].urlToImage {
             let session = URLSession.shared
             let task = session.dataTask(with: imgURL) { (data, response, error) in
@@ -120,10 +119,9 @@ class ArticleHeadingTableViewController: UITableViewController {
     */
     
     func loadData() {
-        RestCall.makeGetCall(endpoint: RestCall.Endpoints.topHeadlines, itemsCount: 30, additionalQueries: [URLQueryItem(name: "country", value: "us")], apiKey: apiKey) { (dane) in
+        RestCall.makeGetCall(endpoint: RestCall.Endpoints.topHeadlines, itemsCount: 30, additionalQueries: [URLQueryItem(name: "country", value: "us")], apiKey: apiKey) { dane in
             for i in 0..<dane.articles.count {
                 self.articles.append(Article(with: dane.articles[i]))
-                print("Iteration: \(i) \n \(dane.articles[i].urlToImage)")
             }
             DispatchQueue.main.async {
                 self.tableView.reloadData()
