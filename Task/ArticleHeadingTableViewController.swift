@@ -18,16 +18,9 @@ class ArticleHeadingTableViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let myGroup = DispatchGroup()
-        myGroup.enter()
-        DispatchQueue.main.async {
-            self.loadData()
-            myGroup.leave()
-        }
-        myGroup.notify(queue: .main) {
-            print("Articles count: \(self.articles.count)")
-        }
+        self.loadData()
         
+        //self.tableView.reloadData()
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -46,7 +39,7 @@ class ArticleHeadingTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 20 //articles.count
+        return 3 //articles.count
     }
 
     
@@ -116,8 +109,9 @@ class ArticleHeadingTableViewController: UITableViewController {
                 self.articles.append(Article(with: dane.articles[i]))
                 print("Iteration: \(i) \n \(dane.articles[i])")
             }
-            self.tableView.reloadData()
-            
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
         }
     }
 
