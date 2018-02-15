@@ -10,6 +10,7 @@ import UIKit
 
 class ArticleHeadingTableViewController: UITableViewController {
 
+    let apiKey = "2beb5953fd92424983abae1dc1c7d58c"
     var articles = [Article]() {
         didSet {
             print("Articles count: \(self.articles.count)")
@@ -47,13 +48,28 @@ class ArticleHeadingTableViewController: UITableViewController {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "ArticleHeadingCell", for: indexPath) as? ArticleHeadingTableViewCell else {
             fatalError("The dequeued cell is not an instance of ArticleHeadingTableViewCell")
         }
-        //let article = articles[indexPath.row]
-        cell.articleHeadingSource.text =  "sdaf"
-        print("Added row: \(indexPath.row)")
-        if (indexPath.row < articles.count){
-            cell.articleHeadingTitle.text = articles[indexPath.row].description //article.title ?? "No title"
+        
+        if (indexPath.row % 2 == 0){
+            cell.backgroundColor = UIColor.lightGray
         }
+        
+        cell.articleHeadingTitle.text = articles[indexPath.row].title ?? "No title"
+        cell.articleHeadingSource.text = "Source: \(articles[indexPath.row].sourceName ?? "-")"
         cell.articleHeadingImage.image = #imageLiteral(resourceName: "newsImage")
+        
+        
+        if let imgURL = articles[indexPath.row].urlToImage {
+            let session = URLSession.shared
+            let task = session.dataTask(with: imgURL) { (data, response, error) in
+                if error == nil {
+                    let downloadedImage = UIImage(data: data!)
+                    DispatchQueue.main.async {
+                        cell.articleHeadingImage.image = downloadedImage
+                    }
+                }
+            }
+            task.resume()
+        }
         return cell
     }
  
@@ -103,16 +119,17 @@ class ArticleHeadingTableViewController: UITableViewController {
     }
     */
     
-    func loadData(){
-        RestCall.makeGetCall(endpoint: RestCall.Endpoints.topHeadlines, itemsCount: 5, additionalQueries: [URLQueryItem(name: "country", value: "us")], apiKey: "2beb5953fd92424983abae1dc1c7d58c") { (dane) in
+    func loadData() {
+        RestCall.makeGetCall(endpoint: RestCall.Endpoints.topHeadlines, itemsCount: 30, additionalQueries: [URLQueryItem(name: "country", value: "us")], apiKey: apiKey) { (dane) in
             for i in 0..<dane.articles.count {
                 self.articles.append(Article(with: dane.articles[i]))
-                print("Iteration: \(i) \n \(dane.articles[i])")
+                print("Iteration: \(i) \n \(dane.articles[i].urlToImage)")
             }
             DispatchQueue.main.async {
                 self.tableView.reloadData()
             }
         }
     }
+    
 
 }

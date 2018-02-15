@@ -33,31 +33,34 @@
                                                 <constraint firstAttribute="width" secondItem="HIt-L6-oYj" secondAttribute="height" multiplier="1:1" id="r6l-h3-cNU"/>
                                             </constraints>
                                         </imageView>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Title:" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RbA-oa-6JL">
-                                            <rect key="frame" x="151" y="8" width="609" height="20.5"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Source:" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0Uh-Um-ruy">
+                                            <rect key="frame" x="8" y="151" width="59" height="20.5"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="20.5" id="YzF-sF-dLs"/>
+                                            </constraints>
+                                            <fontDescription key="fontDescription" name=".AppleSystemUIFont" family=".AppleSystemUIFont" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Source:" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0Uh-Um-ruy">
-                                            <rect key="frame" x="8" y="151" width="59" height="20.5"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Title:" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RbA-oa-6JL">
+                                            <rect key="frame" x="151" y="66" width="609" height="20.5"/>
+                                            <fontDescription key="fontDescription" name=".AppleSystemUIFont" family=".AppleSystemUIFont" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                     </subviews>
                                     <constraints>
                                         <constraint firstItem="HIt-L6-oYj" firstAttribute="height" secondItem="ywU-Sl-GF4" secondAttribute="height" priority="750" id="0yG-ex-4eJ"/>
-                                        <constraint firstItem="RbA-oa-6JL" firstAttribute="width" secondItem="ywU-Sl-GF4" secondAttribute="width" priority="750" id="4OR-MH-yZB"/>
-                                        <constraint firstItem="RbA-oa-6JL" firstAttribute="leading" secondItem="HIt-L6-oYj" secondAttribute="trailing" constant="8" id="4Uz-39-vBp"/>
+                                        <constraint firstItem="RbA-oa-6JL" firstAttribute="centerY" secondItem="HIt-L6-oYj" secondAttribute="centerY" id="CFj-22-r0f"/>
+                                        <constraint firstItem="RbA-oa-6JL" firstAttribute="leading" secondItem="HIt-L6-oYj" secondAttribute="trailing" constant="8" id="I6L-0f-Uwi"/>
                                         <constraint firstItem="HIt-L6-oYj" firstAttribute="width" secondItem="ywU-Sl-GF4" secondAttribute="width" priority="750" id="IVS-xE-h9r"/>
-                                        <constraint firstAttribute="trailing" secondItem="RbA-oa-6JL" secondAttribute="trailing" constant="8" id="Sdn-gy-F6R"/>
+                                        <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="0Uh-Um-ruy" secondAttribute="trailing" constant="8" id="Jve-ir-6Rv"/>
+                                        <constraint firstAttribute="trailing" secondItem="RbA-oa-6JL" secondAttribute="trailing" constant="8" id="Kjd-pf-DWA"/>
                                         <constraint firstItem="HIt-L6-oYj" firstAttribute="leading" secondItem="ywU-Sl-GF4" secondAttribute="leading" constant="8" id="UU0-yU-RLl"/>
                                         <constraint firstItem="0Uh-Um-ruy" firstAttribute="leading" secondItem="ywU-Sl-GF4" secondAttribute="leading" constant="8" id="Zmz-gG-Jfa"/>
                                         <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="HIt-L6-oYj" secondAttribute="trailing" constant="180" id="esc-75-G7Y"/>
-                                        <constraint firstItem="RbA-oa-6JL" firstAttribute="height" relation="lessThanOrEqual" secondItem="HIt-L6-oYj" secondAttribute="height" id="sDP-hi-nH1"/>
+                                        <constraint firstItem="RbA-oa-6JL" firstAttribute="height" relation="lessThanOrEqual" secondItem="HIt-L6-oYj" secondAttribute="height" id="g9g-SF-RWi"/>
                                         <constraint firstAttribute="bottom" secondItem="0Uh-Um-ruy" secondAttribute="bottom" constant="8" id="tEY-DB-ptq"/>
-                                        <constraint firstItem="RbA-oa-6JL" firstAttribute="top" secondItem="ywU-Sl-GF4" secondAttribute="top" constant="8" id="tsE-dV-IjI"/>
                                         <constraint firstItem="HIt-L6-oYj" firstAttribute="top" secondItem="ywU-Sl-GF4" secondAttribute="top" constant="8" id="w8I-oe-a6x"/>
                                         <constraint firstItem="0Uh-Um-ruy" firstAttribute="top" relation="greaterThanOrEqual" secondItem="HIt-L6-oYj" secondAttribute="bottom" constant="8" id="x42-M9-AJm" userLabel="ISource.top ≥ Article Heading Image.bottom + 8"/>
                                     </constraints>
