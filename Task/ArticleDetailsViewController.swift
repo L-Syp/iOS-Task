@@ -10,13 +10,15 @@ import UIKit
 
 class ArticleDetailsViewController: UIViewController {
 
-    @IBOutlet weak var titleLabel: UILabel!
+    @IBOutlet weak var imageView: UIImageView!
+    
     var article: Article? = nil
+    var image: UIImage? = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        titleLabel.text = article!.title
+        imageView.image = image
+        //titleLabel.text = article!.title
         // Do any additional setup after loading the view, typically from a nib.
     }
 

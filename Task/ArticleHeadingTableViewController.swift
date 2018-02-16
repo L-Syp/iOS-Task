@@ -23,14 +23,14 @@ class ArticleHeadingTableViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.loadData(endpoint: RestCall.Endpoints.topHeadlines, itemsCount: 20, additionalQueries: [URLQueryItem(name: "country", value: "us")])
+        self.loadData(endpoint: RestCall.Endpoints.topHeadlines, itemsCount: 3, additionalQueries: [URLQueryItem(name: "country", value: "us")])
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?){
         if segue.identifier == "showDetailsSegue" {
             let vc = segue.destination as! ArticleDetailsViewController
             if sender as? ArticleHeadingTableViewCell != nil {
-                vc.article = articles[tableView.indexPathForSelectedRow!.row]
+                vc.image = cachedImages[tableView.indexPathForSelectedRow!.row] ?? #imageLiteral(resourceName: "newsImage")
             }
         }
     }
@@ -92,6 +92,7 @@ class ArticleHeadingTableViewController: UITableViewController {
             for i in 0..<dane.articles.count {
                 self.articles.append(Article(with: dane.articles[i]))
                 self.cachedImages.append(nil)
+                print("Image no \(i) has been cached")
             }
             DispatchQueue.main.async {
                 self.tableView.reloadData()
