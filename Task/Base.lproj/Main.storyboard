@@ -70,7 +70,7 @@
                                     <outlet property="articleHeadingImage" destination="HIt-L6-oYj" id="ihW-W7-YRN"/>
                                     <outlet property="articleHeadingSource" destination="0Uh-Um-ruy" id="DDF-6c-THx"/>
                                     <outlet property="articleHeadingTitle" destination="RbA-oa-6JL" id="Dhc-zp-hqe"/>
-                                    <outletCollection property="gestureRecognizers" destination="O11-07-3y4" appends="YES" id="NqF-xp-cUk"/>
+                                    <segue destination="BYZ-38-t0r" kind="show" identifier="showDetailsSegue" id="rGe-Y5-yRE"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -89,28 +89,35 @@
                     </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dq6-X3-i1b" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <tapGestureRecognizer id="O11-07-3y4">
-                    <connections>
-                        <segue destination="BYZ-38-t0r" kind="show" id="pHK-hS-deW"/>
-                    </connections>
-                </tapGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="-335" y="100"/>
         </scene>
-        <!--View Controller-->
+        <!--Article Details View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="Task" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" customClass="ArticleDetailsViewController" customModule="Task" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mCm-UR-Qii">
+                                <rect key="frame" x="52" y="111" width="86" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
+                    <connections>
+                        <outlet property="titleLabel" destination="mCm-UR-Qii" id="I9k-JX-iT8"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="554" y="100"/>
+            <point key="canvasLocation" x="553.90625" y="99.609375"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="Lvt-Td-X2P">

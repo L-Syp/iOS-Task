@@ -14,6 +14,8 @@ class ArticleHeadingTableViewCell: UITableViewCell {
     @IBOutlet weak var articleHeadingTitle: UILabel!
     @IBOutlet weak var articleHeadingSource: UILabel!
     
+    var article: Article? = nil
+    
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -25,5 +27,4 @@ class ArticleHeadingTableViewCell: UITableViewCell {
 
         // Configure the view for the selected state
     }
-
 }

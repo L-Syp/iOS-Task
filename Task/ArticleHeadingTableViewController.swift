@@ -18,19 +18,22 @@ class ArticleHeadingTableViewController: UITableViewController {
     // MARK: Actions
     @IBAction func refreshButton(_ sender: UIBarButtonItem) {
         articles = [Article]() // to avoid duplicated posts
+        self.loadData(endpoint: RestCall.Endpoints.topHeadlines, itemsCount: 2, additionalQueries: [URLQueryItem(name: "country", value: "us")])
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
         self.loadData(endpoint: RestCall.Endpoints.topHeadlines, itemsCount: 20, additionalQueries: [URLQueryItem(name: "country", value: "us")])
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        self.loadData(endpoint: RestCall.Endpoints.topHeadlines, itemsCount: 2, additionalQueries: [URLQueryItem(name: "country", value: "us")])
-        
-        //self.tableView.reloadData()
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-        
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?){
+        if segue.identifier == "showDetailsSegue" {
+            print("Success")
+            let vc = segue.destination as! ArticleDetailsViewController
+           if let cell = sender as? ArticleHeadingTableViewCell {
+                vc.testValue = cell.article!.title!
+            }
+        }
     }
     
     override func didReceiveMemoryWarning() {
@@ -57,10 +60,10 @@ class ArticleHeadingTableViewController: UITableViewController {
         } else {
             cell.backgroundColor = UIColor(red: 184.0/255.0, green: 242.0/255.0, blue: 155.0/255.0, alpha: 1.0)
         }
-        
+        cell.article = articles[indexPath.row]
         cell.articleHeadingTitle.text = articles[indexPath.row].title ?? "No title"
         cell.articleHeadingSource.text = "Source: \(articles[indexPath.row].sourceName ?? "-")"
-        cell.articleHeadingImage.image = #imageLiteral(resourceName: "newsImage") //without this line some images are duplicated
+        cell.articleHeadingImage.image = #imageLiteral(resourceName: "newsImage") //without this line some images are duplicated and rendered in a wrong cell
         
         if let imgURL = articles[indexPath.row].urlToImage {
             if let cachedImage = cachedImages[indexPath.row] {
@@ -84,52 +87,6 @@ class ArticleHeadingTableViewController: UITableViewController {
         }
         return cell
     }
-    
-    
-    /*
-     // Override to support conditional editing of the table view.
-     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-     // Return false if you do not want the specified item to be editable.
-     return true
-     }
-     */
-    
-    /*
-     // Override to support editing the table view.
-     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-     if editingStyle == .delete {
-     // Delete the row from the data source
-     tableView.deleteRows(at: [indexPath], with: .fade)
-     } else if editingStyle == .insert {
-     // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-     }
-     }
-     */
-    
-    /*
-     // Override to support rearranging the table view.
-     override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-     
-     }
-     */
-    
-    /*
-     // Override to support conditional rearranging of the table view.
-     override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-     // Return false if you do not want the item to be re-orderable.
-     return true
-     }
-     */
-    
-    /*
-     // MARK: - Navigation
-     
-     // In a storyboard-based application, you will often want to do a little preparation before navigation
-     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-     // Get the new view controller using segue.destinationViewController.
-     // Pass the selected object to the new view controller.
-     }
-     */
     
     func loadData(endpoint: RestCall.Endpoints, itemsCount: Int, additionalQueries: [URLQueryItem]) {
         RestCall.makeGetCall(endpoint: endpoint, itemsCount: itemsCount, additionalQueries: additionalQueries, apiKey: apiKey) { dane in
