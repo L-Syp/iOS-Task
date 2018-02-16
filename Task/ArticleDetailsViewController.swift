@@ -11,11 +11,12 @@ import UIKit
 class ArticleDetailsViewController: UIViewController {
 
     @IBOutlet weak var titleLabel: UILabel!
-    var testValue = String()
+    var article: Article? = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        titleLabel.text = testValue
+        
+        titleLabel.text = article!.title
         // Do any additional setup after loading the view, typically from a nib.
     }
 

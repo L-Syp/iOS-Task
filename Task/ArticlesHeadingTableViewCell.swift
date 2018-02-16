@@ -14,9 +14,6 @@ class ArticleHeadingTableViewCell: UITableViewCell {
     @IBOutlet weak var articleHeadingTitle: UILabel!
     @IBOutlet weak var articleHeadingSource: UILabel!
     
-    var article: Article? = nil
-    
-    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

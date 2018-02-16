@@ -18,7 +18,7 @@ class ArticleHeadingTableViewController: UITableViewController {
     // MARK: Actions
     @IBAction func refreshButton(_ sender: UIBarButtonItem) {
         articles = [Article]() // to avoid duplicated posts
-        self.loadData(endpoint: RestCall.Endpoints.topHeadlines, itemsCount: 2, additionalQueries: [URLQueryItem(name: "country", value: "us")])
+        self.loadData(endpoint: RestCall.Endpoints.topHeadlines, itemsCount: 20, additionalQueries: [URLQueryItem(name: "country", value: "us")])
     }
 
     override func viewDidLoad() {
@@ -28,10 +28,9 @@ class ArticleHeadingTableViewController: UITableViewController {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?){
         if segue.identifier == "showDetailsSegue" {
-            print("Success")
             let vc = segue.destination as! ArticleDetailsViewController
-           if let cell = sender as? ArticleHeadingTableViewCell {
-                vc.testValue = cell.article!.title!
+            if sender as? ArticleHeadingTableViewCell != nil {
+                vc.article = articles[tableView.indexPathForSelectedRow!.row]
             }
         }
     }
@@ -60,7 +59,7 @@ class ArticleHeadingTableViewController: UITableViewController {
         } else {
             cell.backgroundColor = UIColor(red: 184.0/255.0, green: 242.0/255.0, blue: 155.0/255.0, alpha: 1.0)
         }
-        cell.article = articles[indexPath.row]
+        
         cell.articleHeadingTitle.text = articles[indexPath.row].title ?? "No title"
         cell.articleHeadingSource.text = "Source: \(articles[indexPath.row].sourceName ?? "-")"
         cell.articleHeadingImage.image = #imageLiteral(resourceName: "newsImage") //without this line some images are duplicated and rendered in a wrong cell
