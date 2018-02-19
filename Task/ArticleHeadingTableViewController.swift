@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreData
+import SystemConfiguration
 
 class ArticleHeadingTableViewController: UITableViewController {
     
@@ -23,11 +24,15 @@ class ArticleHeadingTableViewController: UITableViewController {
     }
 
     override func viewDidLoad() {
-        
+        print(connectedToNetwork())
         super.viewDidLoad()
-        persistLoadAtricle()
-        self.tableView.reloadData()
-        //self.loadData(endpoint: RestCall.Endpoints.topHeadlines, itemsCount: 3, additionalQueries: [URLQueryItem(name: "country", value: "us")])
+        if connectedToNetwork() {
+            persistDeleteData()
+            self.loadData(endpoint: RestCall.Endpoints.topHeadlines, itemsCount: 3, additionalQueries: [URLQueryItem(name: "country", value: "us")])
+        } else {
+            persistLoadAtricle()
+            self.tableView.reloadData()
+        }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?){
@@ -45,7 +50,6 @@ class ArticleHeadingTableViewController: UITableViewController {
     }
     
     // MARK: - Table view data source
-    
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
@@ -67,7 +71,7 @@ class ArticleHeadingTableViewController: UITableViewController {
         
         cell.articleHeadingTitle.text = articles[indexPath.row].title ?? "No title"
         cell.articleHeadingSource.text = "Source: \(articles[indexPath.row].sourceName ?? "-")"
-        cell.articleHeadingImage.image = articles[indexPath.row].image ?? #imageLiteral(resourceName: "newsImage") //without this line some images are duplicated and rendered in a wrong cell
+        cell.articleHeadingImage.image = articles[indexPath.row].image ?? #imageLiteral(resourceName: "newsImage") //without this line some images are duplicated and rendered in a wrong cells
         if let imgURL = articles[indexPath.row].urlToImage {
             if let cachedImage = articles[indexPath.row].image {
                 cell.articleHeadingImage.image = cachedImage
@@ -96,10 +100,10 @@ class ArticleHeadingTableViewController: UITableViewController {
     }
     
     func loadData(endpoint: RestCall.Endpoints, itemsCount: Int, additionalQueries: [URLQueryItem]) {
-        RestCall.makeGetCall(endpoint: endpoint, itemsCount: itemsCount, additionalQueries: additionalQueries, apiKey: apiKey) { dane in
+        RestCall.makeGetCall(endpoint: endpoint, itemsCount: itemsCount, additionalQueries: additionalQueries, apiKey: apiKey) { data in
             self.articles = [Article]()
-            for i in 0..<dane.articles.count {
-                let article = Article(with: dane.articles[i])
+            for i in 0..<data.articles.count {
+                let article = Article(with: data.articles[i])
                 self.articles.append(article)
             }
             DispatchQueue.main.async {
@@ -126,21 +130,18 @@ class ArticleHeadingTableViewController: UITableViewController {
     
     func persistLoadAtricle(){
         let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-        var length: Int
         do {
             let articleCacheArray = try context.fetch(CachedArticles.fetchRequest())
-            length = articleCacheArray.count
             articles = [Article]()
             for i in 0..<articleCacheArray.count {
                 let entity: CachedArticles = articleCacheArray[i] as! CachedArticles
                 let source = Source(id: entity.sourceID, name: entity.sourceName)
-                let articleData = ArticleData(source: source, author: entity.author, title: entity.title, description: entity.description,
-                                              url: entity.url, urlToImage: nil, publishedAt: entity.publishedAt)
+                let articleData = ArticleData(source: source, author: entity.author, title: entity.title, description: entity.articleDescription,
+                                              url: entity.url, urlToImage: entity.url, publishedAt: entity.publishedAt)
                 articles.append(Article(with: articleData, image: UIImage(data: entity.image!)!))
             }
-            print("Persisted array count: \(length)")
         } catch {
-            print("Fetching articles failed!")
+            fatalError("Fetching articles failed!")
         }
     }
     
@@ -154,18 +155,31 @@ class ArticleHeadingTableViewController: UITableViewController {
                 (UIApplication.shared.delegate as! AppDelegate).saveContext()
             }
         } catch {
-            print("Deleting articles failed!")
-        }
-        
-        do {
-            let imageCacheArray = try context.fetch(CachedImages.fetchRequest())
-            for i in 0..<imageCacheArray.count {
-                context.delete(imageCacheArray[i] as! NSManagedObject)
-                (UIApplication.shared.delegate as! AppDelegate).saveContext()
-            }
-        } catch {
-            print("Deletic images failed!")
+            fatalError("Deleting articles failed!")
         }
     }
     
+    func connectedToNetwork() -> Bool { // Taken from https://stackoverflow.com/questions/25623272/how-to-use-scnetworkreachability-in-swift/25623647#25623647
+        
+        var zeroAddress = sockaddr_in()
+        zeroAddress.sin_len = UInt8(MemoryLayout<sockaddr_in>.size)
+        zeroAddress.sin_family = sa_family_t(AF_INET)
+        
+        guard let defaultRouteReachability = withUnsafePointer(to: &zeroAddress, {
+            $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
+                SCNetworkReachabilityCreateWithAddress(nil, $0)
+            }
+        }) else {
+            return false
+        }
+        
+        var flags: SCNetworkReachabilityFlags = []
+        if !SCNetworkReachabilityGetFlags(defaultRouteReachability, &flags) {
+            return false
+        }
+        
+        let isReachable = flags.contains(.reachable)
+        let needsConnection = flags.contains(.connectionRequired)
+        return (isReachable && !needsConnection)
+    }
 }
