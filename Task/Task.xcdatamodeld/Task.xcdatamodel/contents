@@ -3,6 +3,7 @@
     <entity name="CachedArticles" representedClassName="CachedArticles" syncable="YES" codeGenerationType="class">
         <attribute name="articleDescription" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="author" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="image" optional="YES" attributeType="Binary" syncable="YES"/>
         <attribute name="publishedAt" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="sourceID" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="sourceName" optional="YES" attributeType="String" syncable="YES"/>
@@ -14,7 +15,7 @@
         <attribute name="image" optional="YES" attributeType="Binary" syncable="YES"/>
     </entity>
     <elements>
-        <element name="CachedArticles" positionX="-3258" positionY="-1197" width="128" height="163"/>
+        <element name="CachedArticles" positionX="-3258" positionY="-1197" width="128" height="180"/>
         <element name="CachedImages" positionX="-3249" positionY="-1179" width="128" height="60"/>
     </elements>
 </model>

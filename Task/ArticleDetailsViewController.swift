@@ -18,9 +18,6 @@ class ArticleDetailsViewController: UIViewController {
     @IBOutlet weak var authorLabel: UILabel!
     @IBOutlet weak var URLLabel: UILabel!
     
-    
-    
-    
     var article: Article? = nil
     var image: UIImage? = nil
     
@@ -32,9 +29,9 @@ class ArticleDetailsViewController: UIViewController {
         }
         titleLabel.text = article!.title
         pubishedAtLabel.text = "Published at: \(article!.publishedAt ?? "-")"
-        descriptionLabel.text = article!.description
+        descriptionLabel.text = article!.description ?? "No description available"
         authorLabel.text = "Author: \(article!.author ?? "-")"
-        URLLabel.text = "URL: \(article!.url!.absoluteString)"
+        URLLabel.text = "URL: \(article!.url?.absoluteString ?? "No url available")"
     }
 
     override func didReceiveMemoryWarning() {

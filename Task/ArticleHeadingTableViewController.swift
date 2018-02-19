@@ -14,7 +14,6 @@ class ArticleHeadingTableViewController: UITableViewController {
     // MARK: Properties
     let apiKey = "2beb5953fd92424983abae1dc1c7d58c"
     var articles = [Article]()
-    var cachedImages = [UIImage?]()
     
     
     // MARK: Actions
@@ -24,18 +23,18 @@ class ArticleHeadingTableViewController: UITableViewController {
     }
 
     override func viewDidLoad() {
-        //persistLoadAtricle()
-        super.viewDidLoad()
-        #imageLiteral(resourceName: "newsImage").accessibilityIdentifier = "newsImage"
-        self.loadData(endpoint: RestCall.Endpoints.topHeadlines, itemsCount: 3, additionalQueries: [URLQueryItem(name: "country", value: "us")])
         
+        super.viewDidLoad()
+        persistLoadAtricle()
+        self.tableView.reloadData()
+        //self.loadData(endpoint: RestCall.Endpoints.topHeadlines, itemsCount: 3, additionalQueries: [URLQueryItem(name: "country", value: "us")])
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?){
         if segue.identifier == "showDetailsSegue" {
             let vc = segue.destination as! ArticleDetailsViewController
             if sender as? ArticleHeadingTableViewCell != nil {
-                vc.image = cachedImages[tableView.indexPathForSelectedRow!.row] ?? #imageLiteral(resourceName: "newsImage")
+                vc.image = articles[tableView.indexPathForSelectedRow!.row].image ?? #imageLiteral(resourceName: "newsImage")
                 vc.article = articles[tableView.indexPathForSelectedRow!.row]
             }
         }
@@ -68,10 +67,9 @@ class ArticleHeadingTableViewController: UITableViewController {
         
         cell.articleHeadingTitle.text = articles[indexPath.row].title ?? "No title"
         cell.articleHeadingSource.text = "Source: \(articles[indexPath.row].sourceName ?? "-")"
-        cell.articleHeadingImage.image = #imageLiteral(resourceName: "newsImage") //without this line some images are duplicated and rendered in a wrong cell
-        
+        cell.articleHeadingImage.image = articles[indexPath.row].image ?? #imageLiteral(resourceName: "newsImage") //without this line some images are duplicated and rendered in a wrong cell
         if let imgURL = articles[indexPath.row].urlToImage {
-            if let cachedImage = cachedImages[indexPath.row] {
+            if let cachedImage = articles[indexPath.row].image {
                 cell.articleHeadingImage.image = cachedImage
                 print("************** Set an image cell from cache")
             } else {
@@ -80,7 +78,11 @@ class ArticleHeadingTableViewController: UITableViewController {
                     if error == nil {
                         let downloadedImage = UIImage(data: data!)
                         print("************** Downloaded an image cell")
-                        self.cachedImages[indexPath.row] = downloadedImage
+                        self.articles[indexPath.row].image = downloadedImage
+                        DispatchQueue.main.sync {
+                            self.persistSaveArticle(self.articles[indexPath.row], imageData: data!)
+                        }
+                        print("Article has been saved to the device")
                         DispatchQueue.main.async {
                             cell.articleHeadingImage.image = downloadedImage
                             print("************** Set an image cell from web")
@@ -95,14 +97,10 @@ class ArticleHeadingTableViewController: UITableViewController {
     
     func loadData(endpoint: RestCall.Endpoints, itemsCount: Int, additionalQueries: [URLQueryItem]) {
         RestCall.makeGetCall(endpoint: endpoint, itemsCount: itemsCount, additionalQueries: additionalQueries, apiKey: apiKey) { dane in
+            self.articles = [Article]()
             for i in 0..<dane.articles.count {
                 let article = Article(with: dane.articles[i])
                 self.articles.append(article)
-                self.cachedImages.append(nil)
-                print("Image no \(i) has been cached")
-                self.persistSaveArticle(article)
-                print("Article has been saved to the device")
-                
             }
             DispatchQueue.main.async {
                 self.tableView.reloadData()
@@ -110,7 +108,7 @@ class ArticleHeadingTableViewController: UITableViewController {
         }
     }
     
-    func persistSaveArticle(_ article: Article){
+    func persistSaveArticle(_ article: Article, imageData: Data){
         let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
         let entity = CachedArticles(context: context)
         entity.author = article.author
@@ -121,25 +119,52 @@ class ArticleHeadingTableViewController: UITableViewController {
         entity.title = article.title
         entity.url = article.url
         entity.urlToImage = article.urlToImage
+        entity.image = imageData
         (UIApplication.shared.delegate as! AppDelegate).saveContext()
 
     }
+    
     func persistLoadAtricle(){
         let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
         var length: Int
         do {
             let articleCacheArray = try context.fetch(CachedArticles.fetchRequest())
             length = articleCacheArray.count
+            articles = [Article]()
             for i in 0..<articleCacheArray.count {
                 let entity: CachedArticles = articleCacheArray[i] as! CachedArticles
                 let source = Source(id: entity.sourceID, name: entity.sourceName)
                 let articleData = ArticleData(source: source, author: entity.author, title: entity.title, description: entity.description,
-                                              url: entity.url, urlToImage: entity.urlToImage, publishedAt: entity.publishedAt)
-                articles.append(Article(with: articleData))
+                                              url: entity.url, urlToImage: nil, publishedAt: entity.publishedAt)
+                articles.append(Article(with: articleData, image: UIImage(data: entity.image!)!))
             }
             print("Persisted array count: \(length)")
         } catch {
-            print("Fetching failed!")
+            print("Fetching articles failed!")
+        }
+    }
+    
+    func persistDeleteData(){
+        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+        do {
+            let articleCacheArray = try context.fetch(CachedArticles.fetchRequest())
+            articles = [Article]()
+            for i in 0..<articleCacheArray.count {
+                context.delete(articleCacheArray[i] as! NSManagedObject)
+                (UIApplication.shared.delegate as! AppDelegate).saveContext()
+            }
+        } catch {
+            print("Deleting articles failed!")
+        }
+        
+        do {
+            let imageCacheArray = try context.fetch(CachedImages.fetchRequest())
+            for i in 0..<imageCacheArray.count {
+                context.delete(imageCacheArray[i] as! NSManagedObject)
+                (UIApplication.shared.delegate as! AppDelegate).saveContext()
+            }
+        } catch {
+            print("Deletic images failed!")
         }
     }
     
