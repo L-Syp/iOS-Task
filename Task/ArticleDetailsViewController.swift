@@ -11,6 +11,15 @@ import UIKit
 class ArticleDetailsViewController: UIViewController {
 
     @IBOutlet weak var imageView: UIImageView!
+    @IBOutlet weak var titleLabel: UILabel!
+    
+    @IBOutlet weak var pubishedAtLabel: UILabel!
+    @IBOutlet weak var descriptionLabel: UILabel!
+    @IBOutlet weak var authorLabel: UILabel!
+    @IBOutlet weak var URLLabel: UILabel!
+    
+    
+    
     
     var article: Article? = nil
     var image: UIImage? = nil
@@ -18,8 +27,14 @@ class ArticleDetailsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         imageView.image = image
-        //titleLabel.text = article!.title
-        // Do any additional setup after loading the view, typically from a nib.
+        if image == #imageLiteral(resourceName: "newsImage"){
+            imageView.contentMode = .scaleAspectFit
+        }
+        titleLabel.text = article!.title
+        pubishedAtLabel.text = "Published at: \(article!.publishedAt ?? "-")"
+        descriptionLabel.text = article!.description
+        authorLabel.text = "Author: \(article!.author ?? "-")"
+        URLLabel.text = "URL: \(article!.url!.absoluteString)"
     }
 
     override func didReceiveMemoryWarning() {
@@ -27,7 +42,5 @@ class ArticleDetailsViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-   
-
 }
 
