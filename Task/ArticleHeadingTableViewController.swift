@@ -7,13 +7,13 @@
 //
 
 import UIKit
-import CoreData
 import SystemConfiguration
 
 class ArticleHeadingTableViewController: UITableViewController {
     
     // MARK: Properties
     let apiKey = "2beb5953fd92424983abae1dc1c7d58c"
+    let defaultImage: UIImage = #imageLiteral(resourceName: "newsImage")
     var articles = [Article]()
     
     // MARK: Actions
@@ -23,11 +23,11 @@ class ArticleHeadingTableViewController: UITableViewController {
     }
 
     override func viewDidLoad() {
-        print(connectedToNetwork())
         super.viewDidLoad()
+        print(DataPersistence.getEntitiesCount())
         if connectedToNetwork() {
             DataPersistence.persistDeleteData(&articles)
-            self.loadData(endpoint: RestCall.Endpoints.topHeadlines, itemsCount: 3, additionalQueries: [URLQueryItem(name: "country", value: "us")])
+            self.loadData(endpoint: RestCall.Endpoints.topHeadlines, itemsCount: 7, additionalQueries: [URLQueryItem(name: "country", value: "us")])
         } else {
             DataPersistence.persistLoadAtricle(&articles)
             self.tableView.reloadData()
@@ -38,7 +38,8 @@ class ArticleHeadingTableViewController: UITableViewController {
         if segue.identifier == "showDetailsSegue" {
             let vc = segue.destination as! ArticleDetailsViewController
             if sender as? ArticleHeadingTableViewCell != nil {
-                vc.image = articles[tableView.indexPathForSelectedRow!.row].image ?? #imageLiteral(resourceName: "newsImage")
+                vc.image = articles[tableView.indexPathForSelectedRow!.row].image ?? defaultImage
+                vc.defaultImage = defaultImage
                 vc.article = articles[tableView.indexPathForSelectedRow!.row]
             }
         }
@@ -70,8 +71,8 @@ class ArticleHeadingTableViewController: UITableViewController {
         
         cell.articleHeadingTitle.text = articles[indexPath.row].title ?? "No title"
         cell.articleHeadingSource.text = "Source: \(articles[indexPath.row].sourceName ?? "-")"
-        cell.articleHeadingImage.image = articles[indexPath.row].image ?? #imageLiteral(resourceName: "newsImage") //without this line some images are duplicated and rendered in a wrong cells
-        if let imgURL = articles[indexPath.row].urlToImage {
+        cell.articleHeadingImage.image = articles[indexPath.row].image ?? defaultImage //without this line some images are duplicated and rendered in a wrong cells
+        if let imgURL = articles[indexPath.row].urlToImage{
             if let cachedImage = articles[indexPath.row].image {
                 cell.articleHeadingImage.image = cachedImage
                 print("************** Set an image cell from cache")
@@ -83,21 +84,34 @@ class ArticleHeadingTableViewController: UITableViewController {
                         print("************** Downloaded an image cell")
                         self.articles[indexPath.row].image = downloadedImage
                        DispatchQueue.main.sync {
-                           DataPersistence.persistSaveArticle(self.articles[indexPath.row], imageData: data!)
+                           DataPersistence.persistSaveArticle(self.articles[indexPath.row], imageData: data)
+                           self.articles[indexPath.row].isSavedToCache = true
+                           print("Entities count: \(DataPersistence.getEntitiesCount())")
                         }
                         print("Article has been saved to the device")
                         DispatchQueue.main.async {
                             cell.articleHeadingImage.image = downloadedImage
                             print("************** Set an image cell from web")
                         }
+                    } else {
+                        print("ERROR: \(error.debugDescription)")
+                        self.articles[indexPath.row].image = self.defaultImage
+                        DispatchQueue.main.sync {
+                            DataPersistence.persistSaveArticle(self.articles[indexPath.row], imageData: nil)
+                            self.articles[indexPath.row].isSavedToCache = true
+                            print("Entities count: \(DataPersistence.getEntitiesCount())")
+                        }
+                        print("Article has been saved to the device, but error has occured")
                     }
                 }
                 task.resume()
             }
+        } else if !self.articles[indexPath.row].isSavedToCache {
+            DataPersistence.persistSaveArticle(self.articles[indexPath.row], imageData: nil)
+            self.articles[indexPath.row].isSavedToCache = true
+             self.articles[indexPath.row].image = defaultImage
+            print("Entities count: \(DataPersistence.getEntitiesCount())")
         }
-        /*DispatchQueue.main.sync {
-         self.persistSaveArticle(self.articles[indexPath.row], imageData: data!)
-         }*/
         return cell
     }
     

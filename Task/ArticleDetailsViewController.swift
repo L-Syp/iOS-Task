@@ -19,6 +19,7 @@ class ArticleDetailsViewController: UIViewController {
     
     var article: Article? = nil
     var image: UIImage? = nil
+    var defaultImage: UIImage? = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
