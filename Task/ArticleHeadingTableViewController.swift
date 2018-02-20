@@ -18,9 +18,13 @@ class ArticleHeadingTableViewController: UITableViewController {
     // MARK: Actions
     @IBAction func refreshButton(_ sender: UIBarButtonItem) {
         articles = [Article]() // to avoid duplicated posts
-        self.loadData(endpoint: RestCall.Endpoints.topHeadlines, itemsCount: 7, additionalQueries: [URLQueryItem(name: "country", value: "us")])
+        if !RestCall.connectedToNetwork() {
+            showNoConnectionAlert()
+        } else {
+            self.loadData(endpoint: RestCall.Endpoints.topHeadlines, itemsCount: 7, additionalQueries: [URLQueryItem(name: "country", value: "us")])
+        }
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         if RestCall.connectedToNetwork() {
@@ -70,21 +74,21 @@ class ArticleHeadingTableViewController: UITableViewController {
         cell.articleHeadingTitle.text = articles[indexPath.row].title ?? "No title"
         cell.articleHeadingSource.text = "Source: \(articles[indexPath.row].sourceName ?? "-")"
         cell.articleHeadingImage.image = articles[indexPath.row].image ?? defaultImage //without this line some images are duplicated and rendered in a wrong cells
-        if let imgURL = articles[indexPath.row].urlToImage{
+        if let imgURL = articles[indexPath.row].urlToImage {
             if let cachedImage = articles[indexPath.row].image {
                 cell.articleHeadingImage.image = cachedImage
                 print("************** Set an image cell from cache")
-            } else {
+            } else if RestCall.connectedToNetwork() {
                 let session = URLSession.shared
                 let task = session.dataTask(with: imgURL) { (data, response, error) in
                     if error == nil {
                         let downloadedImage = UIImage(data: data!)
                         print("************** Downloaded an image cell")
                         self.articles[indexPath.row].image = downloadedImage
-                       DispatchQueue.main.sync {
-                           DataPersistence.persistSaveArticle(self.articles[indexPath.row], imageData: data)
-                           self.articles[indexPath.row].isSavedToCache = true
-                           print("Entities count: \(DataPersistence.getEntitiesCount())")
+                        DispatchQueue.main.sync {
+                            DataPersistence.persistSaveArticle(self.articles[indexPath.row], imageData: data)
+                            self.articles[indexPath.row].isSavedToCache = true
+                            print("Entities count: \(DataPersistence.getEntitiesCount())")
                         }
                         print("Article has been saved to the device")
                         DispatchQueue.main.async {
@@ -106,23 +110,35 @@ class ArticleHeadingTableViewController: UITableViewController {
         } else if !self.articles[indexPath.row].isSavedToCache {
             DataPersistence.persistSaveArticle(self.articles[indexPath.row], imageData: nil)
             self.articles[indexPath.row].isSavedToCache = true
-             self.articles[indexPath.row].image = defaultImage
+            self.articles[indexPath.row].image = defaultImage
             print("Entities count: \(DataPersistence.getEntitiesCount())")
         }
         return cell
     }
     
     func loadData(endpoint: RestCall.Endpoints, itemsCount: Int, additionalQueries: [URLQueryItem]) {
-        RestCall.makeGetCall(endpoint: endpoint, itemsCount: itemsCount, additionalQueries: additionalQueries, apiKey: apiKey) { data, response in
+        RestCall.makeGetCall(endpoint: endpoint, itemsCount: itemsCount, additionalQueries: additionalQueries, apiKey: apiKey) { data, response, error in
             self.articles = [Article]()
-            for i in 0..<data.articles.count {
-                let article = Article(with: data.articles[i])
-                self.articles.append(article)
-                print((response as! HTTPURLResponse).statusCode)
+            if let data = data {
+                for i in 0..<data.articles.count {
+                    let article = Article(with: data.articles[i])
+                    self.articles.append(article)
+                    print((response as! HTTPURLResponse).statusCode)
+                }
             }
             DispatchQueue.main.async {
                 self.tableView.reloadData()
             }
         }
+    }
+    
+    func showAlert(title: String, message: String, buttonText: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: NSLocalizedString(buttonText, comment: "Default action"), style: .`default`, handler: nil))
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    func showNoConnectionAlert() {
+        showAlert(title: "No connection", message: "There is no internet connection!", buttonText: "OK")
     }
 }
