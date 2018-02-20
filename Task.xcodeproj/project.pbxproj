@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D69E9E39203C1C6000FF5EA4 /* DataPersistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = D69E9E38203C1C6000FF5EA4 /* DataPersistence.swift */; };
 		D6A6D6A22034811D00441D53 /* ArticlesHeadingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6A6D6A12034811D00441D53 /* ArticlesHeadingTableViewCell.swift */; };
 		D6AC7F522034721A002DDEDC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6AC7F512034721A002DDEDC /* AppDelegate.swift */; };
 		D6AC7F542034721A002DDEDC /* ArticleDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6AC7F532034721A002DDEDC /* ArticleDetailsViewController.swift */; };
@@ -31,6 +32,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		D69E9E38203C1C6000FF5EA4 /* DataPersistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataPersistence.swift; sourceTree = "<group>"; };
 		D6A6D6A12034811D00441D53 /* ArticlesHeadingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ArticlesHeadingTableViewCell.swift; path = /Users/u589242/Documents/Developer/iOS_Task/Task/Task/ArticlesHeadingTableViewCell.swift; sourceTree = "<absolute>"; };
 		D6AC7F4E2034721A002DDEDC /* Task.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Task.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D6AC7F512034721A002DDEDC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -92,6 +94,7 @@
 				D6AC7F532034721A002DDEDC /* ArticleDetailsViewController.swift */,
 				D6AC7F552034721A002DDEDC /* Main.storyboard */,
 				D6AC7F8020347EE1002DDEDC /* ArticleHeadingTableViewController.swift */,
+				D69E9E38203C1C6000FF5EA4 /* DataPersistence.swift */,
 				D6AC7F7A20347317002DDEDC /* Article.swift */,
 				D6AC7F7520347248002DDEDC /* RestCall.swift */,
 				D6AC7F5B2034721A002DDEDC /* Assets.xcassets */,
@@ -214,6 +217,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D69E9E39203C1C6000FF5EA4 /* DataPersistence.swift in Sources */,
 				D6A6D6A22034811D00441D53 /* ArticlesHeadingTableViewCell.swift in Sources */,
 				D6AC7F8120347EE1002DDEDC /* ArticleHeadingTableViewController.swift in Sources */,
 				D6AC7F5A2034721A002DDEDC /* Task.xcdatamodeld in Sources */,

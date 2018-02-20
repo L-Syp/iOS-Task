@@ -26,10 +26,10 @@ class ArticleHeadingTableViewController: UITableViewController {
         print(connectedToNetwork())
         super.viewDidLoad()
         if connectedToNetwork() {
-            persistDeleteData()
+            DataPersistence.persistDeleteData(&articles)
             self.loadData(endpoint: RestCall.Endpoints.topHeadlines, itemsCount: 3, additionalQueries: [URLQueryItem(name: "country", value: "us")])
         } else {
-            persistLoadAtricle()
+            DataPersistence.persistLoadAtricle(&articles)
             self.tableView.reloadData()
         }
     }
@@ -82,8 +82,8 @@ class ArticleHeadingTableViewController: UITableViewController {
                         let downloadedImage = UIImage(data: data!)
                         print("************** Downloaded an image cell")
                         self.articles[indexPath.row].image = downloadedImage
-                        DispatchQueue.main.sync {
-                            self.persistSaveArticle(self.articles[indexPath.row], imageData: data!)
+                       DispatchQueue.main.sync {
+                           DataPersistence.persistSaveArticle(self.articles[indexPath.row], imageData: data!)
                         }
                         print("Article has been saved to the device")
                         DispatchQueue.main.async {
@@ -95,6 +95,9 @@ class ArticleHeadingTableViewController: UITableViewController {
                 task.resume()
             }
         }
+        /*DispatchQueue.main.sync {
+         self.persistSaveArticle(self.articles[indexPath.row], imageData: data!)
+         }*/
         return cell
     }
     
@@ -111,56 +114,8 @@ class ArticleHeadingTableViewController: UITableViewController {
         }
     }
     
-    func persistSaveArticle(_ article: Article, imageData: Data) {
-        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-        let entity = CachedArticles(context: context)
-        entity.author = article.author
-        entity.articleDescription = article.description
-        entity.publishedAt = article.publishedAt
-        entity.sourceID = article.sourceID
-        entity.sourceName = article.sourceName
-        entity.title = article.title
-        entity.url = article.url
-        entity.urlToImage = article.urlToImage
-        entity.image = imageData
-        (UIApplication.shared.delegate as! AppDelegate).saveContext()
-
-    }
-    
-    func persistLoadAtricle() {
-        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-        do {
-            let articleCacheArray = try context.fetch(CachedArticles.fetchRequest())
-            articles = [Article]()
-            for i in 0..<articleCacheArray.count {
-                let entity: CachedArticles = articleCacheArray[i] as! CachedArticles
-                let source = Source(id: entity.sourceID, name: entity.sourceName)
-                let articleData = ArticleData(source: source, author: entity.author, title: entity.title, description: entity.articleDescription,
-                                              url: entity.url, urlToImage: entity.url, publishedAt: entity.publishedAt)
-                articles.append(Article(with: articleData, image: UIImage(data: entity.image!)!))
-            }
-        } catch {
-            fatalError("Fetching articles failed!")
-        }
-    }
-    
-    func persistDeleteData() {
-        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-        do {
-            let articleCacheArray = try context.fetch(CachedArticles.fetchRequest())
-            articles = [Article]()
-            for i in 0..<articleCacheArray.count {
-                context.delete(articleCacheArray[i] as! NSManagedObject)
-                (UIApplication.shared.delegate as! AppDelegate).saveContext()
-            }
-        } catch {
-            fatalError("Deleting articles failed!")
-        }
-    }
-    
     // Taken from https://stackoverflow.com/questions/25623272/how-to-use-scnetworkreachability-in-swift/25623647#25623647
     func connectedToNetwork() -> Bool {
-        
         var zeroAddress = sockaddr_in()
         zeroAddress.sin_len = UInt8(MemoryLayout<sockaddr_in>.size)
         zeroAddress.sin_family = sa_family_t(AF_INET)
