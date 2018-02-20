@@ -7,9 +7,12 @@
 //
 
 import XCTest
+import Foundation
 @testable import Task
 
 class TaskTests: XCTestCase {
+    
+    let apiKey = "2beb5953fd92424983abae1dc1c7d58c"
     
     override func setUp() {
         super.setUp()
@@ -21,15 +24,25 @@ class TaskTests: XCTestCase {
         super.tearDown()
     }
     
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+    func testInternetConnection() {
+        if !RestCall.connectedToNetwork() { 
+            XCTFail("There's no internet connection")
+            continueAfterFailure = false
+        }
     }
     
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
+    func testServiceConnection() {
+        let expectation = self.expectation(description: "Server's HTTP response equals 200")
+        RestCall.makeGetCall(endpoint: RestCall.Endpoints.topHeadlines, itemsCount: 0, additionalQueries: [URLQueryItem(name: "country", value: "us")],
+                             apiKey: apiKey) { data, response in
+                                XCTAssert((response as! HTTPURLResponse).statusCode == 200)
+                                expectation.fulfill()
+        }
+        
+        waitForExpectations(timeout: 1) { error in
+            if let error = error {
+                XCTFail("Async test failed errored: \(error)")
+            }
         }
     }
     

@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import SystemConfiguration
 
 class ArticleHeadingTableViewController: UITableViewController {
     
@@ -19,13 +18,12 @@ class ArticleHeadingTableViewController: UITableViewController {
     // MARK: Actions
     @IBAction func refreshButton(_ sender: UIBarButtonItem) {
         articles = [Article]() // to avoid duplicated posts
-        self.loadData(endpoint: RestCall.Endpoints.topHeadlines, itemsCount: 20, additionalQueries: [URLQueryItem(name: "country", value: "us")])
+        self.loadData(endpoint: RestCall.Endpoints.topHeadlines, itemsCount: 7, additionalQueries: [URLQueryItem(name: "country", value: "us")])
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        print(DataPersistence.getEntitiesCount())
-        if connectedToNetwork() {
+        if RestCall.connectedToNetwork() {
             DataPersistence.persistDeleteData(&articles)
             self.loadData(endpoint: RestCall.Endpoints.topHeadlines, itemsCount: 7, additionalQueries: [URLQueryItem(name: "country", value: "us")])
         } else {
@@ -94,7 +92,6 @@ class ArticleHeadingTableViewController: UITableViewController {
                             print("************** Set an image cell from web")
                         }
                     } else {
-                        print("ERROR: \(error.debugDescription)")
                         self.articles[indexPath.row].image = self.defaultImage
                         DispatchQueue.main.sync {
                             DataPersistence.persistSaveArticle(self.articles[indexPath.row], imageData: nil)
@@ -116,39 +113,16 @@ class ArticleHeadingTableViewController: UITableViewController {
     }
     
     func loadData(endpoint: RestCall.Endpoints, itemsCount: Int, additionalQueries: [URLQueryItem]) {
-        RestCall.makeGetCall(endpoint: endpoint, itemsCount: itemsCount, additionalQueries: additionalQueries, apiKey: apiKey) { data in
+        RestCall.makeGetCall(endpoint: endpoint, itemsCount: itemsCount, additionalQueries: additionalQueries, apiKey: apiKey) { data, response in
             self.articles = [Article]()
             for i in 0..<data.articles.count {
                 let article = Article(with: data.articles[i])
                 self.articles.append(article)
+                print((response as! HTTPURLResponse).statusCode)
             }
             DispatchQueue.main.async {
                 self.tableView.reloadData()
             }
         }
-    }
-    
-    // Taken from https://stackoverflow.com/questions/25623272/how-to-use-scnetworkreachability-in-swift/25623647#25623647
-    func connectedToNetwork() -> Bool {
-        var zeroAddress = sockaddr_in()
-        zeroAddress.sin_len = UInt8(MemoryLayout<sockaddr_in>.size)
-        zeroAddress.sin_family = sa_family_t(AF_INET)
-        
-        guard let defaultRouteReachability = withUnsafePointer(to: &zeroAddress, {
-            $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
-                SCNetworkReachabilityCreateWithAddress(nil, $0)
-            }
-        }) else {
-            return false
-        }
-        
-        var flags: SCNetworkReachabilityFlags = []
-        if !SCNetworkReachabilityGetFlags(defaultRouteReachability, &flags) {
-            return false
-        }
-        
-        let isReachable = flags.contains(.reachable)
-        let needsConnection = flags.contains(.connectionRequired)
-        return (isReachable && !needsConnection)
     }
 }
