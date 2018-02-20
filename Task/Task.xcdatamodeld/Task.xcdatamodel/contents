@@ -11,11 +11,7 @@
         <attribute name="url" optional="YES" attributeType="URI" syncable="YES"/>
         <attribute name="urlToImage" optional="YES" attributeType="URI" syncable="YES"/>
     </entity>
-    <entity name="CachedImages" representedClassName="CachedImages" syncable="YES" codeGenerationType="class">
-        <attribute name="image" optional="YES" attributeType="Binary" syncable="YES"/>
-    </entity>
     <elements>
         <element name="CachedArticles" positionX="-3258" positionY="-1197" width="128" height="180"/>
-        <element name="CachedImages" positionX="-3249" positionY="-1179" width="128" height="60"/>
     </elements>
 </model>

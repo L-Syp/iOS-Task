@@ -16,7 +16,6 @@ class ArticleHeadingTableViewController: UITableViewController {
     let apiKey = "2beb5953fd92424983abae1dc1c7d58c"
     var articles = [Article]()
     
-    
     // MARK: Actions
     @IBAction func refreshButton(_ sender: UIBarButtonItem) {
         articles = [Article]() // to avoid duplicated posts
@@ -35,7 +34,7 @@ class ArticleHeadingTableViewController: UITableViewController {
         }
     }
     
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?){
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showDetailsSegue" {
             let vc = segue.destination as! ArticleDetailsViewController
             if sender as? ArticleHeadingTableViewCell != nil {
@@ -63,7 +62,7 @@ class ArticleHeadingTableViewController: UITableViewController {
             fatalError("The dequeued cell is not an instance of ArticleHeadingTableViewCell")
         }
         
-        if (indexPath.row % 2 == 0){
+        if (indexPath.row % 2 == 0) {
             cell.backgroundColor = UIColor(red: 158.0/255.0, green: 184.0/255.0, blue: 226.0/255.0, alpha: 1.0)
         } else {
             cell.backgroundColor = UIColor(red: 184.0/255.0, green: 242.0/255.0, blue: 155.0/255.0, alpha: 1.0)
@@ -112,7 +111,7 @@ class ArticleHeadingTableViewController: UITableViewController {
         }
     }
     
-    func persistSaveArticle(_ article: Article, imageData: Data){
+    func persistSaveArticle(_ article: Article, imageData: Data) {
         let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
         let entity = CachedArticles(context: context)
         entity.author = article.author
@@ -128,7 +127,7 @@ class ArticleHeadingTableViewController: UITableViewController {
 
     }
     
-    func persistLoadAtricle(){
+    func persistLoadAtricle() {
         let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
         do {
             let articleCacheArray = try context.fetch(CachedArticles.fetchRequest())
@@ -145,7 +144,7 @@ class ArticleHeadingTableViewController: UITableViewController {
         }
     }
     
-    func persistDeleteData(){
+    func persistDeleteData() {
         let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
         do {
             let articleCacheArray = try context.fetch(CachedArticles.fetchRequest())
@@ -159,7 +158,8 @@ class ArticleHeadingTableViewController: UITableViewController {
         }
     }
     
-    func connectedToNetwork() -> Bool { // Taken from https://stackoverflow.com/questions/25623272/how-to-use-scnetworkreachability-in-swift/25623647#25623647
+    // Taken from https://stackoverflow.com/questions/25623272/how-to-use-scnetworkreachability-in-swift/25623647#25623647
+    func connectedToNetwork() -> Bool {
         
         var zeroAddress = sockaddr_in()
         zeroAddress.sin_len = UInt8(MemoryLayout<sockaddr_in>.size)

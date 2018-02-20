@@ -12,7 +12,6 @@ class ArticleDetailsViewController: UIViewController {
 
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var titleLabel: UILabel!
-    
     @IBOutlet weak var pubishedAtLabel: UILabel!
     @IBOutlet weak var descriptionLabel: UILabel!
     @IBOutlet weak var authorLabel: UILabel!
@@ -24,7 +23,7 @@ class ArticleDetailsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         imageView.image = image
-        if image == #imageLiteral(resourceName: "newsImage"){
+        if image == #imageLiteral(resourceName: "newsImage") {
             imageView.contentMode = .scaleAspectFit
         }
         titleLabel.text = article!.title
