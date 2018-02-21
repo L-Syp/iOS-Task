@@ -24,7 +24,7 @@ class ArticleDetailsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         imageView.image = image
-        if image == #imageLiteral(resourceName: "newsImage") {
+        if image == defaultImage {
             imageView.contentMode = .scaleAspectFit
         }
         titleLabel.text = article!.title

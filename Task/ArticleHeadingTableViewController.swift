@@ -62,7 +62,6 @@ class ArticleHeadingTableViewController: UITableViewController {
         }
     }
     
-    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showDetailsSegue" {
             let vc = segue.destination as! ArticleDetailsViewController
@@ -104,32 +103,25 @@ class ArticleHeadingTableViewController: UITableViewController {
         if let imgURL = articles[indexPath.row].urlToImage {
             if let cachedImage = articles[indexPath.row].image {
                 cell.articleHeadingImage.image = cachedImage
-                print("************** Set an image cell from cache")
             } else if RestCall.connectedToNetwork(&isOnline) {
                 let session = URLSession.shared
                 let task = session.dataTask(with: imgURL) { (data, response, error) in
                     if error == nil {
                         let downloadedImage = UIImage(data: data!)
-                        print("************** Downloaded an image cell")
                         self.articles[indexPath.row].image = downloadedImage
                         DispatchQueue.main.sync {
                             DataPersistence.persistSaveArticle(self.articles[indexPath.row], imageData: data)
                             self.articles[indexPath.row].isSavedToCache = true
-                            print("Entities count: \(DataPersistence.getEntitiesCount())")
                         }
-                        print("Article has been saved to the device")
                         DispatchQueue.main.async {
                             cell.articleHeadingImage.image = downloadedImage
-                            print("************** Set an image cell from web")
                         }
                     } else {
                         self.articles[indexPath.row].image = self.defaultImage
                         DispatchQueue.main.sync {
                             DataPersistence.persistSaveArticle(self.articles[indexPath.row], imageData: nil)
                             self.articles[indexPath.row].isSavedToCache = true
-                            print("Entities count: \(DataPersistence.getEntitiesCount())")
                         }
-                        print("Article has been saved to the device, but error has occured")
                     }
                 }
                 task.resume()
@@ -138,7 +130,6 @@ class ArticleHeadingTableViewController: UITableViewController {
             DataPersistence.persistSaveArticle(self.articles[indexPath.row], imageData: nil)
             self.articles[indexPath.row].isSavedToCache = true
             self.articles[indexPath.row].image = defaultImage
-            print("Entities count: \(DataPersistence.getEntitiesCount())")
         }
         return cell
     }
@@ -152,14 +143,15 @@ class ArticleHeadingTableViewController: UITableViewController {
             if let error = error, error.localizedDescription == "The Internet connection appears to be offline." {
                 returnedError = DownloadingDataError.NoInternetConnection
             } else if data == nil {
-                print("Error: did not receive data")
                 returnedError = DownloadingDataError.NoDataDownloaded
             } else {
                 returnedError = error
             }
             group.leave()
             guard returnedError == nil else { return }
-            DataPersistence.persistDeleteData(&self.articles)
+            DispatchQueue.main.sync {
+                DataPersistence.persistDeleteData(&self.articles)
+            }
             self.articles = [Article]() // to avoid duplicated posts
             for i in 0..<data!.articles.count {
                 let article = Article(with: data!.articles[i])

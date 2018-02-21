@@ -76,11 +76,4 @@ class DataPersistence {
             fatalError("Deleting articles failed!")
         }
     }
-    
-    // Taken from https://bencoding.com/2017/03/07/thinking-about-memory-converting-uiimage-to-data-in-swift/
-    func UIImageToDataJPEG2(image: UIImage, compressionRatio: CGFloat) -> Data? {
-        return autoreleasepool(invoking: { () -> Data? in
-            return UIImageJPEGRepresentation(image, compressionRatio)
-        })
-    }
 }
