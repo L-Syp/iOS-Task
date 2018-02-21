@@ -20,6 +20,7 @@ class ArticleDetailsViewController: UIViewController {
     var article: Article? = nil
     var image: UIImage? = nil
     var defaultImage: UIImage? = nil
+    @IBOutlet weak var containerView: UIView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,6 +28,7 @@ class ArticleDetailsViewController: UIViewController {
         if image == defaultImage {
             imageView.contentMode = .scaleAspectFit
         }
+        resizeView()
         titleLabel.text = article!.title
         pubishedAtLabel.text = "Published at: \(article!.publishedAt ?? "-")"
         descriptionLabel.text = article!.description ?? "No description available"
@@ -38,5 +40,20 @@ class ArticleDetailsViewController: UIViewController {
         super.didReceiveMemoryWarning()
     }
     
+    func resizeView() {
+        let containerView = self.containerView!
+        
+        if let Aimage = image {
+            let ratio = Aimage.size.width / Aimage.size.height
+            if containerView.frame.width > containerView.frame.height {
+                let newHeight = containerView.frame.width / ratio
+                imageView.frame.size = CGSize(width: containerView.frame.width, height: newHeight)
+            }
+            else{
+                let newWidth = containerView.frame.height * ratio
+                imageView.frame.size = CGSize(width: newWidth, height: containerView.frame.height)
+            }
+        }
+    }
 }
 
