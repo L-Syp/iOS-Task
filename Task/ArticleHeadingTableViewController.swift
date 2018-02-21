@@ -17,19 +17,31 @@ class ArticleHeadingTableViewController: UITableViewController {
     
     // MARK: Actions
     @IBAction func refreshButton(_ sender: UIBarButtonItem) {
-        articles = [Article]() // to avoid duplicated posts
-        if !RestCall.connectedToNetwork() {
+        do {
+            try self.loadData(endpoint: RestCall.Endpoints.topHeadlines, itemsCount: 7, additionalQueries: [URLQueryItem(name: "country", value: "us")])
+        } catch DownloadingDataError.NoInternetConnection {
             showNoConnectionAlert()
-        } else {
-            self.loadData(endpoint: RestCall.Endpoints.topHeadlines, itemsCount: 7, additionalQueries: [URLQueryItem(name: "country", value: "us")])
+        } catch DownloadingDataError.NoDataDownloaded {
+            showNoDataAlert()
+        } catch {
+            showAlert(title: "Unknown error", message: "Error message: \(error.localizedDescription)", buttonText: "O")
         }
     }
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         if RestCall.connectedToNetwork() {
             DataPersistence.persistDeleteData(&articles)
-            self.loadData(endpoint: RestCall.Endpoints.topHeadlines, itemsCount: 7, additionalQueries: [URLQueryItem(name: "country", value: "us")])
+            do {
+                try self.loadData(endpoint: RestCall.Endpoints.topHeadlines, itemsCount: 7, additionalQueries: [URLQueryItem(name: "country", value: "us")])
+            } catch DownloadingDataError.NoInternetConnection {
+                showNoConnectionAlert()
+            } catch DownloadingDataError.NoDataDownloaded {
+                showNoDataAlert()
+            } catch {
+                showAlert(title: "Unknown error", message: "Error message: \(error.localizedDescription)", buttonText: "O")
+            }
         } else {
             DataPersistence.persistLoadAtricle(&articles)
             self.tableView.reloadData()
@@ -116,19 +128,34 @@ class ArticleHeadingTableViewController: UITableViewController {
         return cell
     }
     
-    func loadData(endpoint: RestCall.Endpoints, itemsCount: Int, additionalQueries: [URLQueryItem]) {
+    func loadData(endpoint: RestCall.Endpoints, itemsCount: Int, additionalQueries: [URLQueryItem]) throws {
+        var returnedError: Error?
+        let group = DispatchGroup()
+        group.enter()
         RestCall.makeGetCall(endpoint: endpoint, itemsCount: itemsCount, additionalQueries: additionalQueries, apiKey: apiKey) { data, response, error in
-            self.articles = [Article]()
-            if let data = data {
-                for i in 0..<data.articles.count {
-                    let article = Article(with: data.articles[i])
-                    self.articles.append(article)
-                    print((response as! HTTPURLResponse).statusCode)
-                }
+            if let error = error, error.localizedDescription == "The Internet connection appears to be offline." {
+                returnedError = DownloadingDataError.NoInternetConnection
+            } else if data == nil {
+                print("Error: did not receive data")
+                returnedError = DownloadingDataError.NoDataDownloaded
+            } else {
+                returnedError = error
+            }
+            group.leave()
+            guard returnedError == nil else { return }
+            
+            self.articles = [Article]() // to avoid duplicated posts
+            for i in 0..<data!.articles.count {
+                let article = Article(with: data!.articles[i])
+                self.articles.append(article)
             }
             DispatchQueue.main.async {
                 self.tableView.reloadData()
             }
+        }
+        group.wait()
+        if let returnedError = returnedError {
+            throw returnedError
         }
     }
     
@@ -139,6 +166,10 @@ class ArticleHeadingTableViewController: UITableViewController {
     }
     
     func showNoConnectionAlert() {
-        showAlert(title: "No connection", message: "There is no internet connection!", buttonText: "OK")
+        showAlert(title: "No internet connection", message: "There is no internet connection, data cannot be downloaded now.", buttonText: "OK")
+    }
+    
+    func showNoDataAlert() {
+        showAlert(title: "No data has been downloaded", message: "No data has been downloaded. Check your internet connection and connection parameters!", buttonText: "OK")
     }
 }

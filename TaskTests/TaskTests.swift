@@ -34,7 +34,22 @@ class TaskTests: XCTestCase {
     func testServiceConnection() {
         let expectation = self.expectation(description: "Server's HTTP response equals 200")
         RestCall.makeGetCall(endpoint: RestCall.Endpoints.topHeadlines, itemsCount: 0, additionalQueries: [URLQueryItem(name: "country", value: "us")],
-                             apiKey: apiKey) { data, response in
+                             apiKey: apiKey) { data, response, error in
+                                XCTAssert((response as! HTTPURLResponse).statusCode == 200)
+                                expectation.fulfill()
+        }
+        
+        waitForExpectations(timeout: 1) { error in
+            if let error = error {
+                XCTFail("Async test failed errored: \(error)")
+            }
+        }
+    }
+    
+    func testFetchingData() {
+        let expectation = self.expectation(description: "Server's HTTP response equals 200")
+        RestCall.makeGetCall(endpoint: RestCall.Endpoints.topHeadlines, itemsCount: 3, additionalQueries: [URLQueryItem(name: "country", value: "us")],
+                             apiKey: apiKey) { data, response, error in
                                 XCTAssert((response as! HTTPURLResponse).statusCode == 200)
                                 expectation.fulfill()
         }
