@@ -86,6 +86,8 @@ class ArticleHeadingTableViewController: UITableViewController {
         return articles.count
     }
     
+    
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "ArticleHeadingCell", for: indexPath) as? ArticleHeadingTableViewCell else {
             fatalError("The dequeued cell is not an instance of ArticleHeadingTableViewCell")
@@ -99,38 +101,7 @@ class ArticleHeadingTableViewController: UITableViewController {
         
         cell.articleHeadingTitle.text = articles[indexPath.row].title ?? "No title"
         cell.articleHeadingSource.text = "Source: \(articles[indexPath.row].sourceName ?? "-")"
-        cell.articleHeadingImage.image = articles[indexPath.row].image ?? defaultImage
-        if let imgURL = articles[indexPath.row].urlToImage {
-            if let cachedImage = articles[indexPath.row].image {
-                cell.articleHeadingImage.image = cachedImage
-            } else if RestCall.connectedToNetwork(&isOnline) {
-                let session = URLSession.shared
-                let task = session.dataTask(with: imgURL) { (data, response, error) in
-                    if error == nil {
-                        let downloadedImage = UIImage(data: data!)
-                        self.articles[indexPath.row].image = downloadedImage
-                        DispatchQueue.main.sync {
-                            DataPersistence.persistSaveArticle(self.articles[indexPath.row], imageData: data)
-                            self.articles[indexPath.row].isSavedToCache = true
-                        }
-                        DispatchQueue.main.async {
-                            cell.articleHeadingImage.image = downloadedImage
-                        }
-                    } else {
-                        self.articles[indexPath.row].image = self.defaultImage
-                        DispatchQueue.main.sync {
-                            DataPersistence.persistSaveArticle(self.articles[indexPath.row], imageData: nil)
-                            self.articles[indexPath.row].isSavedToCache = true
-                        }
-                    }
-                }
-                task.resume()
-            }
-        } else if !self.articles[indexPath.row].isSavedToCache {
-            DataPersistence.persistSaveArticle(self.articles[indexPath.row], imageData: nil)
-            self.articles[indexPath.row].isSavedToCache = true
-            self.articles[indexPath.row].image = defaultImage
-        }
+        loadImageToCell(cell, indexPath)
         return cell
     }
     
@@ -164,6 +135,41 @@ class ArticleHeadingTableViewController: UITableViewController {
         group.wait()
         if let returnedError = returnedError {
             throw returnedError
+        }
+    }
+    
+    fileprivate func loadImageToCell(_ cell: ArticleHeadingTableViewCell, _ indexPath: IndexPath) {
+        cell.articleHeadingImage.image = articles[indexPath.row].image ?? defaultImage
+        if let imgURL = articles[indexPath.row].urlToImage {
+            if let cachedImage = articles[indexPath.row].image {
+                cell.articleHeadingImage.image = cachedImage
+            } else if RestCall.connectedToNetwork(&isOnline) {
+                let session = URLSession.shared
+                let task = session.dataTask(with: imgURL) { (data, response, error) in
+                    if error == nil {
+                        let downloadedImage = UIImage(data: data!)
+                        self.articles[indexPath.row].image = downloadedImage
+                        DispatchQueue.main.sync {
+                            DataPersistence.persistSaveArticle(self.articles[indexPath.row], imageData: data)
+                            self.articles[indexPath.row].isSavedToCache = true
+                        }
+                        DispatchQueue.main.async {
+                            cell.articleHeadingImage.image = downloadedImage
+                        }
+                    } else {
+                        self.articles[indexPath.row].image = self.defaultImage
+                        DispatchQueue.main.sync {
+                            DataPersistence.persistSaveArticle(self.articles[indexPath.row], imageData: nil)
+                            self.articles[indexPath.row].isSavedToCache = true
+                        }
+                    }
+                }
+                task.resume()
+            }
+        } else if !self.articles[indexPath.row].isSavedToCache {
+            DataPersistence.persistSaveArticle(self.articles[indexPath.row], imageData: nil)
+            self.articles[indexPath.row].isSavedToCache = true
+            self.articles[indexPath.row].image = defaultImage
         }
     }
     
