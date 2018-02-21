@@ -30,18 +30,7 @@ class ArticleHeadingTableViewController: UITableViewController {
             showNoConnectionAlert()
             return
         }
-        
-        do {
-            try self.loadData(endpoint: RestCall.Endpoints.topHeadlines, itemsCount: 7, additionalQueries: [URLQueryItem(name: "country", value: "us")])
-        } catch DownloadingDataError.NoInternetConnection {
-            showNoConnectionAlert()
-        } catch DownloadingDataError.NoDataDownloaded {
-            showNoDataAlert()
-        } catch DownloadingDataError.InvalidDataFormat{
-            showInvalidDataFormat()
-        } catch {
-            showAlert(title: "Unknown error", message: "Error message: \(error.localizedDescription)", buttonText: "OK")
-        }
+        loadDataToViewController()
     }
     
     override func viewDidLoad() {
@@ -52,18 +41,7 @@ class ArticleHeadingTableViewController: UITableViewController {
             self.tableView.reloadData()
             return
         }
-        
-        do {
-            try self.loadData(endpoint: RestCall.Endpoints.topHeadlines, itemsCount: 7, additionalQueries: [URLQueryItem(name: "country", value: "us")])
-        } catch DownloadingDataError.NoInternetConnection {
-            showNoConnectionAlert()
-        } catch DownloadingDataError.NoDataDownloaded {
-            showNoDataAlert()
-        } catch DownloadingDataError.InvalidDataFormat{
-            showInvalidDataFormat()
-        } catch {
-            showAlert(title: "Unknown error", message: "Error message: \(error.localizedDescription)", buttonText: "OK")
-        }
+        loadDataToViewController()
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -110,7 +88,7 @@ class ArticleHeadingTableViewController: UITableViewController {
     }
     
     // MARK: - Fetching data
-    func loadData(endpoint: RestCall.Endpoints, itemsCount: Int, additionalQueries: [URLQueryItem]) throws {
+    func downloadData(endpoint: RestCall.Endpoints, itemsCount: Int, additionalQueries: [URLQueryItem]) throws {
         var returnedError: Error?
         let group = DispatchGroup()
         group.enter()
@@ -183,6 +161,19 @@ class ArticleHeadingTableViewController: UITableViewController {
         }
     }
     
+    func loadDataToViewController() {
+        do {
+            try self.downloadData(endpoint: RestCall.Endpoints.topHeadlines, itemsCount: 7, additionalQueries: [URLQueryItem(name: "country", value: "us")])
+        } catch DownloadingDataError.NoInternetConnection {
+            showNoConnectionAlert()
+        } catch DownloadingDataError.NoDataDownloaded {
+            showNoDataAlert()
+        } catch DownloadingDataError.InvalidDataFormat{
+            showInvalidDataFormat()
+        } catch {
+            showAlert(title: "Unknown error", message: "Error message: \(error.localizedDescription)", buttonText: "OK")
+        }
+    }
     // MARK: - Displaying alerts
     func showAlert(title: String, message: String, buttonText: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
