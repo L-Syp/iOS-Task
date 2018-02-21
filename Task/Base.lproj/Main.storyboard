@@ -88,6 +88,9 @@
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" title="Settings" id="tFi-hg-W3q"/>
                     </navigationItem>
+                    <connections>
+                        <outlet property="navigationItem" destination="UGh-fH-tEA" id="FeW-kd-jsB"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dq6-X3-i1b" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

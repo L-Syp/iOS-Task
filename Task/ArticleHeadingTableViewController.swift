@@ -14,9 +14,23 @@ class ArticleHeadingTableViewController: UITableViewController {
     let apiKey = "2beb5953fd92424983abae1dc1c7d58c"
     let defaultImage: UIImage = #imageLiteral(resourceName: "newsImage")
     var articles = [Article]()
+    var isOnline = false {
+        didSet {
+            if !isOnline {
+                self.navigationItem.title = "Breaking news (offline mode)"
+            } else {
+                self.navigationItem.title = "Breaking news"
+            }
+        }
+    }
     
     // MARK: Actions
     @IBAction func refreshButton(_ sender: UIBarButtonItem) {
+        guard RestCall.connectedToNetwork(&isOnline) else {
+            showNoConnectionAlert()
+            return
+        }
+        
         do {
             try self.loadData(endpoint: RestCall.Endpoints.topHeadlines, itemsCount: 7, additionalQueries: [URLQueryItem(name: "country", value: "us")])
         } catch DownloadingDataError.NoInternetConnection {
@@ -24,29 +38,30 @@ class ArticleHeadingTableViewController: UITableViewController {
         } catch DownloadingDataError.NoDataDownloaded {
             showNoDataAlert()
         } catch {
-            showAlert(title: "Unknown error", message: "Error message: \(error.localizedDescription)", buttonText: "O")
+            showAlert(title: "Unknown error", message: "Error message: \(error.localizedDescription)", buttonText: "OK")
         }
     }
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        if RestCall.connectedToNetwork() {
-            DataPersistence.persistDeleteData(&articles)
-            do {
-                try self.loadData(endpoint: RestCall.Endpoints.topHeadlines, itemsCount: 7, additionalQueries: [URLQueryItem(name: "country", value: "us")])
-            } catch DownloadingDataError.NoInternetConnection {
-                showNoConnectionAlert()
-            } catch DownloadingDataError.NoDataDownloaded {
-                showNoDataAlert()
-            } catch {
-                showAlert(title: "Unknown error", message: "Error message: \(error.localizedDescription)", buttonText: "O")
-            }
-        } else {
+        
+        guard RestCall.connectedToNetwork(&isOnline) else {
             DataPersistence.persistLoadAtricle(&articles)
             self.tableView.reloadData()
+            return
+        }
+        
+        do {
+            try self.loadData(endpoint: RestCall.Endpoints.topHeadlines, itemsCount: 7, additionalQueries: [URLQueryItem(name: "country", value: "us")])
+        } catch DownloadingDataError.NoInternetConnection {
+            showNoConnectionAlert()
+        } catch DownloadingDataError.NoDataDownloaded {
+            showNoDataAlert()
+        } catch {
+            showAlert(title: "Unknown error", message: "Error message: \(error.localizedDescription)", buttonText: "OK")
         }
     }
+    
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showDetailsSegue" {
@@ -85,12 +100,12 @@ class ArticleHeadingTableViewController: UITableViewController {
         
         cell.articleHeadingTitle.text = articles[indexPath.row].title ?? "No title"
         cell.articleHeadingSource.text = "Source: \(articles[indexPath.row].sourceName ?? "-")"
-        cell.articleHeadingImage.image = articles[indexPath.row].image ?? defaultImage //without this line some images are duplicated and rendered in a wrong cells
+        cell.articleHeadingImage.image = articles[indexPath.row].image ?? defaultImage
         if let imgURL = articles[indexPath.row].urlToImage {
             if let cachedImage = articles[indexPath.row].image {
                 cell.articleHeadingImage.image = cachedImage
                 print("************** Set an image cell from cache")
-            } else if RestCall.connectedToNetwork() {
+            } else if RestCall.connectedToNetwork(&isOnline) {
                 let session = URLSession.shared
                 let task = session.dataTask(with: imgURL) { (data, response, error) in
                     if error == nil {
@@ -128,6 +143,7 @@ class ArticleHeadingTableViewController: UITableViewController {
         return cell
     }
     
+    // MARK: - Fetching data
     func loadData(endpoint: RestCall.Endpoints, itemsCount: Int, additionalQueries: [URLQueryItem]) throws {
         var returnedError: Error?
         let group = DispatchGroup()
@@ -143,7 +159,7 @@ class ArticleHeadingTableViewController: UITableViewController {
             }
             group.leave()
             guard returnedError == nil else { return }
-            
+            DataPersistence.persistDeleteData(&self.articles)
             self.articles = [Article]() // to avoid duplicated posts
             for i in 0..<data!.articles.count {
                 let article = Article(with: data!.articles[i])
@@ -159,6 +175,7 @@ class ArticleHeadingTableViewController: UITableViewController {
         }
     }
     
+    // MARK: - Displaying alerts
     func showAlert(title: String, message: String, buttonText: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: NSLocalizedString(buttonText, comment: "Default action"), style: .`default`, handler: nil))
