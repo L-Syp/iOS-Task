@@ -37,6 +37,8 @@ class ArticleHeadingTableViewController: UITableViewController {
             showNoConnectionAlert()
         } catch DownloadingDataError.NoDataDownloaded {
             showNoDataAlert()
+        } catch DownloadingDataError.InvalidDataFormat{
+            showInvalidDataFormat()
         } catch {
             showAlert(title: "Unknown error", message: "Error message: \(error.localizedDescription)", buttonText: "OK")
         }
@@ -57,6 +59,8 @@ class ArticleHeadingTableViewController: UITableViewController {
             showNoConnectionAlert()
         } catch DownloadingDataError.NoDataDownloaded {
             showNoDataAlert()
+        } catch DownloadingDataError.InvalidDataFormat{
+            showInvalidDataFormat()
         } catch {
             showAlert(title: "Unknown error", message: "Error message: \(error.localizedDescription)", buttonText: "OK")
         }
@@ -111,12 +115,18 @@ class ArticleHeadingTableViewController: UITableViewController {
         let group = DispatchGroup()
         group.enter()
         RestCall.makeGetCall(endpoint: endpoint, itemsCount: itemsCount, additionalQueries: additionalQueries, apiKey: apiKey) { data, response, error in
-            if let error = error, error.localizedDescription == "The Internet connection appears to be offline." {
-                returnedError = DownloadingDataError.NoInternetConnection
-            } else if data == nil {
-                returnedError = DownloadingDataError.NoDataDownloaded
-            } else {
-                returnedError = error
+            if let error = error {
+                if error.localizedDescription == "The Internet connection appears to be offline." {
+                    returnedError = DownloadingDataError.NoInternetConnection
+                } else if data == nil {
+                    if error.localizedDescription == "The data couldn’t be read because it isn’t in the correct format." {
+                        returnedError = DownloadingDataError.InvalidDataFormat
+                    } else {
+                        returnedError = DownloadingDataError.NoDataDownloaded
+                    }
+                } else {
+                    returnedError = error
+                }
             }
             group.leave()
             guard returnedError == nil else { return }
@@ -186,5 +196,10 @@ class ArticleHeadingTableViewController: UITableViewController {
     
     func showNoDataAlert() {
         showAlert(title: "No data has been downloaded", message: "No data has been downloaded. Check your internet connection and connection parameters!", buttonText: "OK")
+    }
+    
+    func showInvalidDataFormat() {
+        showAlert(title: "Downloaded data is in wrong format", message: "Downloaded data is in wrong format" +
+            "therefore cannot be parsed! Check if correct JSON file has been downloaded.", buttonText: "OK")
     }
 }
