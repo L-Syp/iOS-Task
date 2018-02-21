@@ -110,7 +110,7 @@
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="g9d-Dp-hdU" userLabel="Cointainer View">
                                         <rect key="frame" x="0.0" y="0.0" width="375" height="338.66666666666669"/>
                                         <subviews>
-                                            <imageView userInteractionEnabled="NO" contentMode="redraw" horizontalHuggingPriority="251" verticalHuggingPriority="251" placeholderIntrinsicWidth="340" placeholderIntrinsicHeight="209" image="GoogleIMG" translatesAutoresizingMaskIntoConstraints="NO" id="YBI-YW-bth">
+                                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" placeholderIntrinsicWidth="340" placeholderIntrinsicHeight="209" image="GoogleIMG" translatesAutoresizingMaskIntoConstraints="NO" id="YBI-YW-bth">
                                                 <rect key="frame" x="17.666666666666657" y="0.0" width="340" height="209"/>
                                             </imageView>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Title" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YNV-RT-nw0">
@@ -193,10 +193,10 @@
                     <connections>
                         <outlet property="URLLabel" destination="19j-4Z-Zho" id="Ad7-p7-MxV"/>
                         <outlet property="authorLabel" destination="Ujr-5s-yrA" id="7BL-so-sYP"/>
-                        <outlet property="containerView" destination="g9d-Dp-hdU" id="gKR-al-8JI"/>
                         <outlet property="descriptionLabel" destination="rGz-G2-BY1" id="WVI-YB-5DP"/>
                         <outlet property="imageView" destination="YBI-YW-bth" id="Giu-Oc-mFh"/>
                         <outlet property="pubishedAtLabel" destination="KZ6-YP-YQU" id="CIP-9K-Zcw"/>
+                        <outlet property="rootView" destination="8bC-Xf-vdC" id="hzC-EL-urJ"/>
                         <outlet property="titleLabel" destination="YNV-RT-nw0" id="BCb-vk-faS"/>
                     </connections>
                 </viewController>
