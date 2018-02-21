@@ -24,6 +24,12 @@ class ArticleDetailsViewController: UIViewController {
     var image: UIImage? = nil
     var defaultImage: UIImage? = nil
     
+    // MARK: Actions
+    
+    @IBAction func goToArticleButtnonTouch() {
+        UIApplication.shared.open((article?.url)!, options: [:])
+    }
+    
     
     // MARK: Outlets
     override func viewDidLoad() {

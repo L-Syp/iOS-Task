@@ -108,7 +108,7 @@
                                 <rect key="frame" x="0.0" y="88" width="375" height="690"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="g9d-Dp-hdU" userLabel="Cointainer View">
-                                        <rect key="frame" x="0.0" y="0.0" width="375" height="338.66666666666669"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="375" height="376.66666666666669"/>
                                         <subviews>
                                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" placeholderIntrinsicWidth="340" placeholderIntrinsicHeight="209" image="GoogleIMG" translatesAutoresizingMaskIntoConstraints="NO" id="YBI-YW-bth">
                                                 <rect key="frame" x="17.666666666666657" y="0.0" width="340" height="209"/>
@@ -146,12 +146,18 @@
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="syo-qX-xnj">
+                                                <rect key="frame" x="132.33333333333334" y="338.66666666666669" width="111" height="30"/>
+                                                <state key="normal" title="Go to the article"/>
+                                                <connections>
+                                                    <action selector="goToArticleButtnonTouch" destination="BYZ-38-t0r" eventType="touchUpInside" id="TY0-pJ-Yze"/>
+                                                </connections>
+                                            </button>
                                         </subviews>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstItem="KZ6-YP-YQU" firstAttribute="top" secondItem="YBI-YW-bth" secondAttribute="bottom" constant="10" id="2Y8-qr-Ul5"/>
                                             <constraint firstItem="Ujr-5s-yrA" firstAttribute="top" secondItem="rGz-G2-BY1" secondAttribute="bottom" constant="8" id="4Dd-4m-FAb"/>
-                                            <constraint firstAttribute="bottom" secondItem="19j-4Z-Zho" secondAttribute="bottom" constant="8" id="5XA-Nf-gKP"/>
                                             <constraint firstAttribute="trailing" secondItem="rGz-G2-BY1" secondAttribute="trailing" constant="8" id="F5N-LN-HVo"/>
                                             <constraint firstItem="YBI-YW-bth" firstAttribute="top" secondItem="g9d-Dp-hdU" secondAttribute="top" id="GhX-sb-pec"/>
                                             <constraint firstItem="rGz-G2-BY1" firstAttribute="top" secondItem="YNV-RT-nw0" secondAttribute="bottom" constant="8" id="MJE-UK-eWn"/>
@@ -161,6 +167,9 @@
                                             <constraint firstItem="19j-4Z-Zho" firstAttribute="leading" secondItem="g9d-Dp-hdU" secondAttribute="leading" constant="8" id="Q3Q-Ft-M3r"/>
                                             <constraint firstAttribute="trailing" secondItem="Ujr-5s-yrA" secondAttribute="trailing" constant="8" id="TGM-HP-Yui"/>
                                             <constraint firstAttribute="trailing" secondItem="KZ6-YP-YQU" secondAttribute="trailing" constant="8" id="Wy2-XO-rmP"/>
+                                            <constraint firstItem="syo-qX-xnj" firstAttribute="centerX" secondItem="g9d-Dp-hdU" secondAttribute="centerX" id="YGT-iz-38e"/>
+                                            <constraint firstItem="syo-qX-xnj" firstAttribute="top" secondItem="19j-4Z-Zho" secondAttribute="bottom" constant="8" id="a05-c6-0nW"/>
+                                            <constraint firstAttribute="bottom" secondItem="syo-qX-xnj" secondAttribute="bottom" constant="8" id="eou-TW-aYs"/>
                                             <constraint firstItem="YNV-RT-nw0" firstAttribute="leading" secondItem="g9d-Dp-hdU" secondAttribute="leading" constant="8" id="esq-Oi-uce"/>
                                             <constraint firstItem="YNV-RT-nw0" firstAttribute="top" secondItem="KZ6-YP-YQU" secondAttribute="bottom" constant="8" id="iDx-uD-bo1"/>
                                             <constraint firstItem="Ujr-5s-yrA" firstAttribute="leading" secondItem="g9d-Dp-hdU" secondAttribute="leading" constant="8" id="iod-KU-dzL"/>
