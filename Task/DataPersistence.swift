@@ -31,11 +31,12 @@ class DataPersistence {
         (UIApplication.shared.delegate as! AppDelegate).saveContext()
     }
     
-    static func persistLoadAtricle(_ articles: inout [Article]) {
+    static func persistLoadAtricle() -> [Article] {
         let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+        var articles = [Article]()
         do {
             let articleCacheArray = try context.fetch(CachedArticles.fetchRequest())
-            articles = [Article]()
+            
             print(articleCacheArray.count)
             for i in 0..<articleCacheArray.count {
                 let entity: CachedArticles = articleCacheArray[i] as! CachedArticles
@@ -44,20 +45,20 @@ class DataPersistence {
                                               url: entity.url, urlToImage: entity.url, publishedAt: entity.publishedAt)
                 if let data = entity.image {
                 articles.append(Article(with: articleData, image: UIImage(data: data)))
-                } else{
+                } else {
                     articles.append(Article(with: articleData, image: nil))
                 }
             }
         } catch {
             fatalError("Fetching articles failed!")
         }
+        return articles
     }
     
-    static func persistDeleteData(_ articles: inout [Article]) {
+    static func persistDeleteData() {
         let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
         do {
             let articleCacheArray = try context.fetch(CachedArticles.fetchRequest())
-            articles = [Article]()
             for i in 0..<articleCacheArray.count {
                 context.delete(articleCacheArray[i] as! NSManagedObject)
                 (UIApplication.shared.delegate as! AppDelegate).saveContext()

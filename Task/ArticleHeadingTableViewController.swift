@@ -37,7 +37,7 @@ class ArticleHeadingTableViewController: UITableViewController {
         super.viewDidLoad()
         
         guard checkNetworkConnection()  else {
-            DataPersistence.persistLoadAtricle(&articles)
+            articles = DataPersistence.persistLoadAtricle()
             self.tableView.reloadData()
             return
         }
@@ -109,7 +109,8 @@ class ArticleHeadingTableViewController: UITableViewController {
             }
             
             DispatchQueue.main.sync {
-                DataPersistence.persistDeleteData(&self.articles)
+                self.articles = [Article]()
+                DataPersistence.persistDeleteData()
             }
             self.articles = [Article]() // to avoid duplicated posts
             for i in 0..<data!.articles.count {
