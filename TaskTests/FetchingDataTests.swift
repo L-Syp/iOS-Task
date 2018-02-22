@@ -13,7 +13,6 @@ import Foundation
 class TaskFetchingTests: XCTestCase {
     
     let apiKey = "2beb5953fd92424983abae1dc1c7d58c"
-    var mockIsOnline = false
     
     override func setUp() {
         super.setUp()
@@ -26,7 +25,7 @@ class TaskFetchingTests: XCTestCase {
     }
     
     func testInternetConnection() {
-        if !RestCall.connectedToNetwork(&mockIsOnline) {
+        if !RestCall.connectedToNetwork() {
             XCTFail("There's no internet connection")
             continueAfterFailure = false
         }

@@ -20,7 +20,6 @@
 		D6AC7F7820347249002DDEDC /* RestCall.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6AC7F7520347248002DDEDC /* RestCall.swift */; };
 		D6AC7F7B20347317002DDEDC /* Article.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6AC7F7A20347317002DDEDC /* Article.swift */; };
 		D6AC7F8120347EE1002DDEDC /* ArticleHeadingTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6AC7F8020347EE1002DDEDC /* ArticleHeadingTableViewController.swift */; };
-		D6F68BED203EB81700D3709D /* ImageResizeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F68BEC203EB81700D3709D /* ImageResizeTests.swift */; };
 		D6F68BEF203EB8E400D3709D /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F68BEE203EB8E400D3709D /* Extensions.swift */; };
 /* End PBXBuildFile section */
 
@@ -52,7 +51,6 @@
 		D6AC7F7520347248002DDEDC /* RestCall.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RestCall.swift; path = ../../../RestCall.swift; sourceTree = "<group>"; };
 		D6AC7F7A20347317002DDEDC /* Article.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Article.swift; path = ../../../Article.swift; sourceTree = "<group>"; };
 		D6AC7F8020347EE1002DDEDC /* ArticleHeadingTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleHeadingTableViewController.swift; sourceTree = "<group>"; };
-		D6F68BEC203EB81700D3709D /* ImageResizeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageResizeTests.swift; sourceTree = "<group>"; };
 		D6F68BEE203EB8E400D3709D /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -115,7 +113,6 @@
 		D6AC7F682034721A002DDEDC /* TaskTests */ = {
 			isa = PBXGroup;
 			children = (
-				D6F68BEC203EB81700D3709D /* ImageResizeTests.swift */,
 				D6AC7F692034721A002DDEDC /* FetchingDataTests.swift */,
 				D6AC7F6B2034721A002DDEDC /* Info.plist */,
 				D61D1ACA203DA62700ECF2EC /* CoreDataTests.swift */,
@@ -243,7 +240,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				D61D1ACB203DA62700ECF2EC /* CoreDataTests.swift in Sources */,
-				D6F68BED203EB81700D3709D /* ImageResizeTests.swift in Sources */,
 				D6AC7F6A2034721A002DDEDC /* FetchingDataTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

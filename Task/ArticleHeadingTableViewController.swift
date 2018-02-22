@@ -26,7 +26,7 @@ class ArticleHeadingTableViewController: UITableViewController {
     
     // MARK: Actions
     @IBAction func refreshButton(_ sender: UIBarButtonItem) {
-        guard RestCall.connectedToNetwork(&isOnline) else {
+        guard checkNetworkConnection()  else {
             showNoConnectionAlert()
             return
         }
@@ -36,7 +36,7 @@ class ArticleHeadingTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        guard RestCall.connectedToNetwork(&isOnline) else {
+        guard checkNetworkConnection()  else {
             DataPersistence.persistLoadAtricle(&articles)
             self.tableView.reloadData()
             return
@@ -88,26 +88,26 @@ class ArticleHeadingTableViewController: UITableViewController {
     }
     
     // MARK: - Fetching data
-    func downloadData(endpoint: RestCall.Endpoints, itemsCount: Int, additionalQueries: [URLQueryItem]) throws {
-        var returnedError: Error?
-        let group = DispatchGroup()
-        group.enter()
+    func downloadData(endpoint: RestCall.Endpoints, itemsCount: Int, additionalQueries: [URLQueryItem]) {
         RestCall.makeGetCall(endpoint: endpoint, itemsCount: itemsCount, additionalQueries: additionalQueries, apiKey: apiKey) { data, response, error in
             if let error = error {
                 if error.localizedDescription == "The Internet connection appears to be offline." {
-                    returnedError = DownloadingDataError.NoInternetConnection
+                    self.showNoConnectionAlert()
+                    return
                 } else if data == nil {
                     if error.localizedDescription == "The data couldn’t be read because it isn’t in the correct format." {
-                        returnedError = DownloadingDataError.InvalidDataFormat
+                        self.showInvalidDataFormat()
+                        return
                     } else {
-                        returnedError = DownloadingDataError.NoDataDownloaded
+                        self.showNoDataAlert()
+                        return
                     }
                 } else {
-                    returnedError = error
+                    self.showAlert(title: "Unknown error", message: "Error message: \(error.localizedDescription)", buttonText: "OK")
+                    return
                 }
             }
-            group.leave()
-            guard returnedError == nil else { return }
+            
             DispatchQueue.main.sync {
                 DataPersistence.persistDeleteData(&self.articles)
             }
@@ -120,10 +120,6 @@ class ArticleHeadingTableViewController: UITableViewController {
                 self.tableView.reloadData()
             }
         }
-        group.wait()
-        if let returnedError = returnedError {
-            throw returnedError
-        }
     }
     
     func loadImageToCell(_ cell: ArticleHeadingTableViewCell, _ indexPath: IndexPath) {
@@ -131,7 +127,7 @@ class ArticleHeadingTableViewController: UITableViewController {
         if let imgURL = articles[indexPath.row].urlToImage {
             if let cachedImage = articles[indexPath.row].image {
                 cell.articleHeadingImage.image = cachedImage
-            } else if RestCall.connectedToNetwork(&isOnline) {
+            } else if checkNetworkConnection()  {
                 let session = URLSession.shared
                 let task = session.dataTask(with: imgURL) { (data, response, error) in
                     if error == nil {
@@ -162,18 +158,15 @@ class ArticleHeadingTableViewController: UITableViewController {
     }
     
     func loadDataToViewController() {
-        do {
-            try self.downloadData(endpoint: RestCall.Endpoints.topHeadlines, itemsCount: 7, additionalQueries: [URLQueryItem(name: "country", value: "us")])
-        } catch DownloadingDataError.NoInternetConnection {
-            showNoConnectionAlert()
-        } catch DownloadingDataError.NoDataDownloaded {
-            showNoDataAlert()
-        } catch DownloadingDataError.InvalidDataFormat{
-            showInvalidDataFormat()
-        } catch {
-            showAlert(title: "Unknown error", message: "Error message: \(error.localizedDescription)", buttonText: "OK")
+           self.downloadData(endpoint: RestCall.Endpoints.topHeadlines, itemsCount: 7, additionalQueries: [URLQueryItem(name: "country", value: "us")])
         }
+    
+    // MARK: - Networking
+    func checkNetworkConnection() -> Bool {
+        isOnline = RestCall.connectedToNetwork()
+        return isOnline
     }
+    
     // MARK: - Displaying alerts
     func showAlert(title: String, message: String, buttonText: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
