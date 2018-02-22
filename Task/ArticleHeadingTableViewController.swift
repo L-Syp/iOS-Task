@@ -68,8 +68,6 @@ class ArticleHeadingTableViewController: UITableViewController {
         return articles.count
     }
     
-    
-    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "ArticleHeadingCell", for: indexPath) as? ArticleHeadingTableViewCell else {
             fatalError("The dequeued cell is not an instance of ArticleHeadingTableViewCell")
@@ -83,13 +81,23 @@ class ArticleHeadingTableViewController: UITableViewController {
         
         cell.articleHeadingTitle.text = articles[indexPath.row].title ?? "No title"
         cell.articleHeadingSource.text = "Source: \(articles[indexPath.row].sourceName ?? "-")"
-        loadImageToCell(cell, indexPath)
+        cell.articleHeadingImage.image = self.articles[indexPath.row].image ?? self.defaultImage
+        
+        ArticlesProvider.downloadImage(from: self.articles[indexPath.row].urlToImage) { imageData in
+            self.loadImageToCell(imageData, cell, indexPath)
+            if !self.articles[indexPath.row].isSavedToCache{
+                DispatchQueue.main.async {
+                    DataPersistence.persistSaveArticle(self.articles[indexPath.row], imageData: imageData)
+                    self.articles[indexPath.row].isSavedToCache = true
+                }
+            }
+        }
         return cell
     }
     
     // MARK: - Fetching data
-    func downloadData(endpoint: RestCall.Endpoints, itemsCount: Int, additionalQueries: [URLQueryItem]) {
-        RestCall.makeGetCall(endpoint: endpoint, itemsCount: itemsCount, additionalQueries: additionalQueries, apiKey: apiKey) { data, response, error in
+    func downloadData(endpoint: ArticlesProvider.Endpoints, itemsCount: Int, additionalQueries: [URLQueryItem]) {
+        ArticlesProvider.downloadData(endpoint: endpoint, itemsCount: itemsCount, additionalQueries: additionalQueries, apiKey: apiKey) { data, response, error in
             if let error = error {
                 if error.localizedDescription == "The Internet connection appears to be offline." {
                     self.showNoConnectionAlert()
@@ -107,7 +115,6 @@ class ArticleHeadingTableViewController: UITableViewController {
                     return
                 }
             }
-            
             DispatchQueue.main.sync {
                 self.articles = [Article]()
                 DataPersistence.persistDeleteData()
@@ -123,48 +130,29 @@ class ArticleHeadingTableViewController: UITableViewController {
         }
     }
     
-    func loadImageToCell(_ cell: ArticleHeadingTableViewCell, _ indexPath: IndexPath) {
-        cell.articleHeadingImage.image = articles[indexPath.row].image ?? defaultImage
-        if let imgURL = articles[indexPath.row].urlToImage {
-            if let cachedImage = articles[indexPath.row].image {
-                cell.articleHeadingImage.image = cachedImage
-            } else if checkNetworkConnection()  {
-                let session = URLSession.shared
-                let task = session.dataTask(with: imgURL) { (data, response, error) in
-                    if error == nil {
-                        let downloadedImage = UIImage(data: data!)
-                        self.articles[indexPath.row].image = downloadedImage
-                        DispatchQueue.main.sync {
-                            DataPersistence.persistSaveArticle(self.articles[indexPath.row], imageData: data)
-                            self.articles[indexPath.row].isSavedToCache = true
-                        }
-                        DispatchQueue.main.async {
-                            cell.articleHeadingImage.image = downloadedImage
-                        }
-                    } else {
-                        self.articles[indexPath.row].image = self.defaultImage
-                        DispatchQueue.main.sync {
-                            DataPersistence.persistSaveArticle(self.articles[indexPath.row], imageData: nil)
-                            self.articles[indexPath.row].isSavedToCache = true
-                        }
-                    }
-                }
-                task.resume()
+    func loadImageToCell(_ imageData: Data?,_ cell: ArticleHeadingTableViewCell, _ indexPath: IndexPath) {
+        if articles[indexPath.row].urlToImage != nil {
+            guard let imageData = imageData else {
+                self.articles[indexPath.row].image = self.defaultImage
+                return
+            }
+            let image = UIImage(data: imageData)
+            self.articles[indexPath.row].image = image
+            DispatchQueue.main.async {
+                cell.articleHeadingImage.image = image
             }
         } else if !self.articles[indexPath.row].isSavedToCache {
-            DataPersistence.persistSaveArticle(self.articles[indexPath.row], imageData: nil)
-            self.articles[indexPath.row].isSavedToCache = true
             self.articles[indexPath.row].image = defaultImage
         }
     }
     
     func loadDataToViewController() {
-           self.downloadData(endpoint: RestCall.Endpoints.topHeadlines, itemsCount: 7, additionalQueries: [URLQueryItem(name: "country", value: "us")])
-        }
+        self.downloadData(endpoint: ArticlesProvider.Endpoints.topHeadlines, itemsCount: 7, additionalQueries: [URLQueryItem(name: "country", value: "us")])
+    }
     
     // MARK: - Networking
     func checkNetworkConnection() -> Bool {
-        isOnline = RestCall.connectedToNetwork()
+        isOnline = ArticlesProvider.connectedToNetwork()
         return isOnline
     }
     

@@ -25,7 +25,7 @@ class TaskFetchingTests: XCTestCase {
     }
     
     func testInternetConnection() {
-        if !RestCall.connectedToNetwork() {
+        if !ArticlesProvider.connectedToNetwork() {
             XCTFail("There's no internet connection")
             continueAfterFailure = false
         }
@@ -33,7 +33,7 @@ class TaskFetchingTests: XCTestCase {
     
     func testServiceConnection() {
         let expectation = self.expectation(description: "Server's HTTP response equals 200")
-        RestCall.makeGetCall(endpoint: RestCall.Endpoints.topHeadlines, itemsCount: 0, additionalQueries: [URLQueryItem(name: "country", value: "us")],
+        ArticlesProvider.downloadData(endpoint: ArticlesProvider.Endpoints.topHeadlines, itemsCount: 0, additionalQueries: [URLQueryItem(name: "country", value: "us")],
                              apiKey: apiKey) { data, response, error in
                                 XCTAssert((response as! HTTPURLResponse).statusCode == 200)
                                 expectation.fulfill()
@@ -47,8 +47,8 @@ class TaskFetchingTests: XCTestCase {
     }
     
     func testFetchingData() {
-        let headline = RestCall.Endpoints.topHeadlines
-        let everything = RestCall.Endpoints.everything
+        let headline = ArticlesProvider.Endpoints.topHeadlines
+        let everything = ArticlesProvider.Endpoints.everything
         let testData = [
            (headline, [URLQueryItem(name: "country", value: "us")], true, 200),
            (everything, [URLQueryItem(name: "q", value: "business")], true, 200),
@@ -62,14 +62,14 @@ class TaskFetchingTests: XCTestCase {
         })
     }
     
-    func fetchingData(_ endpoint: RestCall.Endpoints, _ additionalQueries: [URLQueryItem], expectedPass: Bool, expectedHTTPCode: Int) {
+    func fetchingData(_ endpoint: ArticlesProvider.Endpoints, _ additionalQueries: [URLQueryItem], expectedPass: Bool, expectedHTTPCode: Int) {
         let expectation = self.expectation(description: "Number of downloaded data equals to 'itemsCount' parameter.")
         let testEndpoint = endpoint
         let itemsCount = 3
         let testAdditionalQueries = additionalQueries
         continueAfterFailure = false
         
-        RestCall.makeGetCall(endpoint: testEndpoint, itemsCount: itemsCount, additionalQueries: testAdditionalQueries, apiKey: apiKey) { data, response, error in
+        ArticlesProvider.downloadData(endpoint: testEndpoint, itemsCount: itemsCount, additionalQueries: testAdditionalQueries, apiKey: apiKey) { data, response, error in
             guard let response = response else {
                 XCTFail("Couldn't connect to the server. Check internet connection.")
                 return
