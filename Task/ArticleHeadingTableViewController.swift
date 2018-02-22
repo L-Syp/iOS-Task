@@ -126,7 +126,7 @@ class ArticleHeadingTableViewController: UITableViewController {
         }
     }
     
-    fileprivate func loadImageToCell(_ cell: ArticleHeadingTableViewCell, _ indexPath: IndexPath) {
+    func loadImageToCell(_ cell: ArticleHeadingTableViewCell, _ indexPath: IndexPath) {
         cell.articleHeadingImage.image = articles[indexPath.row].image ?? defaultImage
         if let imgURL = articles[indexPath.row].urlToImage {
             if let cachedImage = articles[indexPath.row].image {

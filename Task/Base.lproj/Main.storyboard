@@ -108,9 +108,9 @@
                                 <rect key="frame" x="0.0" y="88" width="375" height="690"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="g9d-Dp-hdU" userLabel="Cointainer View">
-                                        <rect key="frame" x="0.0" y="0.0" width="375" height="376.66666666666669"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="375" height="357.66666666666669"/>
                                         <subviews>
-                                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" placeholderIntrinsicWidth="340" placeholderIntrinsicHeight="209" image="GoogleIMG" translatesAutoresizingMaskIntoConstraints="NO" id="YBI-YW-bth">
+                                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" placeholderIntrinsicWidth="340" placeholderIntrinsicHeight="209" image="GoogleIMG" translatesAutoresizingMaskIntoConstraints="NO" id="YBI-YW-bth">
                                                 <rect key="frame" x="17.666666666666657" y="0.0" width="340" height="209"/>
                                             </imageView>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Title" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YNV-RT-nw0">
@@ -140,15 +140,15 @@
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="URL" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="19j-4Z-Zho" userLabel="URL Label">
-                                                <rect key="frame" x="8" y="319.66666666666669" width="359" height="11"/>
-                                                <fontDescription key="fontDescription" name=".SFNSText" family=".SF NS Text" pointSize="9"/>
-                                                <nil key="textColor"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="syo-qX-xnj">
-                                                <rect key="frame" x="132.33333333333334" y="338.66666666666669" width="111" height="30"/>
+                                                <rect key="frame" x="132.33333333333334" y="319.66666666666669" width="111" height="30"/>
                                                 <state key="normal" title="Go to the article"/>
+                                                <state key="selected">
+                                                    <color key="titleColor" red="1" green="0.57637232540000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                </state>
+                                                <state key="highlighted">
+                                                    <color key="titleColor" red="0.98823529409999999" green="0.30980392159999998" blue="0.87058823529999996" alpha="1" colorSpace="calibratedRGB"/>
+                                                </state>
                                                 <connections>
                                                     <action selector="goToArticleButtnonTouch" destination="BYZ-38-t0r" eventType="touchUpInside" id="TY0-pJ-Yze"/>
                                                 </connections>
@@ -158,24 +158,21 @@
                                         <constraints>
                                             <constraint firstItem="KZ6-YP-YQU" firstAttribute="top" secondItem="YBI-YW-bth" secondAttribute="bottom" constant="10" id="2Y8-qr-Ul5"/>
                                             <constraint firstItem="Ujr-5s-yrA" firstAttribute="top" secondItem="rGz-G2-BY1" secondAttribute="bottom" constant="8" id="4Dd-4m-FAb"/>
+                                            <constraint firstItem="syo-qX-xnj" firstAttribute="top" secondItem="Ujr-5s-yrA" secondAttribute="bottom" constant="8" id="78e-DS-rM3"/>
                                             <constraint firstAttribute="trailing" secondItem="rGz-G2-BY1" secondAttribute="trailing" constant="8" id="F5N-LN-HVo"/>
                                             <constraint firstItem="YBI-YW-bth" firstAttribute="top" secondItem="g9d-Dp-hdU" secondAttribute="top" id="GhX-sb-pec"/>
                                             <constraint firstItem="rGz-G2-BY1" firstAttribute="top" secondItem="YNV-RT-nw0" secondAttribute="bottom" constant="8" id="MJE-UK-eWn"/>
                                             <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="YBI-YW-bth" secondAttribute="trailing" id="NFL-1q-Ysy"/>
-                                            <constraint firstAttribute="trailing" secondItem="19j-4Z-Zho" secondAttribute="trailing" constant="8" id="NoD-Zx-lvd"/>
                                             <constraint firstItem="KZ6-YP-YQU" firstAttribute="leading" secondItem="g9d-Dp-hdU" secondAttribute="leading" constant="8" id="O3F-WO-299"/>
-                                            <constraint firstItem="19j-4Z-Zho" firstAttribute="leading" secondItem="g9d-Dp-hdU" secondAttribute="leading" constant="8" id="Q3Q-Ft-M3r"/>
                                             <constraint firstAttribute="trailing" secondItem="Ujr-5s-yrA" secondAttribute="trailing" constant="8" id="TGM-HP-Yui"/>
                                             <constraint firstAttribute="trailing" secondItem="KZ6-YP-YQU" secondAttribute="trailing" constant="8" id="Wy2-XO-rmP"/>
                                             <constraint firstItem="syo-qX-xnj" firstAttribute="centerX" secondItem="g9d-Dp-hdU" secondAttribute="centerX" id="YGT-iz-38e"/>
-                                            <constraint firstItem="syo-qX-xnj" firstAttribute="top" secondItem="19j-4Z-Zho" secondAttribute="bottom" constant="8" id="a05-c6-0nW"/>
                                             <constraint firstAttribute="bottom" secondItem="syo-qX-xnj" secondAttribute="bottom" constant="8" id="eou-TW-aYs"/>
                                             <constraint firstItem="YNV-RT-nw0" firstAttribute="leading" secondItem="g9d-Dp-hdU" secondAttribute="leading" constant="8" id="esq-Oi-uce"/>
                                             <constraint firstItem="YNV-RT-nw0" firstAttribute="top" secondItem="KZ6-YP-YQU" secondAttribute="bottom" constant="8" id="iDx-uD-bo1"/>
                                             <constraint firstItem="Ujr-5s-yrA" firstAttribute="leading" secondItem="g9d-Dp-hdU" secondAttribute="leading" constant="8" id="iod-KU-dzL"/>
                                             <constraint firstItem="YBI-YW-bth" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="g9d-Dp-hdU" secondAttribute="leading" id="kRA-o2-yng"/>
                                             <constraint firstAttribute="trailing" secondItem="YNV-RT-nw0" secondAttribute="trailing" constant="8" id="nQc-F1-YNz"/>
-                                            <constraint firstItem="19j-4Z-Zho" firstAttribute="top" secondItem="Ujr-5s-yrA" secondAttribute="bottom" constant="8" id="nYL-i8-a0c"/>
                                             <constraint firstItem="rGz-G2-BY1" firstAttribute="leading" secondItem="g9d-Dp-hdU" secondAttribute="leading" constant="8" id="sOZ-EH-Qrj"/>
                                             <constraint firstItem="YBI-YW-bth" firstAttribute="centerX" secondItem="g9d-Dp-hdU" secondAttribute="centerX" id="u0w-rh-gqQ"/>
                                         </constraints>
@@ -200,7 +197,6 @@
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
-                        <outlet property="URLLabel" destination="19j-4Z-Zho" id="Ad7-p7-MxV"/>
                         <outlet property="authorLabel" destination="Ujr-5s-yrA" id="7BL-so-sYP"/>
                         <outlet property="descriptionLabel" destination="rGz-G2-BY1" id="WVI-YB-5DP"/>
                         <outlet property="imageView" destination="YBI-YW-bth" id="Giu-Oc-mFh"/>
