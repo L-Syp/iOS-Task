@@ -19,7 +19,7 @@ class ArticleDetailsViewController: UIViewController {
     @IBOutlet var rootView: UIView!
     
     // MARK: Properties
-    var article: Article? = nil
+    var article: ArticleClass? = nil
     var image: UIImage? = nil
     var defaultImage: UIImage? = nil
     

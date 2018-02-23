@@ -7,13 +7,15 @@
 //
 
 import UIKit
+import CoreData
 
-class ArticleHeadingTableViewController: UITableViewController {
+class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResultsControllerDelegate {
     
     // MARK: Properties
     let apiKey = "2beb5953fd92424983abae1dc1c7d58c"
     let defaultImage: UIImage = #imageLiteral(resourceName: "newsImage")
-    var articles = [Article]()
+    var articles = [ArticleClass]()
+    private let persistentContainer = NSPersistentContainer(name: "Articles")
     var isOnline = false {
         didSet {
             if !isOnline {
@@ -26,22 +28,52 @@ class ArticleHeadingTableViewController: UITableViewController {
     
     // MARK: Actions
     @IBAction func refreshButton(_ sender: UIBarButtonItem) {
-        guard checkNetworkConnection()  else {
-            showNoConnectionAlert()
-            return
-        }
-        loadDataToViewController()
     }
     
+    // MARK: CoreData
+    fileprivate lazy var fetchedResultsController: NSFetchedResultsController<Article> = {
+        // Create Fetch Request
+        let fetchRequest: NSFetchRequest<Article> = Article.fetchRequest()
+        
+        // Configure Fetch Request
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: #keyPath(Article.author), ascending: true)]
+        
+        // Create Fetched Results Controller
+        let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: self.persistentContainer.viewContext, sectionNameKeyPath: #keyPath(Article.sourceName), cacheName: nil)
+        
+        // Configure Fetched Results Controller
+        fetchedResultsController.delegate = self
+        
+        return fetchedResultsController
+    }()
+    
+    // MARK: - View Methods
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        guard checkNetworkConnection()  else {
-            articles = DataPersistence.persistLoadAtricle()
-            self.tableView.reloadData()
-            return
+        persistentContainer.loadPersistentStores { (persistentStoreDescription, error) in
+            if let error = error {
+                print("Unable to Load Persistent Store")
+                print("\(error), \(error.localizedDescription)")
+                
+            } else {
+                //self.setupView()
+                
+                do {
+                    try self.fetchedResultsController.performFetch()
+                } catch {
+                    let fetchError = error as NSError
+                    print("Unable to Perform Fetch Request")
+                    print("\(fetchError), \(fetchError.localizedDescription)")
+                }
+                
+                self.updateView()
+            }
         }
-        loadDataToViewController()
+    }
+    
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -55,17 +87,91 @@ class ArticleHeadingTableViewController: UITableViewController {
         }
     }
     
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
+    private func setupView() {
+        setupMessageLabel()
+        updateView()
+    }
+    
+    fileprivate func updateView() {
+        var hasArticles = false
+        
+        if let articles = fetchedResultsController.fetchedObjects {
+            hasArticles = articles.count > 0
+        }
+        tableView.isHidden = !hasArticles
+        // activityIndicatorView.stopAnimating()
+    }
+    
+    private func setupMessageLabel() {
+        navigationItem.title = "You don't have any quotes yet."
+    }
+    
+    // MARK: NSFetchedResultsControllerDelegate
+    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        tableView.beginUpdates()
+    }
+    
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        tableView.endUpdates()
+        updateView()
+    }
+    
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any,
+                    at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+        switch (type) {
+        case .insert:
+            if let indexPath = newIndexPath {
+                tableView.insertRows(at: [indexPath], with: .fade)
+            }
+            break;
+        case .delete:
+            if let indexPath = indexPath {
+                tableView.deleteRows(at: [indexPath], with: .fade)
+            }
+            break;
+        case .update:
+            if let indexPath = indexPath, let cell = tableView.cellForRow(at: indexPath) as? ArticleHeadingTableViewCell {
+                configure(cell, at: indexPath)
+            }
+            break;
+        case .move:
+            if let indexPath = indexPath {
+                tableView.deleteRows(at: [indexPath], with: .fade)
+            }
+            
+            if let newIndexPath = newIndexPath {
+                tableView.insertRows(at: [newIndexPath], with: .fade)
+            }
+            break;
+        }
+    }
+    
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange sectionInfo: NSFetchedResultsSectionInfo,
+                    atSectionIndex sectionIndex: Int, for type: NSFetchedResultsChangeType) {
+        switch type {
+        case .insert:
+            tableView.insertSections(IndexSet(integer: sectionIndex), with: .fade)
+        case .delete:
+            tableView.deleteSections(IndexSet(integer: sectionIndex), with: .fade)
+        default:
+            break;
+        }
     }
     
     // MARK: - Table view data source
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        guard let sections = fetchedResultsController.sections else { return 0 }
+        return sections.count
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return articles.count
+        guard let sectionInfo = fetchedResultsController.sections?[section] else { fatalError("Unexpected Section") }
+        return sectionInfo.numberOfObjects
+    }
+    
+    override  func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        guard let sectionInfo = fetchedResultsController.sections?[section] else { fatalError("Unexpected Section") }
+        return sectionInfo.name
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -79,20 +185,37 @@ class ArticleHeadingTableViewController: UITableViewController {
             cell.backgroundColor = UIColor(red: 184.0/255.0, green: 242.0/255.0, blue: 155.0/255.0, alpha: 1.0)
         }
         
-        cell.articleHeadingTitle.text = articles[indexPath.row].title ?? "No title"
-        cell.articleHeadingSource.text = "Source: \(articles[indexPath.row].sourceName ?? "-")"
-        cell.articleHeadingImage.image = self.articles[indexPath.row].image ?? self.defaultImage
-        
-        ArticlesProvider.downloadImage(from: self.articles[indexPath.row].urlToImage) { imageData in
-            self.loadImageToCell(imageData, cell, indexPath)
-            if !self.articles[indexPath.row].isSavedToCache{
-                DispatchQueue.main.async {
-                    DataPersistence.persistSaveArticle(self.articles[indexPath.row], imageData: imageData)
-                    self.articles[indexPath.row].isSavedToCache = true
-                }
-            }
-        }
+        // Configure Cell
+        configure(cell, at: indexPath)
         return cell
+    }
+    
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            // Fetch Quote
+            let quote = fetchedResultsController.object(at: indexPath)
+            
+            // Delete Quote
+            quote.managedObjectContext?.delete(quote)
+        }
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    func configure(_ cell: ArticleHeadingTableViewCell, at indexPath: IndexPath) {
+        // Fetch Quote
+        let quote = fetchedResultsController.object(at: indexPath)
+        
+        // Configure Cell
+        cell.articleHeadingTitle.text = quote.title
+        cell.articleHeadingSource.text = quote.sourceName
+        if let data = quote.image {
+            cell.articleHeadingImage.image = UIImage(data: data)
+        } else {
+            cell.articleHeadingImage.image = nil
+        }
     }
     
     // MARK: - Fetching data
@@ -116,12 +239,12 @@ class ArticleHeadingTableViewController: UITableViewController {
                 }
             }
             DispatchQueue.main.sync {
-                self.articles = [Article]()
+                self.articles = [ArticleClass]()
                 DataPersistence.persistDeleteData()
             }
-            self.articles = [Article]() // to avoid duplicated posts
+            self.articles = [ArticleClass]() // to avoid duplicated posts
             for i in 0..<data!.articles.count {
-                let article = Article(with: data!.articles[i])
+                let article = ArticleClass(with: data!.articles[i])
                 self.articles.append(article)
             }
             DispatchQueue.main.async {

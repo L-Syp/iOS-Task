@@ -11,12 +11,12 @@ import Foundation
 @testable import Task
 
 class CoreDataTests: XCTestCase {
-    var articles = [Article]()
+    var articles = [ArticleClass]()
     let numberOfArticlesToAdd = 5
     
     override func setUp() {
         super.setUp()
-        articles = [Article]()
+        articles = [ArticleClass]()
         DataPersistence.persistDeleteData(&articles)
         let entitiesCount = DataPersistence.getEntitiesCount()
         XCTAssert(entitiesCount == 0, "Was: \(entitiesCount), expected: \(0)")
@@ -30,7 +30,7 @@ class CoreDataTests: XCTestCase {
     }
     
     func testSavingData() {
-        for _ in 0..<numberOfArticlesToAdd { DataPersistence.persistSaveArticle(Article(), imageData: nil)}
+        for _ in 0..<numberOfArticlesToAdd { DataPersistence.persistSaveArticle(ArticleClass(), imageData: nil)}
         let entitiesCount = DataPersistence.getEntitiesCount()
         XCTAssert(entitiesCount == numberOfArticlesToAdd, "Was: \(entitiesCount), expected: \(numberOfArticlesToAdd)")
     }

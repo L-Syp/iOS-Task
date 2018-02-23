@@ -13,12 +13,12 @@
 		D6AC7F522034721A002DDEDC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6AC7F512034721A002DDEDC /* AppDelegate.swift */; };
 		D6AC7F542034721A002DDEDC /* ArticleDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6AC7F532034721A002DDEDC /* ArticleDetailsViewController.swift */; };
 		D6AC7F572034721A002DDEDC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D6AC7F552034721A002DDEDC /* Main.storyboard */; };
-		D6AC7F5A2034721A002DDEDC /* Task.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = D6AC7F582034721A002DDEDC /* Task.xcdatamodeld */; };
+		D6AC7F5A2034721A002DDEDC /* Articles.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = D6AC7F582034721A002DDEDC /* Articles.xcdatamodeld */; };
 		D6AC7F5C2034721A002DDEDC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D6AC7F5B2034721A002DDEDC /* Assets.xcassets */; };
 		D6AC7F5F2034721A002DDEDC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D6AC7F5D2034721A002DDEDC /* LaunchScreen.storyboard */; };
 		D6AC7F6A2034721A002DDEDC /* FetchingDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6AC7F692034721A002DDEDC /* FetchingDataTests.swift */; };
 		D6AC7F7820347249002DDEDC /* ArticlesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6AC7F7520347248002DDEDC /* ArticlesProvider.swift */; };
-		D6AC7F7B20347317002DDEDC /* Article.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6AC7F7A20347317002DDEDC /* Article.swift */; };
+		D6AC7F7B20347317002DDEDC /* ArticleClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6AC7F7A20347317002DDEDC /* ArticleClass.swift */; };
 		D6AC7F8120347EE1002DDEDC /* ArticleHeadingTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6AC7F8020347EE1002DDEDC /* ArticleHeadingTableViewController.swift */; };
 		D6F68BEF203EB8E400D3709D /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F68BEE203EB8E400D3709D /* Extensions.swift */; };
 /* End PBXBuildFile section */
@@ -49,7 +49,7 @@
 		D6AC7F692034721A002DDEDC /* FetchingDataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchingDataTests.swift; sourceTree = "<group>"; };
 		D6AC7F6B2034721A002DDEDC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D6AC7F7520347248002DDEDC /* ArticlesProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ArticlesProvider.swift; path = ../../../ArticlesProvider.swift; sourceTree = "<group>"; };
-		D6AC7F7A20347317002DDEDC /* Article.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Article.swift; path = ../../../Article.swift; sourceTree = "<group>"; };
+		D6AC7F7A20347317002DDEDC /* ArticleClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ArticleClass.swift; path = ../../../ArticleClass.swift; sourceTree = "<group>"; };
 		D6AC7F8020347EE1002DDEDC /* ArticleHeadingTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleHeadingTableViewController.swift; sourceTree = "<group>"; };
 		D6F68BEE203EB8E400D3709D /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -98,14 +98,14 @@
 				D6A6D6A12034811D00441D53 /* ArticlesHeadingTableViewCell.swift */,
 				D6AC7F532034721A002DDEDC /* ArticleDetailsViewController.swift */,
 				D6AC7F8020347EE1002DDEDC /* ArticleHeadingTableViewController.swift */,
-				D6AC7F7A20347317002DDEDC /* Article.swift */,
+				D6AC7F7A20347317002DDEDC /* ArticleClass.swift */,
 				D6AC7F7520347248002DDEDC /* ArticlesProvider.swift */,
 				D69E9E38203C1C6000FF5EA4 /* DataPersistence.swift */,
 				D6F68BEE203EB8E400D3709D /* Extensions.swift */,
 				D6AC7F5B2034721A002DDEDC /* Assets.xcassets */,
 				D6AC7F5D2034721A002DDEDC /* LaunchScreen.storyboard */,
 				D6AC7F602034721A002DDEDC /* Info.plist */,
-				D6AC7F582034721A002DDEDC /* Task.xcdatamodeld */,
+				D6AC7F582034721A002DDEDC /* Articles.xcdatamodeld */,
 			);
 			path = Task;
 			sourceTree = "<group>";
@@ -227,9 +227,9 @@
 				D6F68BEF203EB8E400D3709D /* Extensions.swift in Sources */,
 				D6A6D6A22034811D00441D53 /* ArticlesHeadingTableViewCell.swift in Sources */,
 				D6AC7F8120347EE1002DDEDC /* ArticleHeadingTableViewController.swift in Sources */,
-				D6AC7F5A2034721A002DDEDC /* Task.xcdatamodeld in Sources */,
+				D6AC7F5A2034721A002DDEDC /* Articles.xcdatamodeld in Sources */,
 				D6AC7F542034721A002DDEDC /* ArticleDetailsViewController.swift in Sources */,
-				D6AC7F7B20347317002DDEDC /* Article.swift in Sources */,
+				D6AC7F7B20347317002DDEDC /* ArticleClass.swift in Sources */,
 				D6AC7F522034721A002DDEDC /* AppDelegate.swift in Sources */,
 				D6AC7F7820347249002DDEDC /* ArticlesProvider.swift in Sources */,
 			);
@@ -478,13 +478,13 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
-		D6AC7F582034721A002DDEDC /* Task.xcdatamodeld */ = {
+		D6AC7F582034721A002DDEDC /* Articles.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
 				D6AC7F592034721A002DDEDC /* Task.xcdatamodel */,
 			);
 			currentVersion = D6AC7F592034721A002DDEDC /* Task.xcdatamodel */;
-			path = Task.xcdatamodeld;
+			path = Articles.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};
