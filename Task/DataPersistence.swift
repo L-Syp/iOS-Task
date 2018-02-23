@@ -41,8 +41,7 @@ class DataPersistence {
             for i in 0..<articleCacheArray.count {
                 let entity: Article = articleCacheArray[i] as! Article
                 let source = Source(id: entity.sourceID, name: entity.sourceName)
-                let articleData = ArticleData(source: source, author: entity.author, title: entity.title, description: entity.articleDescription,
-                                              url: entity.url, urlToImage: entity.url, publishedAt: entity.publishedAt)
+                let articleData = ArticleData(source: source, author: entity.author, title: entity.title, description: entity.articleDescription, url: entity.url, urlToImage: entity.urlToImage, publishedAt: entity.publishedAt)
                 if let data = entity.image {
                 articles.append(ArticleClass(with: articleData, image: UIImage(data: data)))
                 } else {

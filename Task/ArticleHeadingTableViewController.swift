@@ -25,10 +25,10 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
             }
         }
     }
-    
+
     // MARK: Actions
     @IBAction func refreshButton(_ sender: UIBarButtonItem) {
-        addArticle(article: ArticleData(source: Source(id:"XYZ", name: "Trojmiasto.pl"), author: "Jan Kowal", title: "News", description: "Wydarzenie", url: nil, urlToImage: nil, publishedAt: "Dzisiaj"))
+        addArticle(article: ArticleData(source: Source(id:"XYZ", name: "Trojmiasto.pl"), author: "Autor", title: "Tytul", description: "Opis", url: nil, urlToImage: nil, publishedAt: "Dzisiaj"))
     }
     
     // MARK: CoreData
@@ -70,7 +70,7 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
                 self.updateView()
             }
         }
-        self.downloadData(endpoint: ArticlesProvider.Endpoints.topHeadlines, itemsCount: 30, additionalQueries: [URLQueryItem(name: "country", value: "us")])
+        self.downloadData(endpoint: ArticlesProvider.Endpoints.everything, itemsCount: 20, additionalQueries: [URLQueryItem(name: "q", value: "apple")])
     }
     
     override func didReceiveMemoryWarning() {
@@ -198,15 +198,21 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
     
     func configure(_ cell: ArticleHeadingTableViewCell, at indexPath: IndexPath) {
         // Fetch Quote
+        let index = indexPath
         let article = fetchedResultsController.object(at: indexPath)
         
         // Configure Cell
         cell.articleHeadingTitle.text = article.title
         cell.articleHeadingSource.text = article.sourceName
-        if let data = article.image {
-            cell.articleHeadingImage.image = UIImage(data: data)
-        } else {
-            cell.articleHeadingImage.image = nil
+        cell.articleHeadingImage.image = #imageLiteral(resourceName: "newsImage")
+        ArticlesProvider.downloadImage(from: article.urlToImage) { data in
+            if let data = data {
+                DispatchQueue.main.async {
+                    if index == indexPath {
+                        cell.articleHeadingImage.image = UIImage(data: data)
+                    }
+                }
+            }
         }
     }
     
@@ -250,24 +256,19 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
                 }
             }
             for i in 0..<data!.articles.count {
-                self.addArticle(article: data!.articles[i])
+                var article = data!.articles[i]
+                if let url = article.url {
+                    var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)
+                    urlComponents!.scheme = "http"
+                    article.url = urlComponents!.url
+                }
+                if let urlToImage = article.urlToImage {
+                    var urlComponents = URLComponents(url: urlToImage, resolvingAgainstBaseURL: false)
+                    urlComponents!.scheme = "http"
+                    article.urlToImage = urlComponents!.url
+                }
+                self.addArticle(article: article)
             }
-        }
-    }
-    
-    func loadImageToCell(_ imageData: Data?,_ cell: ArticleHeadingTableViewCell, _ indexPath: IndexPath) {
-        if articles[indexPath.row].urlToImage != nil {
-            guard let imageData = imageData else {
-                self.articles[indexPath.row].image = self.defaultImage
-                return
-            }
-            let image = UIImage(data: imageData)
-            self.articles[indexPath.row].image = image
-            DispatchQueue.main.async {
-                cell.articleHeadingImage.image = image
-            }
-        } else if !self.articles[indexPath.row].isSavedToCache {
-            self.articles[indexPath.row].image = defaultImage
         }
     }
     
