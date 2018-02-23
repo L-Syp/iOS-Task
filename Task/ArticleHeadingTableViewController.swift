@@ -28,6 +28,7 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
     
     // MARK: Actions
     @IBAction func refreshButton(_ sender: UIBarButtonItem) {
+        addArticle(article: ArticleData(source: Source(id:"XYZ", name: "Trojmiasto.pl"), author: "Jan Kowal", title: "News", description: "Wydarzenie", url: nil, urlToImage: nil, publishedAt: "Dzisiaj"))
     }
     
     // MARK: CoreData
@@ -36,7 +37,7 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
         let fetchRequest: NSFetchRequest<Article> = Article.fetchRequest()
         
         // Configure Fetch Request
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: #keyPath(Article.author), ascending: true)]
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: #keyPath(Article.sourceName), ascending: true)]
         
         // Create Fetched Results Controller
         let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: self.persistentContainer.viewContext, sectionNameKeyPath: #keyPath(Article.sourceName), cacheName: nil)
@@ -57,7 +58,7 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
                 print("\(error), \(error.localizedDescription)")
                 
             } else {
-                //self.setupView()
+                self.updateView()
                 
                 do {
                     try self.fetchedResultsController.performFetch()
@@ -66,10 +67,10 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
                     print("Unable to Perform Fetch Request")
                     print("\(fetchError), \(fetchError.localizedDescription)")
                 }
-                
                 self.updateView()
             }
         }
+        self.downloadData(endpoint: ArticlesProvider.Endpoints.topHeadlines, itemsCount: 30, additionalQueries: [URLQueryItem(name: "country", value: "us")])
     }
     
     override func didReceiveMemoryWarning() {
@@ -87,11 +88,6 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
         }
     }
     
-    private func setupView() {
-        setupMessageLabel()
-        updateView()
-    }
-    
     fileprivate func updateView() {
         var hasArticles = false
         
@@ -100,10 +96,6 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
         }
         tableView.isHidden = !hasArticles
         // activityIndicatorView.stopAnimating()
-    }
-    
-    private func setupMessageLabel() {
-        navigationItem.title = "You don't have any quotes yet."
     }
     
     // MARK: NSFetchedResultsControllerDelegate
@@ -206,12 +198,12 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
     
     func configure(_ cell: ArticleHeadingTableViewCell, at indexPath: IndexPath) {
         // Fetch Quote
-        let quote = fetchedResultsController.object(at: indexPath)
+        let article = fetchedResultsController.object(at: indexPath)
         
         // Configure Cell
-        cell.articleHeadingTitle.text = quote.title
-        cell.articleHeadingSource.text = quote.sourceName
-        if let data = quote.image {
+        cell.articleHeadingTitle.text = article.title
+        cell.articleHeadingSource.text = article.sourceName
+        if let data = article.image {
             cell.articleHeadingImage.image = UIImage(data: data)
         } else {
             cell.articleHeadingImage.image = nil
@@ -219,6 +211,25 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
     }
     
     // MARK: - Fetching data
+    
+    func addArticle(article: ArticleData) {
+        let context = persistentContainer.viewContext
+        
+        // Create Quote
+        let newArticle = Article(context: context)
+        
+        // Configure Quote
+        newArticle.articleDescription = article.description
+        newArticle.author = article.author
+        newArticle.image = nil
+        newArticle.publishedAt = article.publishedAt
+        newArticle.sourceID = article.source.id
+        newArticle.sourceName = article.source.name
+        newArticle.title = article.title
+        newArticle.url = article.url
+        newArticle.urlToImage = article.urlToImage
+    }
+    
     func downloadData(endpoint: ArticlesProvider.Endpoints, itemsCount: Int, additionalQueries: [URLQueryItem]) {
         ArticlesProvider.downloadData(endpoint: endpoint, itemsCount: itemsCount, additionalQueries: additionalQueries, apiKey: apiKey) { data, response, error in
             if let error = error {
@@ -238,17 +249,8 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
                     return
                 }
             }
-            DispatchQueue.main.sync {
-                self.articles = [ArticleClass]()
-                DataPersistence.persistDeleteData()
-            }
-            self.articles = [ArticleClass]() // to avoid duplicated posts
             for i in 0..<data!.articles.count {
-                let article = ArticleClass(with: data!.articles[i])
-                self.articles.append(article)
-            }
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
+                self.addArticle(article: data!.articles[i])
             }
         }
     }
@@ -295,7 +297,7 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
     }
     
     func showInvalidDataFormat() {
-        showAlert(title: "Downloaded data is in wrong format", message: "Downloaded data is in wrong format" +
+        showAlert(title: "Downloaded data is in wrong format", message: "Downloaded data is in wrong format " +
             "therefore cannot be parsed! Check if correct JSON file has been downloaded.", buttonText: "OK")
     }
 }
