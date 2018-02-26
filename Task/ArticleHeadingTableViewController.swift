@@ -13,22 +13,25 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
     
     // MARK: Properties
     let apiKey = "2beb5953fd92424983abae1dc1c7d58c"
+    let endpoint = ArticlesProvider.Endpoints.everything
+    let itemsCount = 20
+    let additionalQueries = [URLQueryItem(name: "q", value: "apple")]
     let defaultImage: UIImage = #imageLiteral(resourceName: "newsImage")
-    private let persistentContainer = NSPersistentContainer(name: "Articles")
+    let persistentContainer = NSPersistentContainer(name: "Articles")
     var cachedImages = [UIImage?]()
     var isOnline = false {
         didSet {
-            if !isOnline {
-                self.navigationItem.title = "Breaking news (offline mode)"
-            } else {
-                self.navigationItem.title = "Breaking news"
-            }
+            let title = isOnline ? "Breaking news" : "Breaking news (offline mode)"
+            self.navigationItem.title = title
         }
     }
     
     // MARK: Actions
     @IBAction func refreshButton(_ sender: UIBarButtonItem) {
-        addArticle(article: ArticleData(source: Source(id:"XYZ", name: "Trojmiasto.pl"), author: "Autor", title: "Tytul", description: "Opis", url: nil, urlToImage: nil, publishedAt: "Dzisiaj"))
+        if checkNetworkConnection() {
+            deleteArticlesFromMemory()
+        }
+        self.downloadData(endpoint: endpoint, itemsCount: itemsCount, additionalQueries: additionalQueries)
     }
     
     // MARK: CoreData
@@ -40,7 +43,8 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: #keyPath(Article.sourceName), ascending: true)]
         
         // Create Fetched Results Controller
-        let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: self.persistentContainer.viewContext, sectionNameKeyPath: nil/*#keyPath(Article.sourceName)*/, cacheName: nil)
+        let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: self.persistentContainer.viewContext,
+                                                                  sectionNameKeyPath: nil, cacheName: nil)
         
         // Configure Fetched Results Controller
         fetchedResultsController.delegate = self
@@ -68,7 +72,7 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
                 self.updateView()
             }
         }
-        self.downloadData(endpoint: ArticlesProvider.Endpoints.everything, itemsCount: 20, additionalQueries: [URLQueryItem(name: "q", value: "apple")])
+        self.downloadData(endpoint: endpoint, itemsCount: itemsCount, additionalQueries: additionalQueries)
     }
     
     override func didReceiveMemoryWarning() {
@@ -79,16 +83,15 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
         if segue.identifier == "showDetailsSegue" {
             let article = fetchedResultsController.object(at: tableView.indexPathForSelectedRow!)
             let vc = segue.destination as! ArticleDetailsViewController
-            if sender as? ArticleHeadingTableViewCell != nil {
-                if let data = article.image
-                {
-                    vc.image = UIImage(data: data)
-                } else {
-                    vc.image = defaultImage
-                }
-                vc.defaultImage = defaultImage
-                vc.article = article
+            guard sender as? ArticleHeadingTableViewCell != nil else { return }
+            if let data = article.image
+            {
+                vc.image = UIImage(data: data)
+            } else {
+                vc.image = defaultImage
             }
+            vc.defaultImage = defaultImage
+            vc.article = article
         }
     }
     
@@ -117,7 +120,7 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
         switch (type) {
         case .insert:
             if let indexPath = newIndexPath {
-                tableView.insertRows(at: [indexPath], with: .fade)
+                tableView.insertRows(at: [indexPath], with: .none)
             }
             break;
         case .delete:
@@ -132,11 +135,11 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
             break;
         case .move:
             if let indexPath = indexPath {
-                tableView.deleteRows(at: [indexPath], with: .fade)
+                tableView.deleteRows(at: [indexPath], with: .none)
             }
             
             if let newIndexPath = newIndexPath {
-                tableView.insertRows(at: [newIndexPath], with: .fade)
+                tableView.insertRows(at: [newIndexPath], with: .none)
             }
             break;
         }
@@ -174,24 +177,17 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "ArticleHeadingCell", for: indexPath) as? ArticleHeadingTableViewCell else {
             fatalError("The dequeued cell is not an instance of ArticleHeadingTableViewCell")
         }
-        if (indexPath.row % 2 == 0) {
-            cell.backgroundColor = UIColor(red: 158.0/255.0, green: 184.0/255.0, blue: 226.0/255.0, alpha: 1.0)
-        } else {
-            cell.backgroundColor = UIColor(red: 184.0/255.0, green: 242.0/255.0, blue: 155.0/255.0, alpha: 1.0)
-        }
-        
-        // Configure Cell
+        let colorFirst = UIColor(red: 158.0/255.0, green: 184.0/255.0, blue: 226.0/255.0, alpha: 1.0)
+        let colorSecond = UIColor(red: 184.0/255.0, green: 242.0/255.0, blue: 155.0/255.0, alpha: 1.0)
+        cell.backgroundColor = indexPath.row % 2 == 0 ? colorFirst : colorSecond
         configure(cell, at: indexPath)
         return cell
     }
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            // Fetch Quote
-            let quote = fetchedResultsController.object(at: indexPath)
-            
-            // Delete Quote
-            quote.managedObjectContext?.delete(quote)
+            let article = fetchedResultsController.object(at: indexPath)
+            article.managedObjectContext?.delete(article)
         }
     }
     
@@ -207,7 +203,7 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
         cell.articleHeadingTitle.text = article.title
         cell.articleHeadingSource.text = article.sourceName
         
-        if let articleImage = article.image{
+        if let articleImage = article.image {
             if let cachedImage = cachedImages[indexPath.row] {
                 cell.articleHeadingImage.image = cachedImage
                 print("Image set from cache")
@@ -220,30 +216,27 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
             print("Image set from defaultImage")
         }
         
-        if cachedImages[indexPath.row] == nil {
-            ArticlesProvider.downloadImage(from: article.urlToImage) { data in
-                if let data = data {
-                    let image = UIImage(data: data)
-                    DispatchQueue.main.async {
-                        if index == indexPath {
-                            cell.articleHeadingImage.image = image
-                            self.cachedImages[index.row] = image
-                            print("Image added to cache")
-                            article.image = data
-                        }
-                    }
-                }
+        guard cachedImages[indexPath.row] == nil else { return }
+        ArticlesProvider.downloadImage(from: article.urlToImage) { data in
+            guard let data = data else { return }
+            guard let image = UIImage(data: data) else { return }
+            DispatchQueue.main.async {
+                guard index == indexPath else { return }
+                cell.articleHeadingImage.image = image
+                self.cachedImages[index.row] = image
+                print("Image added to cache")
+                article.image = data
             }
         }
     }
     
     // MARK: - Fetching data
-    
     func addArticle(article: ArticleData) {
         let context = persistentContainer.viewContext
         
         // Create Quote
         let newArticle = Article(context: context)
+        
         // Configure Quote
         newArticle.articleDescription = article.description
         newArticle.author = article.author
@@ -256,10 +249,37 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
         newArticle.urlToImage = article.urlToImage
     }
     
+    func deleteArticlesFromMemory() {
+        guard let articles = fetchedResultsController.fetchedObjects else { return }
+        for article in articles {
+            article.managedObjectContext?.delete(article)
+        }
+    }
+    
+    // Not tested yet
+    func deleteArticlesFromPersistentStorage() {
+        self.tableView.selectAll(nil)
+        let appDel = UIApplication.shared.delegate as! AppDelegate
+        let context = appDel.persistentContainer.viewContext
+        let coord = appDel.persistentContainer.persistentStoreCoordinator
+        
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Article")
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+        
+        do {
+            try coord.execute(deleteRequest, with: context)
+        } catch let error as NSError {
+            debugPrint(error)
+        }
+    }
+    
+    
     func downloadData(endpoint: ArticlesProvider.Endpoints, itemsCount: Int, additionalQueries: [URLQueryItem]) {
-        ArticlesProvider.downloadData(endpoint: endpoint, itemsCount: itemsCount, additionalQueries: additionalQueries, apiKey: apiKey) { data, response, error in
+        ArticlesProvider.downloadData(endpoint: endpoint, itemsCount: itemsCount, additionalQueries: additionalQueries, apiKey: apiKey)
+        { data, response, error in
             if let error = error {
                 if error.localizedDescription == "The Internet connection appears to be offline." {
+                    self.checkNetworkConnection()
                     self.showNoConnectionAlert()
                     return
                 } else if data == nil {
@@ -275,6 +295,8 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
                     return
                 }
             }
+            self.checkNetworkConnection()
+            self.cachedImages = [UIImage?]()
             self.cachedImages = Array(repeating: nil, count: data!.articles.count)
             for i in 0..<data!.articles.count {
                 var article = data!.articles[i]
@@ -289,6 +311,9 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
                     article.urlToImage = urlComponents!.url
                 }
                 self.addArticle(article: article)
+            }
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
             }
         }
     }

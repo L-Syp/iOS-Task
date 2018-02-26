@@ -31,11 +31,10 @@ class ArticleDetailsViewController: UIViewController {
     // MARK: Outlets
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("Title: \(article?.title) \nImageUrl: \(article?.urlToImage)")
         setViewImage()
         titleLabel.text = article!.title
         if let publishedAt = article!.publishedAt {
-        pubishedAtLabel.text = "Published at: \(publishedAt[..<publishedAt.index(publishedAt.startIndex, offsetBy: 10)])"
+            pubishedAtLabel.text = "Published at: \(publishedAt[..<publishedAt.index(publishedAt.startIndex, offsetBy: 10)])"
         } else {
             pubishedAtLabel.text = "Published at: -"
         }
