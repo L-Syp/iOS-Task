@@ -220,31 +220,6 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
     }
     
     // MARK: - Fetching data
-    func addArticle(article: ArticleData) {
-        let context = persistentContainer.viewContext
-        
-        // Create Quote
-        let newArticle = Article(context: context)
-        
-        // Configure Quote
-        newArticle.articleDescription = article.description
-        newArticle.author = article.author
-        newArticle.image = nil
-        newArticle.publishedAt = article.publishedAt
-        newArticle.sourceID = article.source.id
-        newArticle.sourceName = article.source.name
-        newArticle.title = article.title
-        newArticle.url = article.url
-        newArticle.urlToImage = article.urlToImage
-    }
-    
-    func deleteArticlesFromMemory() {
-        guard let articles = fetchedResultsController.fetchedObjects else { return }
-        for article in articles {
-            article.managedObjectContext?.delete(article)
-        }
-    }
-    
     func downloadData(endpoint: ArticlesProvider.Endpoints, itemsCount: Int, additionalQueries: [URLQueryItem]) {
         ArticlesProvider.downloadData(endpoint: endpoint, itemsCount: itemsCount, additionalQueries: additionalQueries, apiKey: apiKey)
         { data, response, error in
@@ -281,7 +256,7 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
                     urlComponents!.scheme = "http"
                     article.urlToImage = urlComponents!.url
                 }
-                self.addArticle(article: article)
+                DataModel.addArticle(article, context: self.persistentContainer.viewContext)
             }
             DataModel.SaveToPeristent(persistentContainer: self.persistentContainer)
             print("Saved second in save: \(self.getSavedPersitentArticleCount()!)")

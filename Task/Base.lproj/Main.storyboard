@@ -141,7 +141,7 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="syo-qX-xnj">
-                                                <rect key="frame" x="132.33333333333334" y="319.66666666666669" width="111" height="30"/>
+                                                <rect key="frame" x="132.66666666666666" y="319.66666666666669" width="111" height="30"/>
                                                 <state key="normal" title="Go to the article"/>
                                                 <state key="selected">
                                                     <color key="titleColor" red="1" green="0.57637232540000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

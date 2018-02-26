@@ -29,6 +29,24 @@ class DataModel {
         }
     }
     
+    static func addArticle(_ article: ArticleData, context: NSManagedObjectContext) {
+        //let context = persistentContainer.viewContext
+        
+        // Create Quote
+        let newArticle = Article(context: context)
+        
+        // Configure Quote
+        newArticle.articleDescription = article.description
+        newArticle.author = article.author
+        newArticle.image = nil
+        newArticle.publishedAt = article.publishedAt
+        newArticle.sourceID = article.source.id
+        newArticle.sourceName = article.source.name
+        newArticle.title = article.title
+        newArticle.url = article.url
+        newArticle.urlToImage = article.urlToImage
+    }
+    
     static func SaveToPeristent(persistentContainer: NSPersistentContainer) {
         do {
             try persistentContainer.viewContext.save()
@@ -49,6 +67,13 @@ class DataModel {
         } catch {
             let updateError = error as NSError
             print("\(updateError), \(updateError.userInfo)")
+        }
+    }
+    
+    static func deleteArticlesFromMemory(fetchedResultsController: NSFetchedResultsController<Article>) {
+        guard let articles = fetchedResultsController.fetchedObjects else { return }
+        for article in articles {
+            article.managedObjectContext?.delete(article)
         }
     }
     
