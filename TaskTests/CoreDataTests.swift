@@ -17,8 +17,8 @@ class CoreDataTests: XCTestCase {
     override func setUp() {
         super.setUp()
         articles = [ArticleClass]()
-        DataPersistence.persistDeleteData(&articles)
-        let entitiesCount = DataPersistence.getEntitiesCount()
+        DataModel.persistDeleteData(&articles)
+        let entitiesCount = DataModel.getEntitiesCount()
         XCTAssert(entitiesCount == 0, "Was: \(entitiesCount), expected: \(0)")
         // Put setup code here. This method is called before the invocation of each test method in the class.
     }
@@ -26,25 +26,25 @@ class CoreDataTests: XCTestCase {
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
         super.tearDown()
-        DataPersistence.persistDeleteData(&articles)
+        DataModel.persistDeleteData(&articles)
     }
     
     func testSavingData() {
-        for _ in 0..<numberOfArticlesToAdd { DataPersistence.persistSaveArticle(ArticleClass(), imageData: nil)}
-        let entitiesCount = DataPersistence.getEntitiesCount()
+        for _ in 0..<numberOfArticlesToAdd { DataModel.persistSaveArticle(ArticleClass(), imageData: nil)}
+        let entitiesCount = DataModel.getEntitiesCount()
         XCTAssert(entitiesCount == numberOfArticlesToAdd, "Was: \(entitiesCount), expected: \(numberOfArticlesToAdd)")
     }
     
     func testLoadingData() {
         testSavingData()
-        DataPersistence.persistLoadAtricle(&articles)
+        DataModel.persistLoadAtricle(&articles)
         XCTAssert(articles.count == numberOfArticlesToAdd, "Was: \(articles.count), expected: \(numberOfArticlesToAdd)")
     }
     
     func testDeletingData() {
         testLoadingData()
-        DataPersistence.persistDeleteData(&articles)
-        let entitiesCount = DataPersistence.getEntitiesCount()
+        DataModel.persistDeleteData(&articles)
+        let entitiesCount = DataModel.getEntitiesCount()
         XCTAssert(entitiesCount == 0, "Was: \(entitiesCount), expected: \(0)")
     }
 }

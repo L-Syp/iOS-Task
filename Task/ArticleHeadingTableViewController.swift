@@ -13,12 +13,13 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
     
     // MARK: Properties
     let apiKey = "2beb5953fd92424983abae1dc1c7d58c"
-    let endpoint = ArticlesProvider.Endpoints.everything
+    let endpoint = ArticlesProvider.Endpoints.topHeadlines
     let itemsCount = 20
-    let additionalQueries = [URLQueryItem(name: "q", value: "apple")]
+    let additionalQueries = [URLQueryItem(name: "country", value: "us")]
     let defaultImage: UIImage = #imageLiteral(resourceName: "newsImage")
     let persistentContainer = NSPersistentContainer(name: "Articles")
-    var cachedImages = [UIImage?]()
+    let articleFerchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Article")
+    var cachedImages:[UIImage?] = Array(repeating: nil, count: 300)//[UIImage?]()
     var isOnline = false {
         didSet {
             let title = isOnline ? "Breaking news" : "Breaking news (offline mode)"
@@ -28,9 +29,6 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
     
     // MARK: Actions
     @IBAction func refreshButton(_ sender: UIBarButtonItem) {
-        if checkNetworkConnection() {
-            deleteArticlesFromMemory()
-        }
         self.downloadData(endpoint: endpoint, itemsCount: itemsCount, additionalQueries: additionalQueries)
     }
     
@@ -55,24 +53,15 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
     // MARK: - View Methods
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        persistentContainer.loadPersistentStores { (persistentStoreDescription, error) in
-            if let error = error {
-                print("Unable to Load Persistent Store")
-                print("\(error), \(error.localizedDescription)")
-                
-            } else {
-                do {
-                    try self.fetchedResultsController.performFetch()
-                } catch {
-                    let fetchError = error as NSError
-                    print("Unable to Perform Fetch Request")
-                    print("\(fetchError), \(fetchError.localizedDescription)")
-                }
-                self.updateView()
-            }
+        DataModel.LoadPersistentStore(persistentContainer: persistentContainer, fetchedResultsController: fetchedResultsController)
+        if checkNetworkConnection(){
+            DataModel.deleteArticlesFromPersistentStorage(persistentContainer: persistentContainer, fetchRequest: articleFerchRequest,
+                                                          tableView: self.tableView, fetchedResultsController: fetchedResultsController)
         }
+        print("Saved first viewdidLoad: \(getSavedPersitentArticleCount()!)")
+        self.updateView()
         self.downloadData(endpoint: endpoint, itemsCount: itemsCount, additionalQueries: additionalQueries)
+        print("Saved second viewdidLoad: \(getSavedPersitentArticleCount()!)")
     }
     
     override func didReceiveMemoryWarning() {
@@ -256,30 +245,12 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
         }
     }
     
-    // Not tested yet
-    func deleteArticlesFromPersistentStorage() {
-        self.tableView.selectAll(nil)
-        let appDel = UIApplication.shared.delegate as! AppDelegate
-        let context = appDel.persistentContainer.viewContext
-        let coord = appDel.persistentContainer.persistentStoreCoordinator
-        
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Article")
-        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-        
-        do {
-            try coord.execute(deleteRequest, with: context)
-        } catch let error as NSError {
-            debugPrint(error)
-        }
-    }
-    
-    
     func downloadData(endpoint: ArticlesProvider.Endpoints, itemsCount: Int, additionalQueries: [URLQueryItem]) {
         ArticlesProvider.downloadData(endpoint: endpoint, itemsCount: itemsCount, additionalQueries: additionalQueries, apiKey: apiKey)
         { data, response, error in
+            self.checkNetworkConnection()
             if let error = error {
                 if error.localizedDescription == "The Internet connection appears to be offline." {
-                    self.checkNetworkConnection()
                     self.showNoConnectionAlert()
                     return
                 } else if data == nil {
@@ -295,9 +266,9 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
                     return
                 }
             }
-            self.checkNetworkConnection()
             self.cachedImages = [UIImage?]()
             self.cachedImages = Array(repeating: nil, count: data!.articles.count)
+            print("Saved first in save: \(self.getSavedPersitentArticleCount()!)")
             for i in 0..<data!.articles.count {
                 var article = data!.articles[i]
                 if let url = article.url {
@@ -312,6 +283,8 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
                 }
                 self.addArticle(article: article)
             }
+            DataModel.SaveToPeristent(persistentContainer: self.persistentContainer)
+            print("Saved second in save: \(self.getSavedPersitentArticleCount()!)")
             DispatchQueue.main.async {
                 self.tableView.reloadData()
             }
@@ -342,5 +315,9 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
     func showInvalidDataFormat() {
         showAlert(title: "Downloaded data is in wrong format", message: "Downloaded data is in wrong format " +
             "therefore cannot be parsed! Check if correct JSON file has been downloaded.", buttonText: "OK")
+    }
+    
+    func getSavedPersitentArticleCount() -> Int? {
+        return DataModel.getEntitiesCount(persistentContainer: persistentContainer, fetchRequest: articleFerchRequest)
     }
 }
