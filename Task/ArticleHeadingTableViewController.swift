@@ -14,8 +14,8 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
     // MARK: Properties
     let apiKey = "2beb5953fd92424983abae1dc1c7d58c"
     let defaultImage: UIImage = #imageLiteral(resourceName: "newsImage")
-    var articles = [ArticleClass]()
     private let persistentContainer = NSPersistentContainer(name: "Articles")
+    var cachedImages = [UIImage?]()
     var isOnline = false {
         didSet {
             if !isOnline {
@@ -25,7 +25,7 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
             }
         }
     }
-
+    
     // MARK: Actions
     @IBAction func refreshButton(_ sender: UIBarButtonItem) {
         addArticle(article: ArticleData(source: Source(id:"XYZ", name: "Trojmiasto.pl"), author: "Autor", title: "Tytul", description: "Opis", url: nil, urlToImage: nil, publishedAt: "Dzisiaj"))
@@ -40,7 +40,7 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: #keyPath(Article.sourceName), ascending: true)]
         
         // Create Fetched Results Controller
-        let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: self.persistentContainer.viewContext, sectionNameKeyPath: #keyPath(Article.sourceName), cacheName: nil)
+        let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: self.persistentContainer.viewContext, sectionNameKeyPath: nil/*#keyPath(Article.sourceName)*/, cacheName: nil)
         
         // Configure Fetched Results Controller
         fetchedResultsController.delegate = self
@@ -58,8 +58,6 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
                 print("\(error), \(error.localizedDescription)")
                 
             } else {
-                self.updateView()
-                
                 do {
                     try self.fetchedResultsController.performFetch()
                 } catch {
@@ -79,11 +77,17 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showDetailsSegue" {
+            let article = fetchedResultsController.object(at: tableView.indexPathForSelectedRow!)
             let vc = segue.destination as! ArticleDetailsViewController
             if sender as? ArticleHeadingTableViewCell != nil {
-                vc.image = articles[tableView.indexPathForSelectedRow!.row].image ?? defaultImage
+                if let data = article.image
+                {
+                    vc.image = UIImage(data: data)
+                } else {
+                    vc.image = defaultImage
+                }
                 vc.defaultImage = defaultImage
-                vc.article = articles[tableView.indexPathForSelectedRow!.row]
+                vc.article = article
             }
         }
     }
@@ -170,7 +174,6 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "ArticleHeadingCell", for: indexPath) as? ArticleHeadingTableViewCell else {
             fatalError("The dequeued cell is not an instance of ArticleHeadingTableViewCell")
         }
-        
         if (indexPath.row % 2 == 0) {
             cell.backgroundColor = UIColor(red: 158.0/255.0, green: 184.0/255.0, blue: 226.0/255.0, alpha: 1.0)
         } else {
@@ -200,16 +203,34 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
         // Fetch Quote
         let index = indexPath
         let article = fetchedResultsController.object(at: indexPath)
-        
         // Configure Cell
         cell.articleHeadingTitle.text = article.title
         cell.articleHeadingSource.text = article.sourceName
-        cell.articleHeadingImage.image = #imageLiteral(resourceName: "newsImage")
-        ArticlesProvider.downloadImage(from: article.urlToImage) { data in
-            if let data = data {
-                DispatchQueue.main.async {
-                    if index == indexPath {
-                        cell.articleHeadingImage.image = UIImage(data: data)
+        
+        if let articleImage = article.image{
+            if let cachedImage = cachedImages[indexPath.row] {
+                cell.articleHeadingImage.image = cachedImage
+                print("Image set from cache")
+            } else {
+                cell.articleHeadingImage.image = UIImage(data: articleImage) ?? defaultImage
+                print("Image set from article.image")
+            }
+        } else {
+            cell.articleHeadingImage.image = defaultImage
+            print("Image set from defaultImage")
+        }
+        
+        if cachedImages[indexPath.row] == nil {
+            ArticlesProvider.downloadImage(from: article.urlToImage) { data in
+                if let data = data {
+                    let image = UIImage(data: data)
+                    DispatchQueue.main.async {
+                        if index == indexPath {
+                            cell.articleHeadingImage.image = image
+                            self.cachedImages[index.row] = image
+                            print("Image added to cache")
+                            article.image = data
+                        }
                     }
                 }
             }
@@ -223,7 +244,6 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
         
         // Create Quote
         let newArticle = Article(context: context)
-        
         // Configure Quote
         newArticle.articleDescription = article.description
         newArticle.author = article.author
@@ -255,6 +275,7 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
                     return
                 }
             }
+            self.cachedImages = Array(repeating: nil, count: data!.articles.count)
             for i in 0..<data!.articles.count {
                 var article = data!.articles[i]
                 if let url = article.url {
@@ -270,10 +291,6 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
                 self.addArticle(article: article)
             }
         }
-    }
-    
-    func loadDataToViewController() {
-        self.downloadData(endpoint: ArticlesProvider.Endpoints.topHeadlines, itemsCount: 7, additionalQueries: [URLQueryItem(name: "country", value: "us")])
     }
     
     // MARK: - Networking

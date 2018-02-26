@@ -19,21 +19,19 @@ class ArticleDetailsViewController: UIViewController {
     @IBOutlet var rootView: UIView!
     
     // MARK: Properties
-    var article: ArticleClass? = nil
+    var article: Article? = nil
     var image: UIImage? = nil
     var defaultImage: UIImage? = nil
     
     // MARK: Actions
-    
     @IBAction func goToArticleButtnonTouch() {
         UIApplication.shared.open((article?.url)!, options: [:])
     }
     
     // MARK: Outlets
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
+        print("Title: \(article?.title) \nImageUrl: \(article?.urlToImage)")
         setViewImage()
         titleLabel.text = article!.title
         if let publishedAt = article!.publishedAt {
@@ -41,7 +39,7 @@ class ArticleDetailsViewController: UIViewController {
         } else {
             pubishedAtLabel.text = "Published at: -"
         }
-        descriptionLabel.text = article!.description ?? "No description available"
+        descriptionLabel.text = article!.articleDescription ?? "No description available"
         setLabelWithBold(bold: "Author: ", normal: "\(article!.author ?? "-")", at: authorLabel )
     }
     
