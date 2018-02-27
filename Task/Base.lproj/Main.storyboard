@@ -35,9 +35,6 @@
                                         </imageView>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Source:" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0Uh-Um-ruy">
                                             <rect key="frame" x="8" y="151" width="59" height="20.666666666666657"/>
-                                            <constraints>
-                                                <constraint firstAttribute="height" constant="20.5" id="YzF-sF-dLs"/>
-                                            </constraints>
                                             <fontDescription key="fontDescription" name=".AppleSystemUIFont" family=".AppleSystemUIFont" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
@@ -110,8 +107,8 @@
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="g9d-Dp-hdU" userLabel="Cointainer View">
                                         <rect key="frame" x="0.0" y="0.0" width="375" height="357.66666666666669"/>
                                         <subviews>
-                                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" placeholderIntrinsicWidth="340" placeholderIntrinsicHeight="209" image="GoogleIMG" translatesAutoresizingMaskIntoConstraints="NO" id="YBI-YW-bth">
-                                                <rect key="frame" x="17.666666666666657" y="0.0" width="340" height="209"/>
+                                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" placeholderIntrinsicWidth="334" placeholderIntrinsicHeight="209" image="GoogleIMG" translatesAutoresizingMaskIntoConstraints="NO" id="YBI-YW-bth">
+                                                <rect key="frame" x="20.666666666666657" y="0.0" width="334" height="209"/>
                                             </imageView>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Title" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YNV-RT-nw0">
                                                 <rect key="frame" x="8" y="239" width="359" height="21"/>

@@ -29,7 +29,11 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
     
     // MARK: Actions
     @IBAction func refreshButton(_ sender: UIBarButtonItem) {
-        self.downloadData(endpoint: endpoint, itemsCount: itemsCount, additionalQueries: additionalQueries)
+        if checkNetworkConnection() {
+            DataModel.deleteArticlesFromMemory(fetchedResultsController: fetchedResultsController)
+            self.downloadData(endpoint: endpoint, itemsCount: itemsCount, additionalQueries: additionalQueries)
+            
+        }
     }
     
     // MARK: CoreData
@@ -58,10 +62,8 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
             DataModel.deleteArticlesFromPersistentStorage(persistentContainer: persistentContainer, fetchRequest: articleFerchRequest,
                                                           tableView: self.tableView, fetchedResultsController: fetchedResultsController)
         }
-        print("Saved first viewdidLoad: \(getSavedPersitentArticleCount()!)")
         self.updateView()
         self.downloadData(endpoint: endpoint, itemsCount: itemsCount, additionalQueries: additionalQueries)
-        print("Saved second viewdidLoad: \(getSavedPersitentArticleCount()!)")
     }
     
     override func didReceiveMemoryWarning() {

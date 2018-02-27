@@ -22,6 +22,11 @@ class ArticleDetailsViewController: UIViewController {
     var article: Article? = nil
     var image: UIImage? = nil
     var defaultImage: UIImage? = nil
+    var const: NSLayoutConstraint {
+        get {
+            return imageView.heightAnchor.constraint(lessThanOrEqualToConstant: rootView.frame.size.height * 0.75)
+        }
+    }
     
     // MARK: Actions
     @IBAction func goToArticleButtnonTouch() {
@@ -31,7 +36,9 @@ class ArticleDetailsViewController: UIViewController {
     // MARK: Outlets
     override func viewDidLoad() {
         super.viewDidLoad()
-        setViewImage()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        const.isActive = true
+        setViewImage(deviceOrientation: UIDevice.current.orientation)
         titleLabel.text = article!.title
         if let publishedAt = article!.publishedAt {
             pubishedAtLabel.text = "Published at: \(publishedAt[..<publishedAt.index(publishedAt.startIndex, offsetBy: 10)])"
@@ -57,7 +64,7 @@ class ArticleDetailsViewController: UIViewController {
     }
     
     @objc func deviceRotated(){
-        setViewImage()
+        setViewImage(deviceOrientation: UIDevice.current.orientation)
     }
     
     fileprivate func setLabelWithBold(bold: String, normal: String, at label: UILabel) {
@@ -71,14 +78,38 @@ class ArticleDetailsViewController: UIViewController {
     }
     
     // MARK: Image setting functions
-    func setViewImage() {
-        if let image = image{
-            imageView.image = image.resizeImage(targetSize: rootView.frame.size) ?? defaultImage?.resizeImage(targetSize: CGSize(width: rootView.frame.width/4, height: rootView.frame.height/4))!
-            //if image == defaultImage {
-            //    imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor, multiplier: 1.0).isActive = true
-            //}
+    func setViewImage(deviceOrientation: UIDeviceOrientation) {
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        image = image ?? defaultImage
+        imageView.image = image
+        if image == defaultImage { setResizedImage(image!, imageView: imageView, deviceOrientation: deviceOrientation, multiplier: 0.5)
+        } else { setResizedImage(image!, imageView: imageView, deviceOrientation: deviceOrientation) }
+        imageView.setNeedsDisplay()
+        loadViewIfNeeded()
+        setConstraints(to: imageView, with: const)
+        print("IMAGE SIZE: \(imageView.image!.size)")
+    }
+    
+    private func setResizedImage(_ image: UIImage, imageView: UIImageView, deviceOrientation: UIDeviceOrientation, multiplier: CGFloat = 1.0) {
+        if deviceOrientation.isPortrait {
+            let ratio = image.size.height / image.size.width
+            let newSize = CGSize(width: rootView.frame.size.width * multiplier, height: rootView.frame.size.height * ratio * multiplier)
+            imageView.image = image.resizeImage(targetSize: newSize) ?? defaultImage?.resizeImage(targetSize: newSize)!
+        } else if deviceOrientation.isLandscape {
+            let ratio =  image.size.width / image.size.height
+            let newSize = CGSize(width: rootView.frame.size.height * ratio * multiplier, height: rootView.frame.size.width * multiplier)
+            imageView.image = image.resizeImage(targetSize: newSize) ?? defaultImage?.resizeImage(targetSize: newSize)!
         }
     }
     
+    private func setConstraints(to view: UIView, with constraint: NSLayoutConstraint) {
+        view.translatesAutoresizingMaskIntoConstraints = false
+        if !constraint.isActive {
+            constraint.isActive = true
+            
+        }
+        imageView.setNeedsUpdateConstraints()
+        imageView.superview?.setNeedsUpdateConstraints()
+    }
 }
 
