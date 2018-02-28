@@ -12,7 +12,6 @@ import CoreData
 class HeadingsTableViewController: UITableViewController,  NSFetchedResultsControllerDelegate {
     
     // MARK: Properties
-    var settings: QuerySettings? = QuerySettings()
     let defaultImage: UIImage = #imageLiteral(resourceName: "newsImage")
     let persistentContainer = NSPersistentContainer(name: "Articles")
     let articleFerchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Article")
@@ -28,16 +27,14 @@ class HeadingsTableViewController: UITableViewController,  NSFetchedResultsContr
     @IBAction func refreshButton(_ sender: Any?) {
         if checkNetworkConnection() {
             DataModel.deleteArticlesFromMemory(fetchedResultsController: fetchedResultsController)
-            guard let settings = settings else { return }
-            self.downloadData(settings: settings)
+            self.downloadData(settings: DataModel.loadAppSettings())
         }
     }
     
     @IBAction func unwindToArticleList(sender: UIStoryboardSegue) {
-        if let sourceViewController = sender.source as? SettingViewController, let settings = sourceViewController.settings {
-            self.settings = settings
+        if let sourceViewController = sender.source as? SettingsViewController, let settings = sourceViewController.settings {
+            DataModel.saveAppSettings(settings: settings)
             refreshButton(nil)
-            print(settings)
         }
     }
     
@@ -62,14 +59,14 @@ class HeadingsTableViewController: UITableViewController,  NSFetchedResultsContr
     // MARK: - View Methods
     override func viewDidLoad() {
         super.viewDidLoad()
+        DataModel.printSettings()
         DataModel.LoadPersistentStore(persistentContainer: persistentContainer, fetchedResultsController: fetchedResultsController)
         if checkNetworkConnection(){
             DataModel.deleteArticlesFromPersistentStorage(persistentContainer: persistentContainer, fetchRequest: articleFerchRequest,
                                                           tableView: self.tableView, fetchedResultsController: fetchedResultsController)
         }
         self.updateView()
-        guard let settings = settings else { return }
-        self.downloadData(settings: settings)
+        self.downloadData(settings: DataModel.loadAppSettings())
     }
     
     override func didReceiveMemoryWarning() {
@@ -92,9 +89,9 @@ class HeadingsTableViewController: UITableViewController,  NSFetchedResultsContr
         }
         if segue.identifier == "showSettingsSegue" {
             let navigationVC = segue.destination as! UINavigationController
-            let settingsVC = navigationVC.viewControllers.first as! SettingViewController
+            let settingsVC = navigationVC.viewControllers.first as! SettingsViewController
             guard sender as? UIBarButtonItem != nil else { return }
-            settingsVC.settings = settings ?? QuerySettings()
+            settingsVC.settings = DataModel.loadAppSettings()
         }
     }
     
@@ -198,7 +195,7 @@ class HeadingsTableViewController: UITableViewController,  NSFetchedResultsContr
     }
     
     func configure(_ cell: HeadingsTableViewCell, at indexPath: IndexPath) {
-        // Fetch Quote
+        // Fetch atricle
         let index = indexPath
         let article = fetchedResultsController.object(at: indexPath)
         // Configure Cell
@@ -208,14 +205,11 @@ class HeadingsTableViewController: UITableViewController,  NSFetchedResultsContr
         if let articleImage = article.image {
             if let cachedImage = cachedImages[indexPath.row] {
                 cell.articleHeadingImage.image = cachedImage
-                print("Image set from cache")
             } else {
                 cell.articleHeadingImage.image = UIImage(data: articleImage) ?? defaultImage
-                print("Image set from article.image")
             }
         } else {
             cell.articleHeadingImage.image = defaultImage
-            print("Image set from defaultImage")
         }
         
         guard cachedImages[indexPath.row] == nil else { return }
@@ -226,7 +220,6 @@ class HeadingsTableViewController: UITableViewController,  NSFetchedResultsContr
                 guard index == indexPath else { return }
                 cell.articleHeadingImage.image = image
                 self.cachedImages[index.row] = image
-                print("Image added to cache")
                 article.image = data
             }
         }
@@ -234,7 +227,7 @@ class HeadingsTableViewController: UITableViewController,  NSFetchedResultsContr
     
     // MARK: - Fetching data
     func downloadData(settings: QuerySettings) {
-        ArticlesProvider.downloadData(endpoint: settings.endpoint, itemsCount: settings.itemsCount, additionalQueries: settings.additionalQueries, apiKey: settings.apiKey)
+        ArticlesProvider.downloadData(endpoint: settings.endpoint, itemsCount: settings.itemsCount, queries: settings.queries, apiKey: settings.apiKey)
         { data, response, error in
             self.checkNetworkConnection()
             if let error = error {

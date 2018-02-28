@@ -214,7 +214,7 @@
         <!--Settings-->
         <scene sceneID="C9h-IG-Gj1">
             <objects>
-                <tableViewController id="nKn-0l-rZG" customClass="SettingViewController" customModule="Task" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="nKn-0l-rZG" customClass="SettingsViewController" customModule="Task" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="8mE-CE-88x">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

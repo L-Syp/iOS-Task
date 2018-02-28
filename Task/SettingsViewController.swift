@@ -9,7 +9,7 @@
 import UIKit
 import os.log
 
-class SettingViewController: UITableViewController, UIPickerViewDelegate, UIPickerViewDataSource, UITextFieldDelegate {
+class SettingsViewController: UITableViewController, UIPickerViewDelegate, UIPickerViewDataSource, UITextFieldDelegate {
     
     // MARK: Properties
     var settings: QuerySettings?
@@ -25,27 +25,12 @@ class SettingViewController: UITableViewController, UIPickerViewDelegate, UIPick
         dismiss(animated: true, completion: nil)
     }
     
-    
+    // MARK: Set views
     override func viewDidLoad() {
         super.viewDidLoad()
         preparePickerView()
-        countryCell.textLabel?.text = settings?.additionalQueries[1].value
-        topicTextField.text = settings?.additionalQueries[0].value
-        
-    }
-    
-    // This method lets you configure a view controller before it's presented.
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        super.prepare(for: segue, sender: sender)
-        // Configure the destination view controller only when the save button is pressed.
-        guard let button = sender as? UIBarButtonItem, button === saveButton else {
-            os_log("The save button was not pressed, cancelling", log: OSLog.default, type: .debug)
-            return
-        }
-        var newSettings = QuerySettings()
-        newSettings.itemsCount = pickerData[pickerView.selectedRow(inComponent: 0)]
-        newSettings.additionalQueries = [URLQueryItem(name: "q", value: topicTextField.text), URLQueryItem(name: "language", value: countryCell.textLabel?.text)]
-        settings = newSettings
+        countryCell.textLabel?.text = settings?.queries[1].value
+        topicTextField.text = settings?.queries[0].value
     }
     
     // MARK: PickerView
@@ -79,5 +64,21 @@ class SettingViewController: UITableViewController, UIPickerViewDelegate, UIPick
     func textFieldDidEndEditing(_ textField: UITextField) {
         let text = topicTextField.text ?? ""
         saveButton.isEnabled = !text.isEmpty
+    }
+    
+    // MARK: Segue
+    
+    // This method lets you configure a view controller before it's presented.
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        super.prepare(for: segue, sender: sender)
+        // Configure the destination view controller only when the save button is pressed.
+        guard let button = sender as? UIBarButtonItem, button === saveButton else {
+            os_log("The save button was not pressed, cancelling", log: OSLog.default, type: .debug)
+            return
+        }
+        if settings != nil {
+            settings!.itemsCount = pickerData[pickerView.selectedRow(inComponent: 0)]
+            settings!.queries = [URLQueryItem(name: "q", value: topicTextField.text), URLQueryItem(name: "language", value: countryCell.textLabel?.text)]
+        }
     }
 }

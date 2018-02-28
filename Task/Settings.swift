@@ -13,12 +13,12 @@ struct QuerySettings {
     var apiKey: String
     var endpoint: ArticlesProvider.Endpoints
     var itemsCount: Int
-    var additionalQueries: [URLQueryItem]
+    var queries: [URLQueryItem]
     
-    init() {
-        apiKey = "2beb5953fd92424983abae1dc1c7d58c"
-        endpoint = ArticlesProvider.Endpoints.everything
-        itemsCount = 20
-        additionalQueries = [URLQueryItem(name: "q", value: "bitcoin"), URLQueryItem(name: "language", value: "pl")]
+    init(apiKey: String, endpoint: ArticlesProvider.Endpoints, itemsCount: Int, queries: [URLQueryItem]) {
+        self.apiKey = apiKey
+        self.endpoint = endpoint
+        self.itemsCount = itemsCount
+        self.queries = queries
     }
 }
