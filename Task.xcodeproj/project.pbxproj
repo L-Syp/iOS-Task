@@ -9,9 +9,9 @@
 /* Begin PBXBuildFile section */
 		D61D1ACB203DA62700ECF2EC /* CoreDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D61D1ACA203DA62700ECF2EC /* CoreDataTests.swift */; };
 		D69E9E39203C1C6000FF5EA4 /* DataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D69E9E38203C1C6000FF5EA4 /* DataModel.swift */; };
-		D6A6D6A22034811D00441D53 /* ArticlesHeadingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6A6D6A12034811D00441D53 /* ArticlesHeadingTableViewCell.swift */; };
+		D6A6D6A22034811D00441D53 /* HeadingsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6A6D6A12034811D00441D53 /* HeadingsTableViewCell.swift */; };
 		D6AC7F522034721A002DDEDC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6AC7F512034721A002DDEDC /* AppDelegate.swift */; };
-		D6AC7F542034721A002DDEDC /* ArticleDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6AC7F532034721A002DDEDC /* ArticleDetailsViewController.swift */; };
+		D6AC7F542034721A002DDEDC /* DetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6AC7F532034721A002DDEDC /* DetailsViewController.swift */; };
 		D6AC7F572034721A002DDEDC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D6AC7F552034721A002DDEDC /* Main.storyboard */; };
 		D6AC7F5A2034721A002DDEDC /* Articles.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = D6AC7F582034721A002DDEDC /* Articles.xcdatamodeld */; };
 		D6AC7F5C2034721A002DDEDC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D6AC7F5B2034721A002DDEDC /* Assets.xcassets */; };
@@ -19,8 +19,10 @@
 		D6AC7F6A2034721A002DDEDC /* FetchingDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6AC7F692034721A002DDEDC /* FetchingDataTests.swift */; };
 		D6AC7F7820347249002DDEDC /* ArticlesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6AC7F7520347248002DDEDC /* ArticlesProvider.swift */; };
 		D6AC7F7B20347317002DDEDC /* ArticleClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6AC7F7A20347317002DDEDC /* ArticleClass.swift */; };
-		D6AC7F8120347EE1002DDEDC /* ArticleHeadingTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6AC7F8020347EE1002DDEDC /* ArticleHeadingTableViewController.swift */; };
+		D6AC7F8120347EE1002DDEDC /* HeadingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6AC7F8020347EE1002DDEDC /* HeadingsTableViewController.swift */; };
+		D6DB39DB2046B56A0019E9C3 /* SettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6DB39DA2046B56A0019E9C3 /* SettingViewController.swift */; };
 		D6F68BEF203EB8E400D3709D /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F68BEE203EB8E400D3709D /* Extensions.swift */; };
+		D6FC5AB12046C5A500787B68 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6FC5AB02046C5A400787B68 /* Settings.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,10 +38,10 @@
 /* Begin PBXFileReference section */
 		D61D1ACA203DA62700ECF2EC /* CoreDataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataTests.swift; sourceTree = "<group>"; };
 		D69E9E38203C1C6000FF5EA4 /* DataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModel.swift; sourceTree = "<group>"; };
-		D6A6D6A12034811D00441D53 /* ArticlesHeadingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ArticlesHeadingTableViewCell.swift; path = /Users/u589242/Documents/Developer/iOS_Task/Task/Task/ArticlesHeadingTableViewCell.swift; sourceTree = "<absolute>"; };
+		D6A6D6A12034811D00441D53 /* HeadingsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HeadingsTableViewCell.swift; path = /Users/u589242/Documents/Developer/iOS_Task/Task/Task/HeadingsTableViewCell.swift; sourceTree = "<absolute>"; };
 		D6AC7F4E2034721A002DDEDC /* Task.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Task.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D6AC7F512034721A002DDEDC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		D6AC7F532034721A002DDEDC /* ArticleDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleDetailsViewController.swift; sourceTree = "<group>"; };
+		D6AC7F532034721A002DDEDC /* DetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailsViewController.swift; sourceTree = "<group>"; };
 		D6AC7F562034721A002DDEDC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		D6AC7F592034721A002DDEDC /* Task.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Task.xcdatamodel; sourceTree = "<group>"; };
 		D6AC7F5B2034721A002DDEDC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -50,8 +52,10 @@
 		D6AC7F6B2034721A002DDEDC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D6AC7F7520347248002DDEDC /* ArticlesProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ArticlesProvider.swift; path = ../../../ArticlesProvider.swift; sourceTree = "<group>"; };
 		D6AC7F7A20347317002DDEDC /* ArticleClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ArticleClass.swift; path = ../../../ArticleClass.swift; sourceTree = "<group>"; };
-		D6AC7F8020347EE1002DDEDC /* ArticleHeadingTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleHeadingTableViewController.swift; sourceTree = "<group>"; };
+		D6AC7F8020347EE1002DDEDC /* HeadingsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeadingsTableViewController.swift; sourceTree = "<group>"; };
+		D6DB39DA2046B56A0019E9C3 /* SettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingViewController.swift; sourceTree = "<group>"; };
 		D6F68BEE203EB8E400D3709D /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		D6FC5AB02046C5A400787B68 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,11 +99,13 @@
 			children = (
 				D6AC7F512034721A002DDEDC /* AppDelegate.swift */,
 				D6AC7F552034721A002DDEDC /* Main.storyboard */,
-				D6A6D6A12034811D00441D53 /* ArticlesHeadingTableViewCell.swift */,
-				D6AC7F532034721A002DDEDC /* ArticleDetailsViewController.swift */,
-				D6AC7F8020347EE1002DDEDC /* ArticleHeadingTableViewController.swift */,
+				D6AC7F532034721A002DDEDC /* DetailsViewController.swift */,
+				D6A6D6A12034811D00441D53 /* HeadingsTableViewCell.swift */,
+				D6AC7F8020347EE1002DDEDC /* HeadingsTableViewController.swift */,
+				D6DB39DA2046B56A0019E9C3 /* SettingViewController.swift */,
 				D6AC7F7A20347317002DDEDC /* ArticleClass.swift */,
 				D6AC7F7520347248002DDEDC /* ArticlesProvider.swift */,
+				D6FC5AB02046C5A400787B68 /* Settings.swift */,
 				D69E9E38203C1C6000FF5EA4 /* DataModel.swift */,
 				D6F68BEE203EB8E400D3709D /* Extensions.swift */,
 				D6AC7F5B2034721A002DDEDC /* Assets.xcassets */,
@@ -225,12 +231,14 @@
 			files = (
 				D69E9E39203C1C6000FF5EA4 /* DataModel.swift in Sources */,
 				D6F68BEF203EB8E400D3709D /* Extensions.swift in Sources */,
-				D6A6D6A22034811D00441D53 /* ArticlesHeadingTableViewCell.swift in Sources */,
-				D6AC7F8120347EE1002DDEDC /* ArticleHeadingTableViewController.swift in Sources */,
+				D6A6D6A22034811D00441D53 /* HeadingsTableViewCell.swift in Sources */,
+				D6AC7F8120347EE1002DDEDC /* HeadingsTableViewController.swift in Sources */,
 				D6AC7F5A2034721A002DDEDC /* Articles.xcdatamodeld in Sources */,
-				D6AC7F542034721A002DDEDC /* ArticleDetailsViewController.swift in Sources */,
+				D6DB39DB2046B56A0019E9C3 /* SettingViewController.swift in Sources */,
+				D6AC7F542034721A002DDEDC /* DetailsViewController.swift in Sources */,
 				D6AC7F7B20347317002DDEDC /* ArticleClass.swift in Sources */,
 				D6AC7F522034721A002DDEDC /* AppDelegate.swift in Sources */,
+				D6FC5AB12046C5A500787B68 /* Settings.swift in Sources */,
 				D6AC7F7820347249002DDEDC /* ArticlesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

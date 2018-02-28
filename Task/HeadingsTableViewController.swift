@@ -9,13 +9,10 @@
 import UIKit
 import CoreData
 
-class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResultsControllerDelegate {
+class HeadingsTableViewController: UITableViewController,  NSFetchedResultsControllerDelegate {
     
     // MARK: Properties
-    let apiKey = "2beb5953fd92424983abae1dc1c7d58c"
-    let endpoint = ArticlesProvider.Endpoints.topHeadlines
-    let itemsCount = 20
-    let additionalQueries = [URLQueryItem(name: "country", value: "us")]
+    var settings: QuerySettings? = QuerySettings()
     let defaultImage: UIImage = #imageLiteral(resourceName: "newsImage")
     let persistentContainer = NSPersistentContainer(name: "Articles")
     let articleFerchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Article")
@@ -28,11 +25,19 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
     }
     
     // MARK: Actions
-    @IBAction func refreshButton(_ sender: UIBarButtonItem) {
+    @IBAction func refreshButton(_ sender: Any?) {
         if checkNetworkConnection() {
             DataModel.deleteArticlesFromMemory(fetchedResultsController: fetchedResultsController)
-            self.downloadData(endpoint: endpoint, itemsCount: itemsCount, additionalQueries: additionalQueries)
-            
+            guard let settings = settings else { return }
+            self.downloadData(settings: settings)
+        }
+    }
+    
+    @IBAction func unwindToArticleList(sender: UIStoryboardSegue) {
+        if let sourceViewController = sender.source as? SettingViewController, let settings = sourceViewController.settings {
+            self.settings = settings
+            refreshButton(nil)
+            print(settings)
         }
     }
     
@@ -63,7 +68,8 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
                                                           tableView: self.tableView, fetchedResultsController: fetchedResultsController)
         }
         self.updateView()
-        self.downloadData(endpoint: endpoint, itemsCount: itemsCount, additionalQueries: additionalQueries)
+        guard let settings = settings else { return }
+        self.downloadData(settings: settings)
     }
     
     override func didReceiveMemoryWarning() {
@@ -73,8 +79,8 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showDetailsSegue" {
             let article = fetchedResultsController.object(at: tableView.indexPathForSelectedRow!)
-            let vc = segue.destination as! ArticleDetailsViewController
-            guard sender as? ArticleHeadingTableViewCell != nil else { return }
+            let vc = segue.destination as! DetailsViewController
+            guard sender as? HeadingsTableViewCell != nil else { return }
             if let data = article.image
             {
                 vc.image = UIImage(data: data)
@@ -83,6 +89,12 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
             }
             vc.defaultImage = defaultImage
             vc.article = article
+        }
+        if segue.identifier == "showSettingsSegue" {
+            let navigationVC = segue.destination as! UINavigationController
+            let settingsVC = navigationVC.viewControllers.first as! SettingViewController
+            guard sender as? UIBarButtonItem != nil else { return }
+            settingsVC.settings = settings ?? QuerySettings()
         }
     }
     
@@ -93,7 +105,6 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
             hasArticles = articles.count > 0
         }
         tableView.isHidden = !hasArticles
-        // activityIndicatorView.stopAnimating()
     }
     
     // MARK: NSFetchedResultsControllerDelegate
@@ -120,7 +131,7 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
             }
             break;
         case .update:
-            if let indexPath = indexPath, let cell = tableView.cellForRow(at: indexPath) as? ArticleHeadingTableViewCell {
+            if let indexPath = indexPath, let cell = tableView.cellForRow(at: indexPath) as? HeadingsTableViewCell {
                 configure(cell, at: indexPath)
             }
             break;
@@ -165,7 +176,7 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "ArticleHeadingCell", for: indexPath) as? ArticleHeadingTableViewCell else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "ArticleHeadingCell", for: indexPath) as? HeadingsTableViewCell else {
             fatalError("The dequeued cell is not an instance of ArticleHeadingTableViewCell")
         }
         let colorFirst = UIColor(red: 158.0/255.0, green: 184.0/255.0, blue: 226.0/255.0, alpha: 1.0)
@@ -186,7 +197,7 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
-    func configure(_ cell: ArticleHeadingTableViewCell, at indexPath: IndexPath) {
+    func configure(_ cell: HeadingsTableViewCell, at indexPath: IndexPath) {
         // Fetch Quote
         let index = indexPath
         let article = fetchedResultsController.object(at: indexPath)
@@ -222,8 +233,8 @@ class ArticleHeadingTableViewController: UITableViewController,  NSFetchedResult
     }
     
     // MARK: - Fetching data
-    func downloadData(endpoint: ArticlesProvider.Endpoints, itemsCount: Int, additionalQueries: [URLQueryItem]) {
-        ArticlesProvider.downloadData(endpoint: endpoint, itemsCount: itemsCount, additionalQueries: additionalQueries, apiKey: apiKey)
+    func downloadData(settings: QuerySettings) {
+        ArticlesProvider.downloadData(endpoint: settings.endpoint, itemsCount: settings.itemsCount, additionalQueries: settings.additionalQueries, apiKey: settings.apiKey)
         { data, response, error in
             self.checkNetworkConnection()
             if let error = error {

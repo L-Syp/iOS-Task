@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ArticleDetailsViewController: UIViewController {
+class DetailsViewController: UIViewController {
     
     // MARK: Outlets
     @IBOutlet weak var imageView: UIImageView!
@@ -17,6 +17,7 @@ class ArticleDetailsViewController: UIViewController {
     @IBOutlet weak var descriptionLabel: UILabel!
     @IBOutlet weak var authorLabel: UILabel!
     @IBOutlet var rootView: UIView!
+    @IBOutlet weak var containerView: UIView!
     
     // MARK: Properties
     var article: Article? = nil
@@ -36,8 +37,6 @@ class ArticleDetailsViewController: UIViewController {
     // MARK: Outlets
     override func viewDidLoad() {
         super.viewDidLoad()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        const.isActive = true
         setViewImage(deviceOrientation: UIDevice.current.orientation)
         titleLabel.text = article!.title
         if let publishedAt = article!.publishedAt {
@@ -79,25 +78,33 @@ class ArticleDetailsViewController: UIViewController {
     
     // MARK: Image setting functions
     func setViewImage(deviceOrientation: UIDeviceOrientation) {
+        print("Constraints BEFORE: \(imageView.constraints)")
         imageView.translatesAutoresizingMaskIntoConstraints = false
         image = image ?? defaultImage
         imageView.image = image
-        if image == defaultImage { setResizedImage(image!, imageView: imageView, deviceOrientation: deviceOrientation, multiplier: 0.5)
-        } else { setResizedImage(image!, imageView: imageView, deviceOrientation: deviceOrientation) }
         imageView.setNeedsDisplay()
+        containerView.setNeedsDisplay()
+        containerView.setNeedsLayout()
         loadViewIfNeeded()
+        DispatchQueue.main.async {
+        
+            if self.image == self.defaultImage { self.setResizedImage(self.image!, imageView: self.imageView, deviceOrientation: deviceOrientation, multiplier: 0.5)
+            } else { self.setResizedImage(self.image!, imageView: self.imageView, deviceOrientation: deviceOrientation, multiplier: 1.0) }
+        }
+        
         setConstraints(to: imageView, with: const)
         print("IMAGE SIZE: \(imageView.image!.size)")
+        print("Constraints AFTER: \(imageView.constraints)")
     }
     
     private func setResizedImage(_ image: UIImage, imageView: UIImageView, deviceOrientation: UIDeviceOrientation, multiplier: CGFloat = 1.0) {
         if deviceOrientation.isPortrait {
             let ratio = image.size.height / image.size.width
-            let newSize = CGSize(width: rootView.frame.size.width * multiplier, height: rootView.frame.size.height * ratio * multiplier)
+            let newSize = CGSize(width: containerView.frame.size.width * multiplier, height: containerView.frame.size.height * ratio * multiplier)
             imageView.image = image.resizeImage(targetSize: newSize) ?? defaultImage?.resizeImage(targetSize: newSize)!
         } else if deviceOrientation.isLandscape {
             let ratio =  image.size.width / image.size.height
-            let newSize = CGSize(width: rootView.frame.size.height * ratio * multiplier, height: rootView.frame.size.width * multiplier)
+            let newSize = CGSize(width: containerView.frame.size.height * ratio * multiplier, height: containerView.frame.size.width * multiplier)
             imageView.image = image.resizeImage(targetSize: newSize) ?? defaultImage?.resizeImage(targetSize: newSize)!
         }
     }

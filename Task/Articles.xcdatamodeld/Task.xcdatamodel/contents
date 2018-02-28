@@ -11,12 +11,7 @@
         <attribute name="url" optional="YES" attributeType="URI" syncable="YES"/>
         <attribute name="urlToImage" optional="YES" attributeType="URI" syncable="YES"/>
     </entity>
-    <entity name="TestEntity" representedClassName="TestEntity" syncable="YES" codeGenerationType="class">
-        <attribute name="costam" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="znowucostam" optional="YES" attributeType="String" syncable="YES"/>
-    </entity>
     <elements>
         <element name="Article" positionX="-3258" positionY="-1197" width="128" height="180"/>
-        <element name="TestEntity" positionX="-3258" positionY="-1125" width="128" height="75"/>
     </elements>
 </model>

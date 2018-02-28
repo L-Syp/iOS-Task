@@ -30,8 +30,6 @@ class DataModel {
     }
     
     static func addArticle(_ article: ArticleData, context: NSManagedObjectContext) {
-        //let context = persistentContainer.viewContext
-        
         // Create Quote
         let newArticle = Article(context: context)
         

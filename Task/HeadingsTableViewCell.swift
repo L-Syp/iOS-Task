@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ArticleHeadingTableViewCell: UITableViewCell {
+class HeadingsTableViewCell: UITableViewCell {
 
     @IBOutlet weak var articleHeadingImage: UIImageView!
     @IBOutlet weak var articleHeadingTitle: UILabel!
