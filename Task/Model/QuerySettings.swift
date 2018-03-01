@@ -1,5 +1,5 @@
 //
-//  Settings.swift
+//  QuerySettings.swift
 //  Task
 //
 //  Created by Łukasz Sypniewski on 28/02/2018.
@@ -10,15 +10,22 @@ import Foundation
 import UIKit
 
 struct QuerySettings {
-    var apiKey: String
-    var endpoint: ArticlesProvider.Endpoints
-    var itemsCount: Int
-    var queries: [URLQueryItem]
+    var apiKey: String?
+    var endpoint: ArticlesProvider.Endpoints?
+    var itemsCount: Int?
+    var queries: [URLQueryItem]?
     
     init(apiKey: String, endpoint: ArticlesProvider.Endpoints, itemsCount: Int, queries: [URLQueryItem]) {
         self.apiKey = apiKey
         self.endpoint = endpoint
         self.itemsCount = itemsCount
         self.queries = queries
+    }
+    
+    init() {
+        self.apiKey = nil
+        self.endpoint = nil
+        self.itemsCount = nil
+        self.queries = nil
     }
 }

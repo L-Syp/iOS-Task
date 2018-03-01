@@ -20,8 +20,11 @@
 		D6AC7F8120347EE1002DDEDC /* HeadingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6AC7F8020347EE1002DDEDC /* HeadingsTableViewController.swift */; };
 		D6DB39DB2046B56A0019E9C3 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6DB39DA2046B56A0019E9C3 /* SettingsViewController.swift */; };
 		D6F68BEF203EB8E400D3709D /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F68BEE203EB8E400D3709D /* Extensions.swift */; };
-		D6FC5AB12046C5A500787B68 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6FC5AB02046C5A400787B68 /* Settings.swift */; };
+		D6FC5AB12046C5A500787B68 /* QuerySettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6FC5AB02046C5A400787B68 /* QuerySettings.swift */; };
 		D6FC5AB92047094000787B68 /* ArticlesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6FC5AB82047094000787B68 /* ArticlesProvider.swift */; };
+		D6FC5ABB20470EEA00787B68 /* SettingsCountryTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6FC5ABA20470EEA00787B68 /* SettingsCountryTableViewController.swift */; };
+		D6FC5ABD2047106D00787B68 /* CountriesList.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6FC5ABC2047106D00787B68 /* CountriesList.swift */; };
+		D6FC5ABF2047194000787B68 /* countriesList.json in Resources */ = {isa = PBXBuildFile; fileRef = D6FC5ABE2047194000787B68 /* countriesList.json */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,8 +55,11 @@
 		D6AC7F8020347EE1002DDEDC /* HeadingsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeadingsTableViewController.swift; sourceTree = "<group>"; };
 		D6DB39DA2046B56A0019E9C3 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		D6F68BEE203EB8E400D3709D /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
-		D6FC5AB02046C5A400787B68 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
+		D6FC5AB02046C5A400787B68 /* QuerySettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuerySettings.swift; sourceTree = "<group>"; };
 		D6FC5AB82047094000787B68 /* ArticlesProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ArticlesProvider.swift; path = ../../../../ArticlesProvider.swift; sourceTree = "<group>"; };
+		D6FC5ABA20470EEA00787B68 /* SettingsCountryTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsCountryTableViewController.swift; sourceTree = "<group>"; };
+		D6FC5ABC2047106D00787B68 /* CountriesList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountriesList.swift; sourceTree = "<group>"; };
+		D6FC5ABE2047194000787B68 /* countriesList.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = countriesList.json; path = ../../../../../countriesList.json; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -124,6 +130,7 @@
 				D6A6D6A12034811D00441D53 /* HeadingsTableViewCell.swift */,
 				D6AC7F532034721A002DDEDC /* DetailsViewController.swift */,
 				D6DB39DA2046B56A0019E9C3 /* SettingsViewController.swift */,
+				D6FC5ABA20470EEA00787B68 /* SettingsCountryTableViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -133,7 +140,9 @@
 			children = (
 				D6FC5AB82047094000787B68 /* ArticlesProvider.swift */,
 				D69E9E38203C1C6000FF5EA4 /* DataModel.swift */,
-				D6FC5AB02046C5A400787B68 /* Settings.swift */,
+				D6FC5AB02046C5A400787B68 /* QuerySettings.swift */,
+				D6FC5ABC2047106D00787B68 /* CountriesList.swift */,
+				D6FC5ABE2047194000787B68 /* countriesList.json */,
 				D6AC7F582034721A002DDEDC /* Articles.xcdatamodeld */,
 			);
 			path = Model;
@@ -224,6 +233,7 @@
 			files = (
 				D6AC7F5F2034721A002DDEDC /* LaunchScreen.storyboard in Resources */,
 				D6AC7F5C2034721A002DDEDC /* Assets.xcassets in Resources */,
+				D6FC5ABF2047194000787B68 /* countriesList.json in Resources */,
 				D6AC7F572034721A002DDEDC /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -244,13 +254,15 @@
 			files = (
 				D69E9E39203C1C6000FF5EA4 /* DataModel.swift in Sources */,
 				D6F68BEF203EB8E400D3709D /* Extensions.swift in Sources */,
+				D6FC5ABD2047106D00787B68 /* CountriesList.swift in Sources */,
 				D6A6D6A22034811D00441D53 /* HeadingsTableViewCell.swift in Sources */,
+				D6FC5ABB20470EEA00787B68 /* SettingsCountryTableViewController.swift in Sources */,
 				D6AC7F8120347EE1002DDEDC /* HeadingsTableViewController.swift in Sources */,
 				D6AC7F5A2034721A002DDEDC /* Articles.xcdatamodeld in Sources */,
 				D6DB39DB2046B56A0019E9C3 /* SettingsViewController.swift in Sources */,
 				D6AC7F542034721A002DDEDC /* DetailsViewController.swift in Sources */,
 				D6AC7F522034721A002DDEDC /* AppDelegate.swift in Sources */,
-				D6FC5AB12046C5A500787B68 /* Settings.swift in Sources */,
+				D6FC5AB12046C5A500787B68 /* QuerySettings.swift in Sources */,
 				D6FC5AB92047094000787B68 /* ArticlesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -16,7 +16,6 @@ class DataModel {
             if let error = error {
                 print("Unable to Load Persistent Store")
                 print("\(error), \(error.localizedDescription)")
-                
             } else {
                 do {
                     try fetchedResultsController.performFetch()
@@ -89,10 +88,10 @@ class DataModel {
     
     static func saveAppSettings(settings: QuerySettings) {
         let defaults = UserDefaults.standard
-        defaults.set(NSKeyedArchiver.archivedData(withRootObject: settings.queries), forKey: "Queries")
-        defaults.set(settings.apiKey, forKey: "ApiKey")
-        defaults.set(settings.endpoint.rawValue, forKey: "Endpoint")
-        defaults.set(settings.itemsCount, forKey: "ItemsCount")
+        defaults.set(NSKeyedArchiver.archivedData(withRootObject: settings.queries!), forKey: "Queries")
+        defaults.set(settings.apiKey!, forKey: "ApiKey")
+        defaults.set(settings.endpoint!.rawValue, forKey: "Endpoint")
+        defaults.set(settings.itemsCount!, forKey: "ItemsCount")
     }
     
     static func loadAppSettings() -> QuerySettings {
@@ -113,9 +112,9 @@ class DataModel {
     
     static func printSettings() {
         let settings = loadAppSettings()
-        print("ApiKey: \(settings.apiKey)")
-        print("Queries: \(settings.queries)")
-        print("endpoint: \(settings.endpoint)")
-        print("itemsCount: \(settings.itemsCount)")
+        print("ApiKey: \(settings.apiKey!)")
+        print("Queries: \(settings.queries!)")
+        print("endpoint: \(settings.endpoint!)")
+        print("itemsCount: \(settings.itemsCount!)")
     }
 }

@@ -20,32 +20,32 @@ class DetailsViewController: UIViewController {
     @IBOutlet weak var containerView: UIView!
     
     // MARK: Properties
-    var article: Article? = nil
+    lazy var article: Article = Article()
     var image: UIImage? = nil
-    var defaultImage: UIImage? = nil
-    var const: NSLayoutConstraint {
+    lazy var defaultImage: UIImage = UIImage()
+    var constraint: NSLayoutConstraint {
         get {
             return imageView.heightAnchor.constraint(lessThanOrEqualToConstant: rootView.frame.size.height * 0.75)
         }
     }
     
     // MARK: Actions
-    @IBAction func goToArticleButtnonTouch() {
-        UIApplication.shared.open((article?.url)!, options: [:])
+    @IBAction func goToArticleButtonTouch() {
+        UIApplication.shared.open((article.url)!, options: [:])
     }
     
     // MARK: Outlets
     override func viewDidLoad() {
         super.viewDidLoad()
         setViewImage(deviceOrientation: UIDevice.current.orientation)
-        titleLabel.text = article!.title
-        if let publishedAt = article!.publishedAt {
+        titleLabel.text = article.title
+        if let publishedAt = article.publishedAt {
             pubishedAtLabel.text = "Published at: \(publishedAt[..<publishedAt.index(publishedAt.startIndex, offsetBy: 10)])"
         } else {
             pubishedAtLabel.text = "Published at: -"
         }
-        descriptionLabel.text = article!.articleDescription ?? "No description available"
-        setLabelWithBold(bold: "Author: ", normal: "\(article!.author ?? "-")", at: authorLabel )
+        descriptionLabel.text = article.articleDescription ?? "No description available"
+        setLabelWithBold(bold: "Author: ", normal: "\(article.author ?? "-")", at: authorLabel )
     }
     
     // MARK: Methods
@@ -70,7 +70,7 @@ class DetailsViewController: UIViewController {
         let boldText  = "Author: "
         let attrs = [NSAttributedStringKey.font : UIFont.boldSystemFont(ofSize: 15)]
         let attributedString = NSMutableAttributedString(string:boldText, attributes:attrs)
-        let normalText = "\(article!.author ?? "-")"
+        let normalText = "\(article.author ?? "-")"
         let normalString = NSMutableAttributedString(string:normalText)
         attributedString.append(normalString)
         label.attributedText = attributedString
@@ -78,7 +78,6 @@ class DetailsViewController: UIViewController {
     
     // MARK: Image setting functions
     func setViewImage(deviceOrientation: UIDeviceOrientation) {
-        print("Constraints BEFORE: \(imageView.constraints)")
         imageView.translatesAutoresizingMaskIntoConstraints = false
         image = image ?? defaultImage
         imageView.image = image
@@ -86,26 +85,20 @@ class DetailsViewController: UIViewController {
         containerView.setNeedsDisplay()
         containerView.setNeedsLayout()
         loadViewIfNeeded()
-        DispatchQueue.main.async {
-        
-            if self.image == self.defaultImage { self.setResizedImage(self.image!, imageView: self.imageView, deviceOrientation: deviceOrientation, multiplier: 0.5)
-            } else { self.setResizedImage(self.image!, imageView: self.imageView, deviceOrientation: deviceOrientation, multiplier: 1.0) }
-        }
-        
-        setConstraints(to: imageView, with: const)
-        print("IMAGE SIZE: \(imageView.image!.size)")
-        print("Constraints AFTER: \(imageView.constraints)")
+        if self.image == self.defaultImage { self.setResizedImage(self.image!, imageView: self.imageView, deviceOrientation: deviceOrientation, multiplier: 0.5)
+        } else { self.setResizedImage(self.image!, imageView: self.imageView, deviceOrientation: deviceOrientation, multiplier: 1.0) }
+        setConstraints(to: imageView, with: constraint)
     }
     
     private func setResizedImage(_ image: UIImage, imageView: UIImageView, deviceOrientation: UIDeviceOrientation, multiplier: CGFloat = 1.0) {
         if deviceOrientation.isPortrait {
             let ratio = image.size.height / image.size.width
             let newSize = CGSize(width: containerView.frame.size.width * multiplier, height: containerView.frame.size.height * ratio * multiplier)
-            imageView.image = image.resizeImage(targetSize: newSize) ?? defaultImage?.resizeImage(targetSize: newSize)!
+            imageView.image = image.resizeImage(targetSize: newSize) ?? defaultImage.resizeImage(targetSize: newSize)!
         } else if deviceOrientation.isLandscape {
             let ratio =  image.size.width / image.size.height
             let newSize = CGSize(width: containerView.frame.size.height * ratio * multiplier, height: containerView.frame.size.width * multiplier)
-            imageView.image = image.resizeImage(targetSize: newSize) ?? defaultImage?.resizeImage(targetSize: newSize)!
+            imageView.image = image.resizeImage(targetSize: newSize) ?? defaultImage.resizeImage(targetSize: newSize)!
         }
     }
     
@@ -113,7 +106,6 @@ class DetailsViewController: UIViewController {
         view.translatesAutoresizingMaskIntoConstraints = false
         if !constraint.isActive {
             constraint.isActive = true
-            
         }
         imageView.setNeedsUpdateConstraints()
         imageView.superview?.setNeedsUpdateConstraints()

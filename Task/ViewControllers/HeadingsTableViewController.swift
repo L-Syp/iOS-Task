@@ -32,9 +32,9 @@ class HeadingsTableViewController: UITableViewController,  NSFetchedResultsContr
     }
     
     @IBAction func unwindToArticleList(sender: UIStoryboardSegue) {
-        if let sourceViewController = sender.source as? SettingsViewController, let settings = sourceViewController.settings {
-            DataModel.saveAppSettings(settings: settings)
-            refreshButton(nil)
+        if let sourceViewController = sender.source as? SettingsViewController {
+            DataModel.saveAppSettings(settings: sourceViewController.settings)
+            refreshButton(self)
         }
     }
     
@@ -60,6 +60,7 @@ class HeadingsTableViewController: UITableViewController,  NSFetchedResultsContr
     override func viewDidLoad() {
         super.viewDidLoad()
         DataModel.printSettings()
+        CountriesProvider.decodeJSON(countries: nil)
         DataModel.LoadPersistentStore(persistentContainer: persistentContainer, fetchedResultsController: fetchedResultsController)
         if checkNetworkConnection(){
             DataModel.deleteArticlesFromPersistentStorage(persistentContainer: persistentContainer, fetchRequest: articleFerchRequest,
@@ -97,7 +98,6 @@ class HeadingsTableViewController: UITableViewController,  NSFetchedResultsContr
     
     fileprivate func updateView() {
         var hasArticles = false
-        
         if let articles = fetchedResultsController.fetchedObjects {
             hasArticles = articles.count > 0
         }
@@ -227,7 +227,7 @@ class HeadingsTableViewController: UITableViewController,  NSFetchedResultsContr
     
     // MARK: - Fetching data
     func downloadData(settings: QuerySettings) {
-        ArticlesProvider.downloadData(endpoint: settings.endpoint, itemsCount: settings.itemsCount, queries: settings.queries, apiKey: settings.apiKey)
+        ArticlesProvider.downloadData(endpoint: settings.endpoint!, itemsCount: settings.itemsCount!, queries: settings.queries!, apiKey: settings.apiKey!)
         { data, response, error in
             self.checkNetworkConnection()
             if let error = error {

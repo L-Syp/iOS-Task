@@ -7,13 +7,19 @@
 //
 
 import UIKit
-import os.log
 
 class SettingsViewController: UITableViewController, UIPickerViewDelegate, UIPickerViewDataSource, UITextFieldDelegate {
     
     // MARK: Properties
-    var settings: QuerySettings?
-    var pickerData: [Int] = [Int]()
+    lazy var settings: QuerySettings = QuerySettings()
+    var pickerData: [Int] {
+        get {
+            var array = [Int]()
+            for i in 1...20 { array.append(i) }
+            return array
+        }
+    }
+    
     // MARK: Outlets
     @IBOutlet weak var saveButton: UIBarButtonItem!
     @IBOutlet weak var pickerView: UIPickerView!
@@ -29,8 +35,8 @@ class SettingsViewController: UITableViewController, UIPickerViewDelegate, UIPic
     override func viewDidLoad() {
         super.viewDidLoad()
         preparePickerView()
-        countryCell.textLabel?.text = settings?.queries[1].value
-        topicTextField.text = settings?.queries[0].value
+        countryCell.textLabel?.text = settings.queries![1].value
+        topicTextField.text = settings.queries![0].value
     }
     
     // MARK: PickerView
@@ -49,12 +55,7 @@ class SettingsViewController: UITableViewController, UIPickerViewDelegate, UIPic
     func preparePickerView() {
         pickerView.delegate = self
         pickerView.dataSource = self
-        for i in 1...20 { pickerData.append(i) }
-        if let settings = settings {
-            pickerView.selectRow(settings.itemsCount - 1 /*pickerView.numberOfRows(inComponent: 0) does not work*/, inComponent: 0, animated: true)
-        } else {
-            pickerView.selectRow(10, inComponent: 0, animated: true)
-        }
+       pickerView.selectRow(settings.itemsCount! - 1 /*pickerView.numberOfRows(inComponent: 0) does not work*/, inComponent: 0, animated: true)
     }
     
     // MARK: UITextFieldDelegate
@@ -67,18 +68,13 @@ class SettingsViewController: UITableViewController, UIPickerViewDelegate, UIPic
     }
     
     // MARK: Segue
-    
-    // This method lets you configure a view controller before it's presented.
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         super.prepare(for: segue, sender: sender)
-        // Configure the destination view controller only when the save button is pressed.
         guard let button = sender as? UIBarButtonItem, button === saveButton else {
-            os_log("The save button was not pressed, cancelling", log: OSLog.default, type: .debug)
+            print("The save button was not pressed, cancelling")
             return
         }
-        if settings != nil {
-            settings!.itemsCount = pickerData[pickerView.selectedRow(inComponent: 0)]
-            settings!.queries = [URLQueryItem(name: "q", value: topicTextField.text), URLQueryItem(name: "language", value: countryCell.textLabel?.text)]
-        }
+            settings.itemsCount = pickerData[pickerView.selectedRow(inComponent: 0)]
+            settings.queries = [URLQueryItem(name: "q", value: topicTextField.text), URLQueryItem(name: "language", value: countryCell.textLabel?.text)]
     }
 }
