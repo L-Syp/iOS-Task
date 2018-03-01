@@ -35,6 +35,7 @@ class HeadingsTableViewController: UITableViewController,  NSFetchedResultsContr
         if let sourceViewController = sender.source as? SettingsViewController {
             DataModel.saveAppSettings(settings: sourceViewController.settings)
             refreshButton(self)
+            print("SETTINGS: \(sourceViewController.settings)")
         }
     }
     
@@ -59,8 +60,7 @@ class HeadingsTableViewController: UITableViewController,  NSFetchedResultsContr
     // MARK: - View Methods
     override func viewDidLoad() {
         super.viewDidLoad()
-        DataModel.printSettings()
-        CountriesProvider.decodeJSON(countries: nil)
+        print(Array(UserDefaults.standard.dictionaryRepresentation()))
         DataModel.LoadPersistentStore(persistentContainer: persistentContainer, fetchedResultsController: fetchedResultsController)
         if checkNetworkConnection(){
             DataModel.deleteArticlesFromPersistentStorage(persistentContainer: persistentContainer, fetchRequest: articleFerchRequest,
