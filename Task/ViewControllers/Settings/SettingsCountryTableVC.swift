@@ -1,5 +1,5 @@
 //
-//  SettingsCountryTableViewController.swift
+//  SettingsCountryTableVC.swift
 //  Task
 //
 //  Created by Łukasz Sypniewski on 28/02/2018.
@@ -12,7 +12,7 @@ protocol SettingsCountryTableVCDelegate {
     func chooseCountry(country: Country)
 }
 
-class SettingsCountryTableViewController: UITableViewController  {
+class SettingsCountryTableVC: UITableViewController  {
     
     // MARK: Properties
     var countries: [Country] = [Country]() {
@@ -21,7 +21,7 @@ class SettingsCountryTableViewController: UITableViewController  {
         }
     }
     var selectedCountry: Country? = nil
-    var currentCountryCode: String = String()
+    lazy var currentCountryCode: String = String()
     var delegate: SettingsCountryTableVCDelegate?
     
     // MARK: Outlets
@@ -38,13 +38,12 @@ class SettingsCountryTableViewController: UITableViewController  {
     }
     
     // MARK: Set view
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         selectCountry(at: countries.index(where: { $0.code == currentCountryCode })!)
         saveButton.isEnabled = false
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
@@ -53,16 +52,16 @@ class SettingsCountryTableViewController: UITableViewController  {
         let rowIndex = IndexPath(row: index, section: 0)
         tableView.selectRow(at: rowIndex, animated: true, scrollPosition: .middle)
     }
-
+    
     // MARK: - Table view data source
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
-
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return countries.count
     }
-
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "CountrySettingsCell", for: indexPath) as? SettingsCountryCellTableViewCell else {
             fatalError("The dequeued cell is not an instance of SettingsCountryCellTableViewCell")

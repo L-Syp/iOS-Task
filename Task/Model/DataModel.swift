@@ -85,36 +85,4 @@ class DataModel {
         }
         return count
     }
-    
-    static func saveAppSettings(settings: QuerySettings) {
-        let defaults = UserDefaults.standard
-        defaults.set(NSKeyedArchiver.archivedData(withRootObject: settings.queries!), forKey: "Queries")
-        defaults.set(settings.apiKey!, forKey: "ApiKey")
-        defaults.set(settings.endpoint!.rawValue, forKey: "Endpoint")
-        defaults.set(settings.itemsCount!, forKey: "ItemsCount")
-    }
-    
-    static func loadAppSettings() -> QuerySettings {
-        let defaults = UserDefaults.standard
-        let queries: [URLQueryItem] = {
-            if let queriesObject = defaults.value(forKey: "Queries") as? NSData {
-                return NSKeyedUnarchiver.unarchiveObject(with: queriesObject as Data) as! [URLQueryItem]
-            } else {
-                return [URLQueryItem(name: "q", value: "bitcoin"), URLQueryItem(name: "language", value: "pl")]
-            }
-        }()
-        let apiKey = defaults.string(forKey: "ApiKey") ?? "2beb5953fd92424983abae1dc1c7d58c"
-        let endpointValue = defaults.string(forKey: "Endpoint") ?? ArticlesProvider.Endpoints.everything.rawValue
-        let itemsCount = defaults.integer(forKey: "ItemsCount") != 0 ? defaults.integer(forKey: "ItemsCount") : 5
-        let endpoint = ArticlesProvider.Endpoints(rawValue: endpointValue)!
-        return QuerySettings(apiKey: apiKey, endpoint: endpoint, itemsCount: itemsCount, queries: queries)
-    }
-    
-    static func printSettings() {
-        let settings = loadAppSettings()
-        print("ApiKey: \(settings.apiKey!)")
-        print("Queries: \(settings.queries!)")
-        print("endpoint: \(settings.endpoint!)")
-        print("itemsCount: \(settings.itemsCount!)")
-    }
 }

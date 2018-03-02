@@ -15,6 +15,13 @@ struct QuerySettings {
     var itemsCount: Int?
     var queries: [URLQueryItem]?
     
+    enum Keys: String {
+        case ApiKey
+        case Endpoint
+        case ItemsCount
+        case Queries
+    }
+    
     init(apiKey: String, endpoint: ArticlesProvider.Endpoints, itemsCount: Int, queries: [URLQueryItem]) {
         self.apiKey = apiKey
         self.endpoint = endpoint

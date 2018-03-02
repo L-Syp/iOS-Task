@@ -1,5 +1,5 @@
 //
-//  ArticleDetailsViewController.swift
+//  ArticleDetailsVC.swift
 //  Task
 //
 //  Created by Łukasz Sypniewski on 14/02/2018.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class DetailsViewController: UIViewController {
+class DetailsVC: UIViewController {
     
     // MARK: Outlets
     @IBOutlet weak var imageView: UIImageView!

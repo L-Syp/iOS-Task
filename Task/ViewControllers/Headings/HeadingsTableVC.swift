@@ -1,5 +1,5 @@
 //
-//  ArticleHeadingTableViewController.swift
+//  ArticleHeadingTableVC.swift
 //  Task
 //
 //  Created by Łukasz Sypniewski on 14/02/2018.
@@ -9,13 +9,13 @@
 import UIKit
 import CoreData
 
-class HeadingsTableViewController: UITableViewController,  NSFetchedResultsControllerDelegate {
+class HeadingsTableVC: UITableViewController,  NSFetchedResultsControllerDelegate {
     
     // MARK: Properties
     let defaultImage: UIImage = #imageLiteral(resourceName: "newsImage")
     let persistentContainer = NSPersistentContainer(name: "Articles")
     let articleFerchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Article")
-    var cachedImages:[UIImage?] = Array(repeating: nil, count: 300)//[UIImage?]()
+    lazy var cachedImages:[UIImage?] = Array(repeating: nil, count: self.tableView.numberOfRows(inSection: 0))
     var isOnline = false {
         didSet {
             let title = isOnline ? "Breaking news" : "Breaking news (offline mode)"
@@ -27,13 +27,13 @@ class HeadingsTableViewController: UITableViewController,  NSFetchedResultsContr
     @IBAction func refreshButton(_ sender: Any?) {
         if checkNetworkConnection() {
             DataModel.deleteArticlesFromMemory(fetchedResultsController: fetchedResultsController)
-            self.downloadData(settings: DataModel.loadAppSettings())
+            self.downloadData(settings: SettingsManager.loadAppSettings())
         }
     }
     
     @IBAction func unwindToArticleList(sender: UIStoryboardSegue) {
-        if let sourceViewController = sender.source as? SettingsViewController {
-            DataModel.saveAppSettings(settings: sourceViewController.settings)
+        if let sourceViewController = sender.source as? SettingsVC {
+            SettingsManager.saveAppSettings(settings: sourceViewController.settings)
             refreshButton(self)
             print("SETTINGS: \(sourceViewController.settings)")
         }
@@ -67,7 +67,7 @@ class HeadingsTableViewController: UITableViewController,  NSFetchedResultsContr
                                                           tableView: self.tableView, fetchedResultsController: fetchedResultsController)
         }
         self.updateView()
-        self.downloadData(settings: DataModel.loadAppSettings())
+        self.downloadData(settings: SettingsManager.loadAppSettings())
     }
     
     override func didReceiveMemoryWarning() {
@@ -77,7 +77,7 @@ class HeadingsTableViewController: UITableViewController,  NSFetchedResultsContr
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showDetailsSegue" {
             let article = fetchedResultsController.object(at: tableView.indexPathForSelectedRow!)
-            let vc = segue.destination as! DetailsViewController
+            let vc = segue.destination as! DetailsVC
             guard sender as? HeadingsTableViewCell != nil else { return }
             if let data = article.image
             {
@@ -90,9 +90,9 @@ class HeadingsTableViewController: UITableViewController,  NSFetchedResultsContr
         }
         if segue.identifier == "showSettingsSegue" {
             let navigationVC = segue.destination as! UINavigationController
-            let settingsVC = navigationVC.viewControllers.first as! SettingsViewController
+            let settingsVC = navigationVC.viewControllers.first as! SettingsVC
             guard sender as? UIBarButtonItem != nil else { return }
-            settingsVC.settings = DataModel.loadAppSettings()
+            settingsVC.settings = SettingsManager.loadAppSettings()
         }
     }
     

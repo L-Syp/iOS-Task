@@ -1,5 +1,5 @@
 //
-//  SettingViewController.swift
+//  SettingVC.swift
 //  Task
 //
 //  Created by Łukasz Sypniewski on 28/02/2018.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SettingsViewController: UITableViewController, UIPickerViewDelegate,
+class SettingsVC: UITableViewController, UIPickerViewDelegate,
 UIPickerViewDataSource, SettingsCountryTableVCDelegate {
     
     // MARK: Properties
@@ -75,7 +75,7 @@ UIPickerViewDataSource, SettingsCountryTableVCDelegate {
         }
         if segue.identifier == "countriesTableSegue" {
             let navigationVC = segue.destination as! UINavigationController
-            let countriesTableVC = navigationVC.viewControllers.first as! SettingsCountryTableViewController
+            let countriesTableVC = navigationVC.viewControllers.first as! SettingsCountryTableVC
             countriesTableVC.delegate = self
             countriesTableVC.countries = availableCountries
             countriesTableVC.currentCountryCode = settings.queries![0].value!

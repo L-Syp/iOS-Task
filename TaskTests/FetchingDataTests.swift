@@ -16,11 +16,9 @@ class TaskFetchingTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
     }
     
     override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
         super.tearDown()
     }
     
@@ -33,7 +31,7 @@ class TaskFetchingTests: XCTestCase {
     
     func testServiceConnection() {
         let expectation = self.expectation(description: "Server's HTTP response equals 200")
-        ArticlesProvider.downloadData(endpoint: ArticlesProvider.Endpoints.topHeadlines, itemsCount: 0, additionalQueries: [URLQueryItem(name: "country", value: "us")],
+        ArticlesProvider.downloadData(endpoint: ArticlesProvider.Endpoints.topHeadlines, itemsCount: 0, queries: [URLQueryItem(name: "country", value: "us")],
                              apiKey: apiKey) { data, response, error in
                                 XCTAssert((response as! HTTPURLResponse).statusCode == 200)
                                 expectation.fulfill()
@@ -69,7 +67,7 @@ class TaskFetchingTests: XCTestCase {
         let testAdditionalQueries = additionalQueries
         continueAfterFailure = false
         
-        ArticlesProvider.downloadData(endpoint: testEndpoint, itemsCount: itemsCount, additionalQueries: testAdditionalQueries, apiKey: apiKey) { data, response, error in
+        ArticlesProvider.downloadData(endpoint: testEndpoint, itemsCount: itemsCount, queries: testAdditionalQueries, apiKey: apiKey) { data, response, error in
             guard let response = response else {
                 XCTFail("Couldn't connect to the server. Check internet connection.")
                 return
