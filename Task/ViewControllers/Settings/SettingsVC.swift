@@ -84,7 +84,8 @@ UIPickerViewDataSource, SettingsCountryTableVCDelegate {
     
     private func parseJSON(from path: String) -> [Country] {
         do {
-            return try CountriesProvider.decodeJSON(from: path)!.filter{ CountriesProvider.availableCountries.contains($0.code.lowercased()) }
+            let allCountries = try CountriesProvider.decodeJSON(from: path)!
+            return allCountries.filter{ CountriesProvider.availableCountries.contains($0.code.lowercased()) }
         } catch {
             fatalError("Error during parsing json file containing list of countries.")
         }

@@ -36,7 +36,7 @@ enum DownloadingDataError: Error {
     case OtherError
 }
 
-class ArticlesProvider {
+struct ArticlesProvider {
     enum Endpoints : String {
         case topHeadlines = "/v2/top-headlines"
         case everything = "/v2/everything"

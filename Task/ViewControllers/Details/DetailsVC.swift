@@ -79,11 +79,7 @@ class DetailsVC: UIViewController {
     // MARK: Image setting functions
     func setViewImage(deviceOrientation: UIDeviceOrientation) {
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        image = image ?? defaultImage
-        imageView.image = image
-        imageView.setNeedsDisplay()
-        containerView.setNeedsDisplay()
-        containerView.setNeedsLayout()
+        imageView.image = image ?? defaultImage
         loadViewIfNeeded()
         if self.image == self.defaultImage { self.setResizedImage(self.image!, imageView: self.imageView, deviceOrientation: deviceOrientation, multiplier: 0.5)
         } else { self.setResizedImage(self.image!, imageView: self.imageView, deviceOrientation: deviceOrientation, multiplier: 1.0) }

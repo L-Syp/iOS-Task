@@ -10,20 +10,19 @@ import Foundation
 import CoreData
 import UIKit
 
-class DataModel {
+struct DataModel {
     static func LoadPersistentStore<T>(persistentContainer: NSPersistentContainer, fetchedResultsController: NSFetchedResultsController<T>) {
         persistentContainer.loadPersistentStores { (persistentStoreDescription, error) in
-            if let error = error {
+            guard error == nil else {
                 print("Unable to Load Persistent Store")
-                print("\(error), \(error.localizedDescription)")
-            } else {
-                do {
-                    try fetchedResultsController.performFetch()
-                } catch {
-                    let fetchError = error as NSError
-                    print("Unable to Perform Fetch Request")
-                    print("\(fetchError), \(fetchError.localizedDescription)")
-                }
+                fatalError("\(error!), \(error!.localizedDescription)")
+            }
+            do {
+                try fetchedResultsController.performFetch()
+            } catch {
+                let fetchError = error as NSError
+                print("Unable to Perform Fetch Request")
+                print("\(fetchError), \(fetchError.localizedDescription)")
             }
         }
     }

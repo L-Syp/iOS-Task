@@ -8,7 +8,7 @@
 
 import Foundation
 
-class SettingsManager {
+struct SettingsManager {
     static func saveAppSettings(settings: QuerySettings) {
         let defaults = UserDefaults.standard
         defaults.set(NSKeyedArchiver.archivedData(withRootObject: settings.queries!), forKey: QuerySettings.Keys.Queries.rawValue)
