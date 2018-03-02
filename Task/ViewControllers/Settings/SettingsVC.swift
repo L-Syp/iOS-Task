@@ -8,8 +8,7 @@
 
 import UIKit
 
-class SettingsVC: UITableViewController, UIPickerViewDelegate,
-UIPickerViewDataSource, SettingsCountryTableVCDelegate {
+class SettingsVC: UITableViewController {
     
     // MARK: Properties
     lazy var settings: QuerySettings = QuerySettings()
@@ -43,28 +42,10 @@ UIPickerViewDataSource, SettingsCountryTableVCDelegate {
     }
     
     // MARK: PickerView
-    func numberOfComponents(in pickerView: UIPickerView) -> Int {
-        return 1
-    }
-    
-    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return pickerData.count
-    }
-    
-    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        return String(pickerData[row])
-    }
-    
     func preparePickerView() {
         pickerView.delegate = self
         pickerView.dataSource = self
         pickerView.selectRow(settings.itemsCount! - 1 /*pickerView.numberOfRows(inComponent: 0) does not work*/, inComponent: 0, animated: true)
-    }
-    
-    // MARK: CountryTableViewDelegate
-    func chooseCountry(country: Country) {
-        countryCell.textLabel?.text = "\(country.flag) \(country.name)"
-        settings.queries = [URLQueryItem(name: "country", value: country.code)]
     }
     
     // MARK: Segue
@@ -95,6 +76,31 @@ UIPickerViewDataSource, SettingsCountryTableVCDelegate {
         let flag = CountriesProvider.getCountryFlag(from: countries, for: countryCode)
         let name = CountriesProvider.getCountryName(from: countries, for: countryCode)
         countryCell.textLabel?.text = "\(flag) \(name)"
+    }
+}
+
+// MARK: - UIPickerViewDelegate
+extension SettingsVC: UIPickerViewDelegate {
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return String(self.pickerData[row])
+    }
+}
+
+// MARK: - UIPickerViewDataSource
+extension SettingsVC: UIPickerViewDataSource {
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return self.pickerData.count
+    }
+}
+
+// MARK: - SettingsCountryTableVCDelegate
+extension SettingsVC: SettingsCountryTableVCDelegate {
+    func chooseCountry(country: Country) {
+        countryCell.textLabel?.text = "\(country.flag) \(country.name)"
+        settings.queries = [URLQueryItem(name: "country", value: country.code)]
     }
 }
 

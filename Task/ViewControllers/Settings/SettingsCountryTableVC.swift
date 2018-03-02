@@ -8,11 +8,14 @@
 
 import UIKit
 
-protocol SettingsCountryTableVCDelegate {
+protocol SettingsCountryTableVCDelegate: AnyObject {
     func chooseCountry(country: Country)
 }
 
-class SettingsCountryTableVC: UITableViewController  {
+class SettingsCountryTableVC: UIViewController  {
+    
+    // MARK: Outlets
+    @IBOutlet weak var tableView: UITableView!
     
     // MARK: Properties
     var countries: [Country] = [Country]() {
@@ -22,7 +25,7 @@ class SettingsCountryTableVC: UITableViewController  {
     }
     var selectedCountry: Country? = nil
     lazy var currentCountryCode: String = String()
-    var delegate: SettingsCountryTableVCDelegate?
+    weak var delegate: SettingsCountryTableVCDelegate?
     
     // MARK: Outlets
     @IBOutlet weak var saveButton: UIBarButtonItem!
@@ -40,6 +43,8 @@ class SettingsCountryTableVC: UITableViewController  {
     // MARK: Set view
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.delegate = self
+        tableView.dataSource = self
         selectCountry(at: countries.index(where: { $0.code == currentCountryCode })!)
         saveButton.isEnabled = false
     }
@@ -53,26 +58,33 @@ class SettingsCountryTableVC: UITableViewController  {
         tableView.selectRow(at: rowIndex, animated: true, scrollPosition: .middle)
     }
     
-    // MARK: - Table view data source
-    override func numberOfSections(in tableView: UITableView) -> Int {
+}
+
+// MARK: - UITableViewDelegate
+extension SettingsCountryTableVC : UITableViewDelegate
+{
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if !saveButton.isEnabled { saveButton.isEnabled = true }
+        selectedCountry = countries[indexPath.row]
+    }
+}
+
+// MARK: - UITableViewDataSource
+extension SettingsCountryTableVC : UITableViewDataSource {
+    func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
     
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return countries.count
     }
     
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "CountrySettingsCell", for: indexPath) as? SettingsCountryCellTableViewCell else {
             fatalError("The dequeued cell is not an instance of SettingsCountryCellTableViewCell")
         }
         cell.labelName.text = "\(countries[indexPath.row].flag) \(countries[indexPath.row].name)"
         return cell
-    }
-    
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if !saveButton.isEnabled { saveButton.isEnabled = true }
-        selectedCountry = countries[indexPath.row]
     }
 }
 

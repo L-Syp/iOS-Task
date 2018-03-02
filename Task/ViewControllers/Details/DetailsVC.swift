@@ -66,7 +66,7 @@ class DetailsVC: UIViewController {
         setViewImage(deviceOrientation: UIDevice.current.orientation)
     }
     
-    fileprivate func setLabelWithBold(bold: String, normal: String, at label: UILabel) {
+    private func setLabelWithBold(bold: String, normal: String, at label: UILabel) {
         let boldText  = "Author: "
         let attrs = [NSAttributedStringKey.font : UIFont.boldSystemFont(ofSize: 15)]
         let attributedString = NSMutableAttributedString(string:boldText, attributes:attrs)
