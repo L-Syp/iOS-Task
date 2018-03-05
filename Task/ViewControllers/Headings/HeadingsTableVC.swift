@@ -15,9 +15,9 @@ class HeadingsTableVC: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     
     // MARK: Properties
-    let persistentContainer = NSPersistentContainer(name: "Articles")
-    let articleFerchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Article")
-    lazy var dataSource: HeadingsTableDataSource? = HeadingsTableDataSource(fetchedResultsController: fetchedResultsController, persistentContainer: persistentContainer)
+    let persistentContainer: NSPersistentContainer
+    let articleFerchRequest: NSFetchRequest<NSFetchRequestResult>
+    lazy var dataSource = HeadingsTableDataSource(fetchedResultsController: fetchedResultsController, persistentContainer: persistentContainer)
     var isOnline = false {
         didSet {
             let title = isOnline ? "Breaking news" : "Breaking news (offline mode)"
@@ -41,11 +41,19 @@ class HeadingsTableVC: UIViewController {
         return fetchedResultsController
     }()
     
+    // MARK: Initializers
+    required init?(coder aDecoder: NSCoder) {
+        self.persistentContainer = NSPersistentContainer(name: "Articles")
+        self.articleFerchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Article")
+        super.init(coder: aDecoder)
+    }
+    
+    
     // MARK: Actions
     @IBAction func refreshButton(_ sender: Any?) {
         if checkNetworkConnection() {
             DataModel.deleteArticlesFromMemory(fetchedResultsController: fetchedResultsController)
-            dataSource!.downloadData(settings: SettingsManager.loadAppSettings())
+            dataSource.downloadData(settings: SettingsManager.loadAppSettings())
         }
     }
     
@@ -60,7 +68,7 @@ class HeadingsTableVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.dataSource = dataSource
-        dataSource!.delegate = self
+        dataSource.delegate = self
         tableView.delegate = self
         DataModel.LoadPersistentStore(persistentContainer: persistentContainer, fetchedResultsController: fetchedResultsController)
         if checkNetworkConnection(){
@@ -68,7 +76,7 @@ class HeadingsTableVC: UIViewController {
                                                           tableView: self.tableView, fetchedResultsController: fetchedResultsController)
         }
         self.updateView()
-        dataSource!.downloadData(settings: SettingsManager.loadAppSettings())
+        dataSource.downloadData(settings: SettingsManager.loadAppSettings())
     }
     
     override func didReceiveMemoryWarning() {
@@ -118,7 +126,7 @@ extension HeadingsTableVC : UITableViewDelegate
     }
 }
 
-// MARK: UITableViewDelegate
+// MARK: HeadingsTableDataSourceDelegate
 extension HeadingsTableVC : HeadingsTableDataSourceDelegate
 {
     func downloadData(endpoint: ArticlesProvider.Endpoints, itemsCount: Int, queries: [URLQueryItem], apiKey: String, callBack: @escaping (Articles?, URLResponse?, Error?) -> ()) {
@@ -177,7 +185,7 @@ extension HeadingsTableVC: NSFetchedResultsControllerDelegate {
             break;
         case .update:
             if let indexPath = indexPath, let cell = tableView.cellForRow(at: indexPath) as? HeadingsTableViewCell {
-                dataSource!.configure(cell, at: indexPath)
+                dataSource.configure(cell, at: indexPath)
             }
             break;
         case .move:

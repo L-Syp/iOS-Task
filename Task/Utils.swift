@@ -41,7 +41,6 @@ class Utils {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: NSLocalizedString(buttonText, comment: "Default action"), style: .`default`, handler: nil))
         UIApplication.shared.keyWindow?.rootViewController?.present(alert, animated: true, completion: nil)
-        //alert.present(vc, animated: true, completion: nil)
     }
     
     static func showNoConnectionAlert(_ vc: UIViewController) {

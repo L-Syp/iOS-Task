@@ -11,9 +11,9 @@ import UIKit
 class SettingsVC: UITableViewController {
     
     // MARK: Properties
-    lazy var settings: QuerySettings = QuerySettings()
-    let JSONFilePath = Bundle.main.path(forResource: "countriesList", ofType: "json")
+    let JSONFilePath: String
     lazy var availableCountries: [Country] = [Country]()
+    lazy var settings: QuerySettings = QuerySettings()
     var pickerData: [Int] {
         get {
             var array = [Int]()
@@ -32,10 +32,16 @@ class SettingsVC: UITableViewController {
         dismiss(animated: true, completion: nil)
     }
     
+    // MARK: Initializers
+    required init?(coder aDecoder: NSCoder) {
+        self.JSONFilePath = Bundle.main.path(forResource: "countriesList", ofType: "json")!
+        super.init(coder: aDecoder)
+    }
+    
     // MARK: Set views
     override func viewDidLoad() {
         super.viewDidLoad()
-        availableCountries = parseAndFilterJSON(from: JSONFilePath!)
+        self.availableCountries = parseAndFilterJSON(from: self.JSONFilePath)
         setCountryCell(countries: availableCountries, countryCode: settings.queries![0].value!)
         preparePickerView()
         
