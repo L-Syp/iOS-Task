@@ -79,14 +79,14 @@ class SettingsVC: UITableViewController {
     }
 }
 
-// MARK: - UIPickerViewDelegate
+// MARK: UIPickerViewDelegate
 extension SettingsVC: UIPickerViewDelegate {
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
         return String(self.pickerData[row])
     }
 }
 
-// MARK: - UIPickerViewDataSource
+// MARK: UIPickerViewDataSource
 extension SettingsVC: UIPickerViewDataSource {
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
@@ -96,7 +96,7 @@ extension SettingsVC: UIPickerViewDataSource {
     }
 }
 
-// MARK: - SettingsCountryTableVCDelegate
+// MARK: SettingsCountryTableVCDelegate
 extension SettingsVC: SettingsCountryTableVCDelegate {
     func chooseCountry(country: Country) {
         countryCell.textLabel?.text = "\(country.flag) \(country.name)"

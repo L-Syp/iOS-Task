@@ -58,7 +58,7 @@ class SettingsCountryTableVC: UIViewController  {
     
 }
 
-// MARK: - UITableViewDelegate
+// MARK: UITableViewDelegate
 extension SettingsCountryTableVC : UITableViewDelegate
 {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -67,7 +67,7 @@ extension SettingsCountryTableVC : UITableViewDelegate
     }
 }
 
-// MARK: - UITableViewDataSource
+// MARK: UITableViewDataSource
 extension SettingsCountryTableVC : UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1

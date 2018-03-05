@@ -15,10 +15,9 @@ class HeadingsTableVC: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     
     // MARK: Properties
-    let defaultImage: UIImage = #imageLiteral(resourceName: "newsImage")
     let persistentContainer = NSPersistentContainer(name: "Articles")
     let articleFerchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Article")
-    lazy var cachedImages:[UIImage?] = Array(repeating: nil, count: self.tableView.numberOfRows(inSection: 0))
+    lazy var dataSource: HeadingsTableDataSource? = HeadingsTableDataSource(fetchedResultsController: fetchedResultsController, persistentContainer: persistentContainer)
     var isOnline = false {
         didSet {
             let title = isOnline ? "Breaking news" : "Breaking news (offline mode)"
@@ -46,7 +45,7 @@ class HeadingsTableVC: UIViewController {
     @IBAction func refreshButton(_ sender: Any?) {
         if checkNetworkConnection() {
             DataModel.deleteArticlesFromMemory(fetchedResultsController: fetchedResultsController)
-            self.downloadData(settings: SettingsManager.loadAppSettings())
+            dataSource!.downloadData(settings: SettingsManager.loadAppSettings())
         }
     }
     
@@ -57,18 +56,19 @@ class HeadingsTableVC: UIViewController {
         }
     }
     
-    // MARK: - View Methods
+    // MARK: View Methods
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.dataSource = dataSource
+        dataSource!.delegate = self
         tableView.delegate = self
-        tableView.dataSource = self
         DataModel.LoadPersistentStore(persistentContainer: persistentContainer, fetchedResultsController: fetchedResultsController)
         if checkNetworkConnection(){
             DataModel.deleteArticlesFromPersistentStorage(persistentContainer: persistentContainer, fetchRequest: articleFerchRequest,
                                                           tableView: self.tableView, fetchedResultsController: fetchedResultsController)
         }
         self.updateView()
-        self.downloadData(settings: SettingsManager.loadAppSettings())
+        dataSource!.downloadData(settings: SettingsManager.loadAppSettings())
     }
     
     override func didReceiveMemoryWarning() {
@@ -84,9 +84,9 @@ class HeadingsTableVC: UIViewController {
             {
                 vc.image = UIImage(data: data)
             } else {
-                vc.image = defaultImage
+                vc.image = HeadingsTableDataSource.defaultImage
             }
-            vc.defaultImage = defaultImage
+            vc.defaultImage = HeadingsTableDataSource.defaultImage
             vc.article = article
         }
         if segue.identifier == "showSettingsSegue" {
@@ -105,113 +105,12 @@ class HeadingsTableVC: UIViewController {
         tableView.isHidden = !hasArticles
     }
     
-    func configure(_ cell: HeadingsTableViewCell, at indexPath: IndexPath) {
-        let index = indexPath
-        let article = fetchedResultsController.object(at: indexPath)
-        
-        cell.title = article.title
-        cell.source = article.sourceName
-        
-        if let articleImage = article.image {
-            if let cachedImage = cachedImages[indexPath.row] {
-                cell.newsImage = cachedImage
-            } else {
-                cell.newsImage = UIImage(data: articleImage) ?? defaultImage
-            }
-        } else {
-            cell.newsImage = defaultImage
-        }
-        
-        guard cachedImages[indexPath.row] == nil else { return }
-        ArticlesProvider.downloadImage(from: article.urlToImage) { data in
-            guard let data = data else { return }
-            guard let image = UIImage(data: data) else { return }
-            DispatchQueue.main.async {
-                guard index == indexPath else { return }
-                cell.newsImage = image
-                self.cachedImages[index.row] = image
-                article.image = data
-            }
-        }
-    }
-    
-    // MARK: - Fetching data
-    func downloadData(settings: QuerySettings) {
-        ArticlesProvider.downloadData(endpoint: settings.endpoint!, itemsCount: settings.itemsCount!, queries: settings.queries!, apiKey: settings.apiKey!)
-        { data, response, error in
-            self.checkNetworkConnection()
-            if let error = error {
-                if error.localizedDescription == "The Internet connection appears to be offline." {
-                    self.showNoConnectionAlert()
-                    return
-                } else if data == nil {
-                    if error.localizedDescription == "The data couldn’t be read because it isn’t in the correct format." {
-                        self.showInvalidDataFormat()
-                        return
-                    } else {
-                        self.showNoDataAlert()
-                        return
-                    }
-                } else {
-                    self.showAlert(title: "Unknown error", message: "Error message: \(error.localizedDescription)", buttonText: "OK")
-                    return
-                }
-            }
-            self.cachedImages = [UIImage?]()
-            self.cachedImages = Array(repeating: nil, count: data!.articles.count)
-            for i in 0..<data!.articles.count {
-                var article = data!.articles[i]
-                if let url = article.url {
-                    var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)
-                    urlComponents!.scheme = "http"
-                    article.url = urlComponents!.url
-                }
-                if let urlToImage = article.urlToImage {
-                    var urlComponents = URLComponents(url: urlToImage, resolvingAgainstBaseURL: false)
-                    urlComponents!.scheme = "http"
-                    article.urlToImage = urlComponents!.url
-                }
-                DataModel.addArticle(article, context: self.persistentContainer.viewContext)
-            }
-            DataModel.SaveToPeristent(persistentContainer: self.persistentContainer)
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-            }
-        }
-    }
-    
-    // MARK: - Networking
-    func checkNetworkConnection() -> Bool {
-        isOnline = ArticlesProvider.connectedToNetwork()
-        return isOnline
-    }
-    
-    // MARK: - Displaying alerts
-    func showAlert(title: String, message: String, buttonText: String) {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: NSLocalizedString(buttonText, comment: "Default action"), style: .`default`, handler: nil))
-        self.present(alert, animated: true, completion: nil)
-    }
-    
-    func showNoConnectionAlert() {
-        showAlert(title: "No internet connection", message: "There is no internet connection, data cannot be downloaded now.", buttonText: "OK")
-    }
-    
-    func showNoDataAlert() {
-        showAlert(title: "No data has been downloaded", message: "No data has been downloaded. Check your internet connection and connection parameters!", buttonText: "OK")
-    }
-    
-    func showInvalidDataFormat() {
-        showAlert(title: "Downloaded data is in wrong format", message: "Downloaded data is in wrong format " +
-            "therefore cannot be parsed! Check if correct JSON file has been downloaded.", buttonText: "OK")
-    }
-    
     func getSavedPersitentArticleCount() -> Int? {
         return DataModel.getEntitiesCount(persistentContainer: persistentContainer, fetchRequest: articleFerchRequest)
     }
 }
 
-// MARK: - UITableViewDelegate
+// MARK: UITableViewDelegate
 extension HeadingsTableVC : UITableViewDelegate
 {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -219,39 +118,36 @@ extension HeadingsTableVC : UITableViewDelegate
     }
 }
 
-// MARK: - UITableViewDataSource
-extension HeadingsTableVC : UITableViewDataSource {
-    func numberOfSections(in tableView: UITableView) -> Int {
-        guard let sections = self.fetchedResultsController.sections else { return 0 }
-        return sections.count
+// MARK: UITableViewDelegate
+extension HeadingsTableVC : HeadingsTableDataSourceDelegate
+{
+    func downloadData(endpoint: ArticlesProvider.Endpoints, itemsCount: Int, queries: [URLQueryItem], apiKey: String, callBack: @escaping (Articles?, URLResponse?, Error?) -> ()) {
+        ArticlesProvider.downloadData(endpoint: endpoint, itemsCount: itemsCount, queries: queries, apiKey: apiKey, callBack: callBack)
     }
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard let sectionInfo = self.fetchedResultsController.sections?[section] else { fatalError("Unexpected Section") }
-        return sectionInfo.numberOfObjects
+    func downloadImage(from url: URL?, callBack: @escaping (Data?) -> ()) {
+        ArticlesProvider.downloadImage(from: url, callBack: callBack)
     }
     
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        guard let sectionInfo = self.fetchedResultsController.sections?[section] else { fatalError("Unexpected Section") }
-        return sectionInfo.name
+    func handleNoConnectionError(error: Error) {
+        Utils.showNoConnectionAlert(self)
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "ArticleHeadingCell", for: indexPath) as? HeadingsTableViewCell else {
-            fatalError("The dequeued cell is not an instance of ArticleHeadingTableViewCell")
-        }
-        let colorFirst = UIColor(red: 158.0/255.0, green: 184.0/255.0, blue: 226.0/255.0, alpha: 1.0)
-        let colorSecond = UIColor(red: 184.0/255.0, green: 242.0/255.0, blue: 155.0/255.0, alpha: 1.0)
-        cell.backgroundColor = indexPath.row % 2 == 0 ? colorFirst : colorSecond
-        configure(cell, at: indexPath)
-        return cell
+    func handleNoDataError(error: Error) {
+        Utils.showNoDataAlert(self)
     }
     
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            let article = self.fetchedResultsController.object(at: indexPath)
-            article.managedObjectContext?.delete(article)
-        }
+    func handleInvalidDataError(error: Error) {
+        Utils.showInvalidDataFormat(self)
+    }
+    
+    func handleUnknownError(error: Error) {
+        Utils.showAlert(self, title: "Unknown error", message: "Error message: \(error.localizedDescription)", buttonText: "OK")
+    }
+    
+    func checkNetworkConnection() -> Bool {
+        isOnline = Utils.connectedToNetwork()
+        return isOnline
     }
 }
 
@@ -281,7 +177,7 @@ extension HeadingsTableVC: NSFetchedResultsControllerDelegate {
             break;
         case .update:
             if let indexPath = indexPath, let cell = tableView.cellForRow(at: indexPath) as? HeadingsTableViewCell {
-                configure(cell, at: indexPath)
+                dataSource!.configure(cell, at: indexPath)
             }
             break;
         case .move:
