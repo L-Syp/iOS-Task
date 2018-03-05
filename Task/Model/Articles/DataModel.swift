@@ -53,13 +53,12 @@ struct DataModel {
     }
     
     static func deleteArticlesFromPersistentStorage(persistentContainer: NSPersistentContainer, fetchRequest: NSFetchRequest<NSFetchRequestResult>,
-                                                    tableView: UITableView, fetchedResultsController: NSFetchedResultsController<Article>) {
+                                                    fetchedResultsController: NSFetchedResultsController<Article>) {
         let context = persistentContainer.viewContext
         let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
         do {
             try context.execute(deleteRequest)
             try fetchedResultsController.performFetch()
-            tableView.reloadData()
         } catch {
             let updateError = error as NSError
             print("\(updateError), \(updateError.userInfo)")

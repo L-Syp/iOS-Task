@@ -73,7 +73,7 @@ class HeadingsTableVC: UIViewController {
         DataModel.LoadPersistentStore(persistentContainer: persistentContainer, fetchedResultsController: fetchedResultsController)
         if checkNetworkConnection(){
             DataModel.deleteArticlesFromPersistentStorage(persistentContainer: persistentContainer, fetchRequest: articleFerchRequest,
-                                                          tableView: self.tableView, fetchedResultsController: fetchedResultsController)
+                                                          fetchedResultsController: fetchedResultsController)
         }
         self.updateView()
         dataSource.downloadData(settings: SettingsManager.loadAppSettings())
