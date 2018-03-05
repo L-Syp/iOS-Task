@@ -25,6 +25,7 @@ class SettingsCountryTableVC: UIViewController  {
         }
     }
     var selectedCountry: Country? = nil
+    lazy var dataSource: SettingsCountryTableDataSource = SettingsCountryTableDataSource(countries: self.countries)
     lazy var currentCountryCode: String = String()
     weak var delegate: SettingsCountryTableVCDelegate?
     
@@ -42,7 +43,7 @@ class SettingsCountryTableVC: UIViewController  {
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.delegate = self
-        tableView.dataSource = self
+        tableView.dataSource = dataSource
         selectCountry(at: countries.index(where: { $0.code == currentCountryCode })!)
         saveButton.isEnabled = false
     }
@@ -67,23 +68,6 @@ extension SettingsCountryTableVC : UITableViewDelegate
     }
 }
 
-// MARK: UITableViewDataSource
-extension SettingsCountryTableVC : UITableViewDataSource {
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
-    }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return countries.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "CountrySettingsCell", for: indexPath) as? SettingsCountryCellTableViewCell else {
-            fatalError("The dequeued cell is not an instance of SettingsCountryCellTableViewCell")
-        }
-        cell.name = "\(countries[indexPath.row].flag) \(countries[indexPath.row].name)"
-        return cell
-    }
-}
+
 
 

@@ -35,7 +35,7 @@ class SettingsVC: UITableViewController {
     // MARK: Set views
     override func viewDidLoad() {
         super.viewDidLoad()
-        availableCountries = parseJSON(from: JSONFilePath!)
+        availableCountries = parseAndFilterJSON(from: JSONFilePath!)
         setCountryCell(countries: availableCountries, countryCode: settings.queries![0].value!)
         preparePickerView()
         
@@ -63,7 +63,7 @@ class SettingsVC: UITableViewController {
         }
     }
     
-    private func parseJSON(from path: String) -> [Country] {
+    private func parseAndFilterJSON(from path: String) -> [Country] {
         do {
             let allCountries = try CountriesProvider.decodeJSON(from: path)!
             return allCountries.filter{ CountriesProvider.availableCountries.contains($0.code.lowercased()) }
