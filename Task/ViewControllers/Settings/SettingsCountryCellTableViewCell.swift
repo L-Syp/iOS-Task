@@ -8,8 +8,17 @@
 
 import UIKit
 
-class SettingsCountryCellTableViewCell: UITableViewCell { 
+class SettingsCountryCellTableViewCell: UITableViewCell {
+    
+    // MARK - outlets
     @IBOutlet weak var labelName: UILabel!
+    
+    // MARK - properties
+    var name: String? {
+        didSet {
+            labelName.text = name
+        }
+    }
     
     override func awakeFromNib() {
         super.awakeFromNib()

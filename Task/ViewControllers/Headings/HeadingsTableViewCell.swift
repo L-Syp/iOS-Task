@@ -10,9 +10,27 @@ import UIKit
 
 class HeadingsTableViewCell: UITableViewCell {
 
+    //MARK - outlets
     @IBOutlet weak var articleHeadingImage: UIImageView!
     @IBOutlet weak var articleHeadingTitle: UILabel!
     @IBOutlet weak var articleHeadingSource: UILabel!
+    
+    //MARK - properties
+    var newsImage: UIImage? {
+        didSet {
+            articleHeadingImage.image = newsImage
+        }
+    }
+    var title: String? {
+        didSet {
+            articleHeadingTitle.text = title
+        }
+    }
+    var source: String? {
+        didSet {
+            articleHeadingSource.text = source
+        }
+    }
     
     override func awakeFromNib() {
         super.awakeFromNib()

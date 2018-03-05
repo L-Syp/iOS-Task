@@ -22,7 +22,7 @@ struct DataModel {
             } catch {
                 let fetchError = error as NSError
                 print("Unable to Perform Fetch Request")
-                print("\(fetchError), \(fetchError.localizedDescription)")
+                fatalError("\(fetchError), \(fetchError.localizedDescription)")
             }
         }
     }

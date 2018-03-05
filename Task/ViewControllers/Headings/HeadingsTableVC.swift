@@ -54,7 +54,6 @@ class HeadingsTableVC: UIViewController {
         if let sourceViewController = sender.source as? SettingsVC {
             SettingsManager.saveAppSettings(settings: sourceViewController.settings)
             refreshButton(self)
-            print("SETTINGS: \(sourceViewController.settings)")
         }
     }
     
@@ -63,7 +62,6 @@ class HeadingsTableVC: UIViewController {
         super.viewDidLoad()
         tableView.delegate = self
         tableView.dataSource = self
-        print(Array(UserDefaults.standard.dictionaryRepresentation()))
         DataModel.LoadPersistentStore(persistentContainer: persistentContainer, fetchedResultsController: fetchedResultsController)
         if checkNetworkConnection(){
             DataModel.deleteArticlesFromPersistentStorage(persistentContainer: persistentContainer, fetchRequest: articleFerchRequest,
@@ -108,21 +106,20 @@ class HeadingsTableVC: UIViewController {
     }
     
     func configure(_ cell: HeadingsTableViewCell, at indexPath: IndexPath) {
-        // Fetch atricle
         let index = indexPath
         let article = fetchedResultsController.object(at: indexPath)
-        // Configure Cell
-        cell.articleHeadingTitle.text = article.title
-        cell.articleHeadingSource.text = article.sourceName
+        
+        cell.title = article.title
+        cell.source = article.sourceName
         
         if let articleImage = article.image {
             if let cachedImage = cachedImages[indexPath.row] {
-                cell.articleHeadingImage.image = cachedImage
+                cell.newsImage = cachedImage
             } else {
-                cell.articleHeadingImage.image = UIImage(data: articleImage) ?? defaultImage
+                cell.newsImage = UIImage(data: articleImage) ?? defaultImage
             }
         } else {
-            cell.articleHeadingImage.image = defaultImage
+            cell.newsImage = defaultImage
         }
         
         guard cachedImages[indexPath.row] == nil else { return }
@@ -131,7 +128,7 @@ class HeadingsTableVC: UIViewController {
             guard let image = UIImage(data: data) else { return }
             DispatchQueue.main.async {
                 guard index == indexPath else { return }
-                cell.articleHeadingImage.image = image
+                cell.newsImage = image
                 self.cachedImages[index.row] = image
                 article.image = data
             }
@@ -162,7 +159,6 @@ class HeadingsTableVC: UIViewController {
             }
             self.cachedImages = [UIImage?]()
             self.cachedImages = Array(repeating: nil, count: data!.articles.count)
-            print("Saved first in save: \(self.getSavedPersitentArticleCount()!)")
             for i in 0..<data!.articles.count {
                 var article = data!.articles[i]
                 if let url = article.url {
@@ -178,7 +174,6 @@ class HeadingsTableVC: UIViewController {
                 DataModel.addArticle(article, context: self.persistentContainer.viewContext)
             }
             DataModel.SaveToPeristent(persistentContainer: self.persistentContainer)
-            print("Saved second in save: \(self.getSavedPersitentArticleCount()!)")
             DispatchQueue.main.async {
                 self.tableView.reloadData()
             }

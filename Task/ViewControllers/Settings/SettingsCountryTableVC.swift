@@ -16,6 +16,7 @@ class SettingsCountryTableVC: UIViewController  {
     
     // MARK: Outlets
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var saveButton: UIBarButtonItem!
     
     // MARK: Properties
     var countries: [Country] = [Country]() {
@@ -26,9 +27,6 @@ class SettingsCountryTableVC: UIViewController  {
     var selectedCountry: Country? = nil
     lazy var currentCountryCode: String = String()
     weak var delegate: SettingsCountryTableVCDelegate?
-    
-    // MARK: Outlets
-    @IBOutlet weak var saveButton: UIBarButtonItem!
     
     // MARK: Actions
     @IBAction func cancelButtonClicked(_ sender: Any) {
@@ -83,7 +81,7 @@ extension SettingsCountryTableVC : UITableViewDataSource {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "CountrySettingsCell", for: indexPath) as? SettingsCountryCellTableViewCell else {
             fatalError("The dequeued cell is not an instance of SettingsCountryCellTableViewCell")
         }
-        cell.labelName.text = "\(countries[indexPath.row].flag) \(countries[indexPath.row].name)"
+        cell.name = "\(countries[indexPath.row].flag) \(countries[indexPath.row].name)"
         return cell
     }
 }
