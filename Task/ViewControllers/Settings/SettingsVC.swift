@@ -12,8 +12,8 @@ class SettingsVC: UITableViewController {
     
     // MARK: Properties
     let JSONFilePath: String
-    lazy var availableCountries: [Country] = [Country]()
-    lazy var settings: QuerySettings = QuerySettings()
+    lazy var availableCountries: [CountriesModel.Country] = [CountriesModel.Country]()
+    lazy var settings: Settings = Settings()
     var pickerData: [Int] {
         get {
             var array = [Int]()
@@ -69,18 +69,18 @@ class SettingsVC: UITableViewController {
         }
     }
     
-    private func parseAndFilterJSON(from path: String) -> [Country] {
+    private func parseAndFilterJSON(from path: String) -> [CountriesModel.Country] {
         do {
-            let allCountries = try CountriesProvider.decodeJSON(from: path)!
-            return allCountries.filter{ CountriesProvider.availableCountries.contains($0.code.lowercased()) }
+            let allCountries = try CountriesController.decodeJSON(from: path)!
+            return allCountries.filter{ CountriesController.availableCountries.contains($0.code.lowercased()) }
         } catch {
             fatalError("Error during parsing json file containing list of countries.")
         }
     }
     
-    private func setCountryCell(countries: [Country], countryCode: String) {
-        let flag = CountriesProvider.getCountryFlag(from: countries, for: countryCode)
-        let name = CountriesProvider.getCountryName(from: countries, for: countryCode)
+    private func setCountryCell(countries: [CountriesModel.Country], countryCode: String) {
+        let flag = CountriesController.getCountryFlag(from: countries, for: countryCode)
+        let name = CountriesController.getCountryName(from: countries, for: countryCode)
         countryCell.textLabel?.text = "\(flag) \(name)"
     }
 }
@@ -104,7 +104,7 @@ extension SettingsVC: UIPickerViewDataSource {
 
 // MARK: SettingsCountryTableVCDelegate
 extension SettingsVC: SettingsCountryTableVCDelegate {
-    func chooseCountry(country: Country) {
+    func chooseCountry(country: CountriesModel.Country) {
         countryCell.textLabel?.text = "\(country.flag) \(country.name)"
         settings.queries = [URLQueryItem(name: "country", value: country.code)]
     }

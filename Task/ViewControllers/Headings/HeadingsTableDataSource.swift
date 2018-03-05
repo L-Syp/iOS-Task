@@ -16,8 +16,8 @@ protocol HeadingsTableDataSourceDelegate: AnyObject {
     func handleInvalidDataError(error: Error)
     func handleUnknownError(error: Error)
     func downloadImage(from url: URL?, callBack: @escaping (_ imageData: Data?) -> ())
-    func downloadData(endpoint: ArticlesProvider.Endpoints, itemsCount: Int, queries: [URLQueryItem], apiKey: String,
-                                  callBack: @escaping (_ articlesData: Articles?, _ response: URLResponse?, _ error: Error?) -> ())
+    func downloadData(endpoint: ArticleModel.Endpoints, itemsCount: Int, queries: [URLQueryItem], apiKey: String,
+                                  callBack: @escaping (_ articlesData: ArticleModel.Articles?, _ response: URLResponse?, _ error: Error?) -> ())
 }
 
 class HeadingsTableDataSource: NSObject {
@@ -68,7 +68,7 @@ class HeadingsTableDataSource: NSObject {
     }
     
     // MARK: Fetching data
-    func downloadData(settings: QuerySettings) {
+    func downloadData(settings: Settings) {
         delegate?.downloadData(endpoint: settings.endpoint!, itemsCount: settings.itemsCount!, queries: settings.queries!, apiKey: settings.apiKey!)
         { data, response, error in
             self.delegate?.checkNetworkConnection()
@@ -103,9 +103,9 @@ class HeadingsTableDataSource: NSObject {
                     urlComponents!.scheme = "http"
                     article.urlToImage = urlComponents!.url
                 }
-                DataModel.addArticle(article, context: self.persistentContainer.viewContext)
+                ArticleController.addArticle(article, context: self.persistentContainer.viewContext)
             }
-            DataModel.SaveToPeristent(persistentContainer: self.persistentContainer)
+            ArticleController.SaveToPeristent(persistentContainer: self.persistentContainer)
         }
     }
 }

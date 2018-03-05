@@ -9,7 +9,7 @@
 import UIKit
 
 protocol SettingsCountryTableVCDelegate: AnyObject {
-    func chooseCountry(country: Country)
+    func chooseCountry(country: CountriesModel.Country)
 }
 
 class SettingsCountryTableVC: UIViewController  {
@@ -19,12 +19,12 @@ class SettingsCountryTableVC: UIViewController  {
     @IBOutlet weak var saveButton: UIBarButtonItem!
     
     // MARK: Properties
-    var countries: [Country] = [Country]() {
+    var countries: [CountriesModel.Country] = [CountriesModel.Country]() {
         didSet {
             countries.sort { $0.name < $1.name } //By default it's sorted by ISO code
         }
     }
-    var selectedCountry: Country? = nil
+    var selectedCountry: CountriesModel.Country? = nil
     lazy var dataSource: SettingsCountryTableDataSource = SettingsCountryTableDataSource(countries: self.countries)
     lazy var currentCountryCode: String = String()
     weak var delegate: SettingsCountryTableVCDelegate?

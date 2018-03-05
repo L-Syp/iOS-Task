@@ -1,16 +1,68 @@
 //
-//  DataModel.swift
-//  Task
+//  ArticleController.swift
+//  iOS-Task
 //
-//  Created by Łukasz Sypniewski on 20/02/2018.
+//  Created by Łukasz Sypniewski on 14/02/2018.
 //  Copyright © 2018 Łukasz Sypniewski. All rights reserved.
 //
 
-import Foundation
 import CoreData
-import UIKit
 
-struct DataModel {
+class ArticleController {
+    enum DownloadingDataError: Error {
+        case NoInternetConnection
+        case NoDataDownloaded
+        case InvalidDataFormat
+        case OtherError
+    }
+    
+    static func downloadData(endpoint: ArticleModel.Endpoints, itemsCount: Int, queries: [URLQueryItem], apiKey: String,
+                             callBack: @escaping (_ articlesData: ArticleModel.Articles?, _ response: URLResponse?, _ error: Error?) -> ())  {
+        var urlComponents = URLComponents()
+        let queryItems : [URLQueryItem] = [URLQueryItem(name: "pageSize", value: String(itemsCount))] + queries
+        urlComponents.scheme = "http"
+        urlComponents.host = "newsapi.org"
+        urlComponents.path = endpoint.rawValue
+        urlComponents.queryItems = queryItems
+        
+        var urlRequest = URLRequest(url: urlComponents.url!)
+        urlRequest.setValue(apiKey, forHTTPHeaderField: "X-Api-Key")
+        let config = URLSessionConfiguration.default
+        let session = URLSession(configuration: config)
+        let task = session.dataTask(with: urlRequest) {
+            (data, response, taskError) in
+            do {
+                if let data = data {
+                    let articlesData = try JSONDecoder().decode(ArticleModel.Articles.self, from: data)
+                    callBack(articlesData, response, taskError)
+                } else {
+                    callBack(nil, response, taskError)
+                    return
+                }
+            } catch {
+                callBack(nil, response, error)
+                return
+            }
+        }
+        task.resume()
+    }
+    
+    static func downloadImage(from url: URL?, callBack: @escaping (_ imageData: Data?) -> ()) {
+        guard let url = url else {
+            callBack(nil)
+            return
+        }
+        let session = URLSession.shared
+        let task = session.dataTask(with: url) { (data, response, error) in
+            guard error == nil, let data = data else {
+                callBack(nil)
+                return
+            }
+            callBack(data)
+        }
+        task.resume()
+    }
+    
     static func LoadPersistentStore<T>(persistentContainer: NSPersistentContainer, fetchedResultsController: NSFetchedResultsController<T>) {
         persistentContainer.loadPersistentStores { (persistentStoreDescription, error) in
             guard error == nil else {
@@ -27,7 +79,7 @@ struct DataModel {
         }
     }
     
-    static func addArticle(_ article: ArticleData, context: NSManagedObjectContext) {
+    static func addArticle(_ article: ArticleModel.ArticleData, context: NSManagedObjectContext) {
         // Create Article
         let newArticle = Article(context: context)
         
@@ -83,4 +135,5 @@ struct DataModel {
         }
         return count
     }
+    private init() {}
 }

@@ -9,13 +9,13 @@
 import UIKit
 
 class SettingsCountryTableDataSource: NSObject {
-    var countries: [Country] = [Country]() {
+    var countries: [CountriesModel.Country] = [CountriesModel.Country]() {
         didSet {
             countries.sort { $0.name < $1.name } //By default it's sorted by ISO code
         }
     }
     
-    init(countries: [Country]) {
+    init(countries: [CountriesModel.Country]) {
         self.countries = countries
     }
 }

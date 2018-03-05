@@ -52,14 +52,14 @@ class HeadingsTableVC: UIViewController {
     // MARK: Actions
     @IBAction func refreshButton(_ sender: Any?) {
         if checkNetworkConnection() {
-            DataModel.deleteArticlesFromMemory(fetchedResultsController: fetchedResultsController)
-            dataSource.downloadData(settings: SettingsManager.loadAppSettings())
+            ArticleController.deleteArticlesFromMemory(fetchedResultsController: fetchedResultsController)
+            dataSource.downloadData(settings: SettingsController.loadAppSettings())
         }
     }
     
     @IBAction func unwindToArticleList(sender: UIStoryboardSegue) {
         if let sourceViewController = sender.source as? SettingsVC {
-            SettingsManager.saveAppSettings(settings: sourceViewController.settings)
+            SettingsController.saveAppSettings(settings: sourceViewController.settings)
             refreshButton(self)
         }
     }
@@ -70,13 +70,13 @@ class HeadingsTableVC: UIViewController {
         tableView.dataSource = dataSource
         dataSource.delegate = self
         tableView.delegate = self
-        DataModel.LoadPersistentStore(persistentContainer: persistentContainer, fetchedResultsController: fetchedResultsController)
+        ArticleController.LoadPersistentStore(persistentContainer: persistentContainer, fetchedResultsController: fetchedResultsController)
         if checkNetworkConnection(){
-            DataModel.deleteArticlesFromPersistentStorage(persistentContainer: persistentContainer, fetchRequest: articleFerchRequest,
+            ArticleController.deleteArticlesFromPersistentStorage(persistentContainer: persistentContainer, fetchRequest: articleFerchRequest,
                                                           fetchedResultsController: fetchedResultsController)
         }
         self.updateView()
-        dataSource.downloadData(settings: SettingsManager.loadAppSettings())
+        dataSource.downloadData(settings: SettingsController.loadAppSettings())
     }
     
     override func didReceiveMemoryWarning() {
@@ -101,7 +101,7 @@ class HeadingsTableVC: UIViewController {
             let navigationVC = segue.destination as! UINavigationController
             let settingsVC = navigationVC.viewControllers.first as! SettingsVC
             guard sender as? UIBarButtonItem != nil else { return }
-            settingsVC.settings = SettingsManager.loadAppSettings()
+            settingsVC.settings = SettingsController.loadAppSettings()
         }
     }
     
@@ -114,7 +114,7 @@ class HeadingsTableVC: UIViewController {
     }
     
     func getSavedPersitentArticleCount() -> Int? {
-        return DataModel.getEntitiesCount(persistentContainer: persistentContainer, fetchRequest: articleFerchRequest)
+        return ArticleController.getEntitiesCount(persistentContainer: persistentContainer, fetchRequest: articleFerchRequest)
     }
 }
 
@@ -129,12 +129,13 @@ extension HeadingsTableVC : UITableViewDelegate
 // MARK: HeadingsTableDataSourceDelegate
 extension HeadingsTableVC : HeadingsTableDataSourceDelegate
 {
-    func downloadData(endpoint: ArticlesProvider.Endpoints, itemsCount: Int, queries: [URLQueryItem], apiKey: String, callBack: @escaping (Articles?, URLResponse?, Error?) -> ()) {
-        ArticlesProvider.downloadData(endpoint: endpoint, itemsCount: itemsCount, queries: queries, apiKey: apiKey, callBack: callBack)
+    func downloadData(endpoint: ArticleModel.Endpoints, itemsCount: Int, queries: [URLQueryItem], apiKey: String,
+                      callBack: @escaping (ArticleModel.Articles?, URLResponse?, Error?) -> ()) {
+        ArticleController.downloadData(endpoint: endpoint, itemsCount: itemsCount, queries: queries, apiKey: apiKey, callBack: callBack)
     }
     
     func downloadImage(from url: URL?, callBack: @escaping (Data?) -> ()) {
-        ArticlesProvider.downloadImage(from: url, callBack: callBack)
+        ArticleController.downloadImage(from: url, callBack: callBack)
     }
     
     func handleNoConnectionError(error: Error) {
