@@ -139,19 +139,19 @@ extension HeadingsTableVC : HeadingsTableDataSourceDelegate
     }
     
     func handleNoConnectionError(error: Error) {
-        Utils.showNoConnectionAlert(self)
+        Utils.showNoConnectionAlert()
     }
     
     func handleNoDataError(error: Error) {
-        Utils.showNoDataAlert(self)
+        Utils.showNoDataAlert()
     }
     
     func handleInvalidDataError(error: Error) {
-        Utils.showInvalidDataFormat(self)
+        Utils.showInvalidDataFormat()
     }
     
     func handleUnknownError(error: Error) {
-        Utils.showAlert(self, title: "Unknown error", message: "Error message: \(error.localizedDescription)", buttonText: "OK")
+        Utils.showAlert(title: "Unknown error", message: "Error message: \(error.localizedDescription)", buttonText: "OK")
     }
     
     func checkNetworkConnection() -> Bool {

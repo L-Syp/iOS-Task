@@ -37,22 +37,22 @@ class Utils {
     }
     
     // MARK: Displaying alerts
-    static func showAlert(_ vc: UIViewController, title: String, message: String, buttonText: String) {
+    static func showAlert(title: String, message: String, buttonText: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: NSLocalizedString(buttonText, comment: "Default action"), style: .`default`, handler: nil))
         UIApplication.shared.keyWindow?.rootViewController?.present(alert, animated: true, completion: nil)
     }
     
-    static func showNoConnectionAlert(_ vc: UIViewController) {
-        showAlert(vc, title: "No internet connection", message: "There is no internet connection, data cannot be downloaded now.", buttonText: "OK")
+    static func showNoConnectionAlert() {
+        showAlert(title: "No internet connection", message: "There is no internet connection, data cannot be downloaded now.", buttonText: "OK")
     }
     
-    static func showNoDataAlert(_ vc: UIViewController) {
-        showAlert(vc, title: "No data has been downloaded", message: "No data has been downloaded. Check your internet connection and connection parameters!", buttonText: "OK")
+    static func showNoDataAlert() {
+        showAlert(title: "No data has been downloaded", message: "No data has been downloaded. Check your internet connection and connection parameters!", buttonText: "OK")
     }
     
-    static func showInvalidDataFormat(_ vc: UIViewController) {
-        showAlert(vc, title: "Downloaded data is in wrong format", message: "Downloaded data is in wrong format " +
+    static func showInvalidDataFormat() {
+        showAlert(title: "Downloaded data is in wrong format", message: "Downloaded data is in wrong format " +
             "therefore cannot be parsed! Check if correct JSON file has been downloaded.", buttonText: "OK")
     }
 }
