@@ -9,24 +9,22 @@
 import CoreData
 
 class ArticleController {
-    enum DownloadingDataError: Error {
-        case NoInternetConnection
-        case NoDataDownloaded
-        case InvalidDataFormat
-        case OtherError
+    enum Endpoints : String {
+        case topHeadlines = "/v2/top-headlines"
+        case everything = "/v2/everything"
     }
     
-    static func downloadData(endpoint: ArticleModel.Endpoints, itemsCount: Int, queries: [URLQueryItem], apiKey: String,
+    static func downloadData(withSettings settings: Settings,
                              callBack: @escaping (_ articlesData: ArticleModel.Articles?, _ response: URLResponse?, _ error: Error?) -> ())  {
         var urlComponents = URLComponents()
-        let queryItems : [URLQueryItem] = [URLQueryItem(name: "pageSize", value: String(itemsCount))] + queries
+        let queryItems : [URLQueryItem] = [URLQueryItem(name: "pageSize", value: String(settings.itemsCount!))] + settings.queries!
         urlComponents.scheme = "http"
         urlComponents.host = "newsapi.org"
-        urlComponents.path = endpoint.rawValue
+        urlComponents.path =  settings.endpoint!.rawValue
         urlComponents.queryItems = queryItems
         
         var urlRequest = URLRequest(url: urlComponents.url!)
-        urlRequest.setValue(apiKey, forHTTPHeaderField: "X-Api-Key")
+        urlRequest.setValue(settings.apiKey!, forHTTPHeaderField: "X-Api-Key")
         let config = URLSessionConfiguration.default
         let session = URLSession(configuration: config)
         let task = session.dataTask(with: urlRequest) {

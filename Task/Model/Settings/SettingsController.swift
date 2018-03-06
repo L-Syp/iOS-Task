@@ -27,10 +27,10 @@ class SettingsController {
             }
         }()
         let apiKey = defaults.string(forKey: Settings.Keys.ApiKey.rawValue) ?? "2beb5953fd92424983abae1dc1c7d58c"
-        let endpointValue = defaults.string(forKey: Settings.Keys.Endpoint.rawValue) ?? ArticleModel.Endpoints.everything.rawValue
+        let endpointValue = defaults.string(forKey: Settings.Keys.Endpoint.rawValue) ?? ArticleController.Endpoints.everything.rawValue
         let itemsCount = defaults.integer(forKey: Settings.Keys.ItemsCount.rawValue) != 0 ?
             defaults.integer(forKey: Settings.Keys.ItemsCount.rawValue) : 5
-        let endpoint = ArticleModel.Endpoints(rawValue: endpointValue)!
+        let endpoint = ArticleController.Endpoints(rawValue: endpointValue)!
         return Settings(apiKey: apiKey, endpoint: endpoint, itemsCount: itemsCount, queries: queries)
     }
     

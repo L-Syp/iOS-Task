@@ -16,7 +16,7 @@ protocol HeadingsTableDataSourceDelegate: AnyObject {
     func handleInvalidDataError(error: Error)
     func handleUnknownError(error: Error)
     func downloadImage(from url: URL?, callBack: @escaping (_ imageData: Data?) -> ())
-    func downloadData(endpoint: ArticleModel.Endpoints, itemsCount: Int, queries: [URLQueryItem], apiKey: String,
+    func downloadData(endpoint: ArticleController.Endpoints, itemsCount: Int, queries: [URLQueryItem], apiKey: String,
                                   callBack: @escaping (_ articlesData: ArticleModel.Articles?, _ response: URLResponse?, _ error: Error?) -> ())
 }
 
@@ -131,8 +131,8 @@ extension HeadingsTableDataSource : UITableViewDataSource {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "ArticleHeadingCell", for: indexPath) as? HeadingsTableViewCell else {
             fatalError("The dequeued cell is not an instance of ArticleHeadingTableViewCell")
         }
-        let colorFirst = UIColor(red: 158.0/255.0, green: 184.0/255.0, blue: 226.0/255.0, alpha: 1.0)
-        let colorSecond = UIColor(red: 184.0/255.0, green: 242.0/255.0, blue: 155.0/255.0, alpha: 1.0)
+        let colorFirst = UIColor(red: 218.0/255.0, green: 224.0/255.0, blue: 234.0/255.0, alpha: 1.0)
+        let colorSecond = UIColor.white
         cell.backgroundColor = indexPath.row % 2 == 0 ? colorFirst : colorSecond
         configure(cell, at: indexPath)
         return cell

@@ -29,10 +29,5 @@ class ArticleModel {
         let name: String?
     }
     
-    enum Endpoints : String {
-        case topHeadlines = "/v2/top-headlines"
-        case everything = "/v2/everything"
-    }
-    
     private init() {}
 }

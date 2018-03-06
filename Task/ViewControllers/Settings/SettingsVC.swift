@@ -47,6 +47,21 @@ class SettingsVC: UITableViewController {
         
     }
     
+    private func parseAndFilterJSON(from path: String) -> [CountriesModel.Country] {
+        do {
+            let allCountries = try CountriesController.decodeJSON(from: path)!
+            return allCountries.filter{ CountriesController.availableCountries.contains($0.code.lowercased()) }
+        } catch {
+            fatalError("Error during parsing json file containing list of countries.")
+        }
+    }
+    
+    private func setCountryCell(countries: [CountriesModel.Country], countryCode: String) {
+        let flag = CountriesController.getCountryFlag(from: countries, for: countryCode)
+        let name = CountriesController.getCountryName(from: countries, for: countryCode)
+        countryCell.textLabel?.text = "\(flag) \(name)"
+    }
+    
     // MARK: PickerView
     func preparePickerView() {
         pickerView.delegate = self
@@ -67,21 +82,6 @@ class SettingsVC: UITableViewController {
             countriesTableVC.countries = availableCountries
             countriesTableVC.currentCountryCode = settings.queries![0].value!
         }
-    }
-    
-    private func parseAndFilterJSON(from path: String) -> [CountriesModel.Country] {
-        do {
-            let allCountries = try CountriesController.decodeJSON(from: path)!
-            return allCountries.filter{ CountriesController.availableCountries.contains($0.code.lowercased()) }
-        } catch {
-            fatalError("Error during parsing json file containing list of countries.")
-        }
-    }
-    
-    private func setCountryCell(countries: [CountriesModel.Country], countryCode: String) {
-        let flag = CountriesController.getCountryFlag(from: countries, for: countryCode)
-        let name = CountriesController.getCountryName(from: countries, for: countryCode)
-        countryCell.textLabel?.text = "\(flag) \(name)"
     }
 }
 

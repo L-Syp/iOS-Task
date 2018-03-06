@@ -10,7 +10,7 @@ import Foundation
 
 class Settings {
     var apiKey: String?
-    var endpoint: ArticleModel.Endpoints?
+    var endpoint: ArticleController.Endpoints?
     var itemsCount: Int?
     var queries: [URLQueryItem]?
     
@@ -21,7 +21,7 @@ class Settings {
         case Queries
     }
     
-    init(apiKey: String, endpoint: ArticleModel.Endpoints, itemsCount: Int, queries: [URLQueryItem]) {
+    init(apiKey: String, endpoint: ArticleController.Endpoints, itemsCount: Int, queries: [URLQueryItem]) {
         self.apiKey = apiKey
         self.endpoint = endpoint
         self.itemsCount = itemsCount

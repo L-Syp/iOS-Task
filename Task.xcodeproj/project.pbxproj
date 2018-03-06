@@ -103,8 +103,8 @@
 		D60DD35820480DEC0014F242 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
-				D67952A1204D600700B63903 /* SettingsCountryTable */,
 				D6DB39DA2046B56A0019E9C3 /* SettingsVC.swift */,
+				D67952A1204D600700B63903 /* SettingsCountryTable */,
 			);
 			path = Settings;
 			sourceTree = "<group>";

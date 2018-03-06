@@ -129,9 +129,9 @@ extension HeadingsTableVC : UITableViewDelegate
 // MARK: HeadingsTableDataSourceDelegate
 extension HeadingsTableVC : HeadingsTableDataSourceDelegate
 {
-    func downloadData(endpoint: ArticleModel.Endpoints, itemsCount: Int, queries: [URLQueryItem], apiKey: String,
+    func downloadData(endpoint: ArticleController.Endpoints, itemsCount: Int, queries: [URLQueryItem], apiKey: String,
                       callBack: @escaping (ArticleModel.Articles?, URLResponse?, Error?) -> ()) {
-        ArticleController.downloadData(endpoint: endpoint, itemsCount: itemsCount, queries: queries, apiKey: apiKey, callBack: callBack)
+        ArticleController.downloadData(withSettings: SettingsController.loadAppSettings(), callBack: callBack)
     }
     
     func downloadImage(from url: URL?, callBack: @escaping (Data?) -> ()) {
