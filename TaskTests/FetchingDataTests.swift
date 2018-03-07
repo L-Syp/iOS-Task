@@ -23,7 +23,7 @@ class TaskFetchingTests: XCTestCase {
     }
     
     func testInternetConnection() {
-        if !ArticleController.connectedToNetwork() {
+        if !Utils.connectedToNetwork() {
             XCTFail("There's no internet connection")
             continueAfterFailure = false
         }
@@ -31,9 +31,10 @@ class TaskFetchingTests: XCTestCase {
     
     func testServiceConnection() {
         let expectation = self.expectation(description: "Server's HTTP response equals 200")
-        ArticleController.downloadData(endpoint: ArticleController.Endpoints.topHeadlines, itemsCount: 0, queries: [URLQueryItem(name: "country", value: "us")],
-                             apiKey: apiKey) { data, response, error in
-                                XCTAssert((response as! HTTPURLResponse).statusCode == 200)
+        let settings = Settings(apiKey: apiKey, endpoint: ArticleController.Endpoints.topHeadlines, itemsCount: 0, queries: [URLQueryItem(name: "country", value: "us")])
+        ArticleController.downloadData(withSettings: settings) { data, response, error in
+                                let statusCode = (response as! HTTPURLResponse).statusCode
+                                XCTAssert(statusCode == 200, "Was: \(statusCode), expected: \(200)")
                                 expectation.fulfill()
         }
         
@@ -60,14 +61,15 @@ class TaskFetchingTests: XCTestCase {
         })
     }
     
-    func fetchingData(_ endpoint: ArticleController.Endpoints, _ additionalQueries: [URLQueryItem], expectedPass: Bool, expectedHTTPCode: Int) {
+    func fetchingData(_ endpoint: ArticleController.Endpoints, _ queries: [URLQueryItem], expectedPass: Bool, expectedHTTPCode: Int) {
         let expectation = self.expectation(description: "Number of downloaded data equals to 'itemsCount' parameter.")
         let testEndpoint = endpoint
         let itemsCount = 3
-        let testAdditionalQueries = additionalQueries
+        let testqueries = queries
+        let settings = Settings(apiKey: apiKey, endpoint: endpoint, itemsCount: itemsCount, queries: testqueries)
         continueAfterFailure = false
         
-        ArticleController.downloadData(endpoint: testEndpoint, itemsCount: itemsCount, queries: testAdditionalQueries, apiKey: apiKey) { data, response, error in
+        ArticleController.downloadData(withSettings: settings) { data, response, error in
             guard let response = response else {
                 XCTFail("Couldn't connect to the server. Check internet connection.")
                 return
@@ -76,13 +78,12 @@ class TaskFetchingTests: XCTestCase {
             XCTAssert(statusCode == expectedHTTPCode, "Was: \(statusCode), expected: \(expectedHTTPCode)")
             guard let data = data else {
                 if expectedPass {
-                    XCTFail("Function has downloaded no data. Test data: \(endpoint), \(additionalQueries), \(expectedPass)")
+                    XCTFail("Function has downloaded no data. Test data: \(testEndpoint), \(testqueries), \(expectedPass)")
                 } else {
                     expectation.fulfill()
                 }
                 return
             }
-            
             
             if expectedPass {
                 let dataCount = data.articles.count

@@ -27,7 +27,7 @@ class HeadingsTableDataSource: NSObject {
     let persistentContainer: NSPersistentContainer
     static let defaultImage: UIImage = #imageLiteral(resourceName: "newsImage")
     weak var delegate: HeadingsTableDataSourceDelegate?
-    lazy var cachedImages:[UIImage?] = [UIImage?]()
+    lazy var cachedImages: [UIImage?] = [UIImage?]()
     
     // MARK: Initializers
     init(fetchedResultsController: NSFetchedResultsController<Article>, persistentContainer: NSPersistentContainer) {
